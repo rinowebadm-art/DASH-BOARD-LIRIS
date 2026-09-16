@@ -409,7 +409,7 @@ function periodRange(){
   if(PERIOD==='semaine')return weekRange(d);
   return[new Date(d.getFullYear(),d.getMonth(),1),new Date(d.getFullYear(),d.getMonth()+1,0)];
 }
-function baseHeures(){
+  function baseHeures(){
   const d=new Date(PDATE);
   if(PERIOD==='jour')return 8;
   if(PERIOD==='semaine')return 40;
