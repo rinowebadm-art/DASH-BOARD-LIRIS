@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr" data-theme="light">
 <head>
@@ -11,12 +10,14 @@
 [data-theme="dark"]{--bg:#0f172a;--bg2:#1e293b;--bg3:#243044;--bd:#334155;--bd2:#2d3f55;--txt:#e2e8f0;--txt2:#cbd5e1;--txt3:#94a3b8;--txt4:#64748b;--txt5:#a0aec0;--blue:#3b82f6;--sh:0 1px 6px rgba(0,0,0,.4);--ib:#1e293b;--ibd:#334155;--gridC:#2d3f55;--tickC:#94a3b8;--tickC2:#cbd5e1}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--txt);font-size:12px}
+/* HEADER */
 .hd{background:linear-gradient(135deg,#1f2937,#2e75b6);padding:12px 20px;display:flex;flex-direction:row;align-items:center;justify-content:space-between;color:#fff}
 .hd h1{font-size:19px;font-weight:900;display:flex;align-items:center;gap:8px}
 .badge{background:#c55a11;color:#fff;padding:2px 9px;border-radius:9px;font-size:11px;font-weight:700}
 .hd-r{text-align:right;font-size:10px;color:#dbe6f2;line-height:1.8}
 .tmbtn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:4px 11px;border-radius:14px;cursor:pointer;font-size:11px;font-weight:700;display:block;margin-bottom:4px}
 .tmbtn:hover{background:rgba(255,255,255,.28)}
+/* IMPORT */
 .imp{background:var(--bg2);padding:8px 20px;display:flex;flex-direction:row;align-items:center;gap:10px;border-bottom:1px solid var(--bd)}
 label.dz{flex:1;border:2px dashed var(--blue);border-radius:8px;padding:9px 14px;cursor:pointer;text-align:center;color:var(--txt3);display:block;background:var(--bg3)}
 label.dz strong{color:var(--blue)}
@@ -27,10 +28,12 @@ label.dz2 small{display:block;font-size:10px;color:var(--txt4);margin-top:2px}
 input[type=file]{display:none}
 .sp{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
 .sp.idle{background:var(--bg3);color:var(--txt3)}.sp.ok{background:#dcf5e3;color:#15803d}.sp.err{background:#fde2e2;color:#c0392b}.sp.ld{background:#fef3d6;color:#a06600}
+/* TABS */
 .tabs{background:var(--bg2);display:flex;flex-direction:row;border-bottom:1px solid var(--bd)}
 .tab{padding:8px 20px;cursor:pointer;font-size:12px;font-weight:700;color:var(--txt3);border-bottom:3px solid transparent;user-select:none}
 .tab.on{color:var(--txt);border-bottom-color:var(--blue);background:var(--bg3)}
 .tab:hover:not(.on){color:var(--txt);background:var(--bg3)}
+/* FILTRES */
 .fbar{background:var(--bg2);padding:6px 20px;display:flex;flex-direction:row;gap:6px;align-items:center;border-bottom:1px solid var(--bd);flex-wrap:wrap}
 .fbar label{color:var(--txt3);font-size:11px}
 button{border:none;padding:4px 12px;border-radius:14px;cursor:pointer;font-size:11px;font-weight:700;transition:.15s}
@@ -45,6 +48,7 @@ button{border:none;padding:4px 12px;border-radius:14px;cursor:pointer;font-size:
 .bpr:hover{background:#1c5a99;color:#fff}
 .bho{background:#fde9d8;color:#a15117}
 .bho:hover{background:#a15117;color:#fff}
+/* boutons filtre site modal */
 .b-tana{background:#f1e9fb;color:#7c4fbf}
 .b-tana:hover{background:#7c4fbf;color:#fff}
 .b-diego{background:#e2f7f4;color:#0f9b8e}
@@ -57,11 +61,13 @@ button{border:none;padding:4px 12px;border-radius:14px;cursor:pointer;font-size:
 .srch{background:transparent;border:none;color:var(--txt);padding:4px 10px;font-size:11px;width:150px;outline:none}
 .srch::placeholder{color:var(--txt4)}
 .srch-btn{background:var(--blue);color:#fff;border:none;padding:4px 10px;cursor:pointer;font-size:11px;font-weight:700}
+/* ALERTES */
 .aband{background:#fef3d6;border-bottom:2px solid #f5c518;padding:5px 20px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:11px}
 .aband.hide{display:none}
 .ab-title{font-weight:800;color:#a06600;white-space:nowrap}
 .ab-item{background:#fff8e1;color:#7a4f00;padding:2px 8px;border-radius:6px;font-weight:700;border:1px solid #f0d060;font-size:10px}
 .ab-close{margin-left:auto;cursor:pointer;color:#a06600;font-size:15px;font-weight:800;background:none;border:none;padding:1px 6px;border-radius:5px}
+/* MAIN */
 .main{padding:10px 16px}
 .krow{display:grid;gap:7px;margin-bottom:10px}
 .k8{grid-template-columns:repeat(8,1fr)}
@@ -85,13 +91,16 @@ button{border:none;padding:4px 12px;border-radius:14px;cursor:pointer;font-size:
 .kbd{background:#fde2e2;color:#c0392b}
 .pin-icon{position:absolute;bottom:5px;right:6px;font-size:9px;color:var(--txt4)}
 .kpi.pinned .pin-icon{color:var(--blue)}
+/* GRIDS */
 .r3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
 .r2{display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-bottom:8px}
 .r2b{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
 .r3d{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
+/* CARD */
 .card{background:var(--bg2);border-radius:7px;padding:10px;border:1px solid var(--bd2);box-shadow:var(--sh)}
 .ct{font-size:10px;color:var(--txt2);font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-bottom:7px;display:flex;align-items:center;gap:5px;justify-content:space-between}
 .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+/* TABLE */
 .tw{overflow-y:auto;max-height:420px}
 table{width:100%;border-collapse:collapse}
 th{background:var(--bg3);color:var(--txt3);padding:8px 10px;text-align:center;position:sticky;top:0;z-index:1;font-size:11px;font-weight:700;border-bottom:2px solid var(--blue)}
@@ -106,6 +115,7 @@ tr:hover td{background:#e8f0fb!important}
 tr.alert-red.senior td{animation:blink-sr 1.8s ease-in-out infinite}
 tr.alert-red.junior td{animation:blink-jr 1.8s ease-in-out infinite}
 tr.alert-red:hover td{animation:none!important;background:#e8f0fb!important}
+/* BADGES */
 .bgold{display:inline-flex;align-items:center;gap:3px;background:linear-gradient(135deg,#ffd700,#e8a800);color:#5a3800;padding:3px 10px;border-radius:20px;font-weight:800;font-size:11px}
 .bsilv{display:inline-flex;align-items:center;gap:3px;background:linear-gradient(135deg,#e0e0e0,#a8a8a8);color:#2a2a2a;padding:3px 10px;border-radius:20px;font-weight:800;font-size:11px}
 .bbrz{display:inline-flex;align-items:center;gap:3px;background:linear-gradient(135deg,#cd7f32,#9a5a1f);color:#fff;padding:3px 10px;border-radius:20px;font-weight:800;font-size:11px}
@@ -128,6 +138,7 @@ tr.alert-red:hover td{animation:none!important;background:#e8f0fb!important}
 .nq-sep{border-left:2px solid rgba(231,76,60,.3);padding-left:8px}
 .obg{background:var(--bd);border-radius:3px;height:7px;overflow:hidden;display:inline-block;width:55px;vertical-align:middle;margin-right:4px}
 .obr{height:7px;border-radius:3px}
+/* MODAL — display:none aussi via style inline sur l'élément */
 .mo{display:none;position:fixed;inset:0;background:rgba(20,30,45,.55);z-index:200;align-items:center;justify-content:center}
 .mo.open{display:flex}
 .mdl{background:var(--bg2);border-radius:10px;width:900px;max-width:97vw;max-height:90vh;display:flex;flex-direction:column;border:1px solid var(--bd);box-shadow:0 10px 30px rgba(0,0,0,.25)}
@@ -161,6 +172,7 @@ tr.alert-red:hover td{animation:none!important;background:#e8f0fb!important}
 </style>
 </head>
 <body>
+<!-- HEADER -->
 <div class="hd">
   <div>
     <h1>📊 DASHBOARD LIRIS <span class="badge" id="wk">S--</span></h1>
@@ -174,26 +186,28 @@ tr.alert-red:hover td{animation:none!important;background:#e8f0fb!important}
     <div>Base : <span id="baseLabel">40h / semaine</span> · <span id="basecount">62 agents</span></div>
   </div>
 </div>
+<!-- IMPORT -->
 <div class="imp">
-  <!-- ✅ FIX : id="dz" et id="dz2" ajoutés pour que le drag & drop fonctionne -->
-  <label class="dz" id="dz" for="fi">
+  <label class="dz" for="fi">
     <input type="file" id="fi" accept=".xlsx,.xls"/>
     📥 <strong>Glisse l'export_monitoring ici</strong> ou clique pour choisir
     <small>Seuls les agents du référentiel sont affichés</small>
   </label>
   <div class="sp idle" id="sp">⏳ Aucun fichier</div>
-  <label class="dz2" id="dz2" for="fi2">
+  <label class="dz2" for="fi2">
     <input type="file" id="fi2" accept=".xlsx,.xls"/>
     📊 <strong>Glisse le fichier NQ ici</strong> ou clique pour choisir
     <small>Feuille "NQ Liris" · Catégorie · Validée=OK uniquement</small>
   </label>
   <div class="sp idle" id="spNQ">📊 NQ non chargé</div>
 </div>
+<!-- TABS -->
 <div class="tabs">
   <div class="tab on" onclick="setTab('g',this)">🌍 Vue Globale</div>
   <div class="tab" onclick="setTab('t',this)">🟣 TANA</div>
   <div class="tab" onclick="setTab('d',this)">🟢 DIEGO</div>
 </div>
+<!-- FILTRES -->
 <div class="fbar">
   <label>📅 Période :</label>
   <button id="pJ" class="bof pbtn" onclick="setPeriod('jour')">Jour</button>
@@ -221,14 +235,17 @@ tr.alert-red:hover td{animation:none!important;background:#e8f0fb!important}
   <button class="bho" onclick="openMoLH()">🕳️ Heures perdues</button>
   <span id="finfo" style="color:var(--txt3);font-size:11px;margin-left:auto"></span>
 </div>
+<!-- ALERTE -->
 <div class="aband hide" id="aband">
   <span class="ab-title" id="abTitle"></span>
   <span id="abItems" style="display:flex;gap:5px;flex-wrap:wrap"></span>
   <button class="ab-close" onclick="document.getElementById('aband').classList.add('hide')">✕</button>
 </div>
+<!-- MAIN -->
 <div class="main" id="main">
   <div class="empty">📥<br><br>Glisse ton <strong style="color:#c55a11">export_monitoring.xlsx</strong></div>
 </div>
+<!-- MODAL AGENTS — style="display:none" INLINE pour forcer le masquage -->
 <div class="mo" id="mo" style="display:none" onclick="if(event.target===this)closeMo()">
   <div class="mdl">
     <div class="mh">
@@ -271,6 +288,7 @@ tr.alert-red:hover td{animation:none!important;background:#e8f0fb!important}
     </div>
   </div>
 </div>
+<!-- MODAL HEURES PERDUES — style="display:none" INLINE -->
 <div class="mo" id="moLH" style="display:none" onclick="if(event.target===this)closeMoLH()">
   <div class="mdl">
     <div class="mh">
@@ -310,6 +328,7 @@ tr.alert-red:hover td{animation:none!important;background:#e8f0fb!important}
   </div>
 </div>
 <script>
+/* ===== RÉFÉRENTIEL ===== */
 const DEF={
 "ZTH":{"nom":"ANDRIANARIBAKO","prenom":"Tiana","s":"Senior","site":"TANA","shift":"05:00","obj":90},
 "ZNL":{"nom":"ANDRIAMAHEFA","prenom":"Nambinintsoa","s":"Senior","site":"TANA","shift":"23:00","obj":100},
@@ -463,6 +482,7 @@ function fd(){
   if(SHFT!=='all')d=d.filter(x=>x.shift===SHFT);
   return d;
 }
+/* ===== NQ ===== */
 function readNQ(f){
   setSpNQ('⏳ Lecture NQ…','ld');
   const r=new FileReader();
@@ -515,7 +535,15 @@ function readNQ(f){
       const totL=Object.values(agg).reduce((s,v)=>s+v.loupe,0);
       const totN=Object.values(agg).reduce((s,v)=>s+v.nonconforme,0);
       setSpNQ('✅ NQ OK · '+nb+' agents · '+tot+' NQ validées','ok');
-      showDiag('NQ chargées (Validée=OK seulement)\nFeuille : "'+sn+'"\nCol. Catégorie : '+(cCat||'NON TROUVÉE')+'\nCol. Validée   : '+(cVal||'NON TROUVÉE — toutes lignes retenues')+'\nLignes retenues : '+counted+' | Exclues : '+skipped+'\nTotal NQ : '+tot+' (Mauvaise:'+totM+' Loupé:'+totL+' NC:'+totN+')\nPériode : '+iso(pStart)+' → '+iso(pEnd));
+      showDiag(
+        'NQ chargées (Validée=OK seulement)\n'+
+        'Feuille : "'+sn+'"\n'+
+        'Col. Catégorie : '+(cCat||'NON TROUVÉE')+'\n'+
+        'Col. Validée   : '+(cVal||'NON TROUVÉE — toutes lignes retenues')+'\n'+
+        'Lignes retenues : '+counted+' | Exclues : '+skipped+'\n'+
+        'Total NQ : '+tot+' (Mauvaise:'+totM+' Loupé:'+totL+' NC:'+totN+')\n'+
+        'Période : '+iso(pStart)+' → '+iso(pEnd)
+      );
       if(DATA.length)build();
     }catch(err){setSpNQ('❌ '+err.message,'err');showDiag('Erreur NQ : '+err.message);}
   };
@@ -538,6 +566,7 @@ function nqBadge(cat,t,res,rm){
   if(r<=s*2)return'<span class="nqbadge nqwn">'+pct+'</span>';
   return'<span class="nqbadge nqbd">'+pct+'</span>';
 }
+/* ===== PROD ===== */
 function readXL(f){
   setSp('⏳ Lecture…','ld');
   document.getElementById('diag').style.display='none';
@@ -620,6 +649,7 @@ function recompute(fname,sn){
   if(DATA.length)document.getElementById('diag').style.display='none';
   build();
 }
+/* ===== EXPORT ===== */
 function exportXL(){
   if(!DATA.length){alert('Aucune donnée chargée.');return;}
   const d=fd();
@@ -640,6 +670,7 @@ function exportXL(){
   XLSX.utils.book_append_sheet(wb2,ws,'Dashboard');
   XLSX.writeFile(wb2,'Dashboard_LIRIS_'+PERIOD+'.xlsx');
 }
+/* ===== ALERTE BAND ===== */
 function buildAlertBand(data){
   const bd=document.getElementById('aband');
   const alrts=data.filter(d=>d.top>0&&d.top<0.85).sort((a,b)=>a.top-b.top);
@@ -648,6 +679,7 @@ function buildAlertBand(data){
   document.getElementById('abTitle').textContent='⚠️ '+alrts.length+' agent'+(alrts.length>1?'s':'')+' sous 85% :';
   document.getElementById('abItems').innerHTML=alrts.slice(0,20).map(d=>'<span class="ab-item">'+d.t+' · '+(d.top*100).toFixed(0)+'%</span>').join('');
 }
+/* ===== TABLEAU CLASSEMENT ===== */
 function rankBadge(i){
   if(i===0)return'<span class="bgold">🥇 #1</span>';
   if(i===1)return'<span class="bsilv">🥈 #2</span>';
@@ -701,6 +733,7 @@ function renderCls(data){
   const cb=document.getElementById('clsBody');
   if(cb)cb.innerHTML=html||'<tr><td colspan="20" style="padding:20px;color:var(--txt4)">Aucun agent</td></tr>';
 }
+/* ===== BUILD ===== */
 function build(){
   const data=fd().sort((a,b)=>b.top-a.top);
   const sr=data.filter(d=>d.s==='Senior'),jr=data.filter(d=>d.s==='Junior');
@@ -852,6 +885,7 @@ function build(){
     CHS.S=new Chart('cS',{type:'bar',data:{labels:data.map(d=>d.t),datasets:[{data:data.map(d=>d.top),backgroundColor:data.map(d=>tc(d.top)),borderRadius:3}]},options:{...bO(true,false),plugins:{legend:{display:false}}}});
   }
 }
+/* ===== RÉFÉRENTIEL MODAL ===== */
 function saveB(){localStorage.setItem('lb4',JSON.stringify(BASE));document.getElementById('basecount').textContent=Object.keys(BASE).length+' agents';const e=document.getElementById('sv');e.style.display='block';setTimeout(()=>e.style.display='none',1800);if(RAWROWS.length)recompute();}
 function resetB(){Object.keys(BASE).forEach(k=>delete BASE[k]);Object.assign(BASE,JSON.parse(JSON.stringify(DEF)));saveB();rTbl();}
 function openMo(){document.getElementById('mq').value='';mfv='all';document.querySelectorAll('#mo .mbar button').forEach(b=>{b.classList.remove('bon');b.classList.add('bof');});document.getElementById('mfa').classList.remove('bof');document.getElementById('mfa').classList.add('bon');rTbl();const el=document.getElementById('mo');el.style.display='flex';el.classList.add('open');}
@@ -893,6 +927,7 @@ function exportBase(){
   const csv=rows.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(',')).join('\n');
   const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download='referentiel_agents.csv';a.click();
 }
+/* ===== HEURES PERDUES MODAL ===== */
 function saveLH(){localStorage.setItem('lh1',JSON.stringify(LOSTH));const e=document.getElementById('svLH');e.style.display='block';setTimeout(()=>e.style.display='none',1800);if(RAWROWS.length)recompute();}
 function fillLHSelect(){const sel=document.getElementById('lhtri');sel.innerHTML=Object.entries(BASE).sort((a,b)=>a[0].localeCompare(b[0])).map(([t,v])=>'<option value="'+t+'">'+t+' — '+v.nom+'</option>').join('');}
 function openMoLH(){fillLHSelect();document.getElementById('lhq').value='';document.getElementById('lhdate').value=iso(new Date());rLHTbl();const el=document.getElementById('moLH');el.style.display='flex';el.classList.add('open');}
