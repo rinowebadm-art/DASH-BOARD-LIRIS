@@ -801,7 +801,7 @@ function build(){
   CHS.P=new Chart('cP',{type:'bar',data:{labels:d10p.map(d=>d.t),datasets:[{data:d10p.map(d=>d.ph),backgroundColor:d10p.map(d=>d.s==='Senior'?'rgba(46,117,182,.85)':'rgba(197,90,17,.85)'),borderRadius:3}]},options:bO(false,true)});
   const d10t=data.slice().sort((a,b)=>b.top-a.top).slice(0,10);
   CHS.T=new Chart('cT',{type:'bar',data:{labels:d10t.map(d=>d.t),datasets:[{data:d10t.map(d=>d.top),backgroundColor:d10t.map(d=>tc(d.top)),borderRadius:3}]},options:bO(true,true)});
-  const nqArr=Object.entries(NQ_DATA).map(([t,v])=>{const d=DATA.find(x=>x.t===t);const rate=d&&d.res>0?(v.total/d.res):0;return{t,...v,rate};}).filter(x=>x.rate>0).sort((a,b)=>b.rate-a.rate).slice(0,10);
+  const nqArr=Object.entries(NQ_DATA).map(([t,v])=>{const d=DATA.find(x=>x.t===t);const rate=d&&d.res>0?(v.total/d.res):0;return{t,...v,rate};}).filter(x=>x.rate>0).sort((a,b)=>b.total-a.total).slice(0,10);
   if(nqArr.length){
     CHS.NQ=new Chart('cNQ',{type:'bar',data:{
       labels:nqArr.map(d=>d.t),
