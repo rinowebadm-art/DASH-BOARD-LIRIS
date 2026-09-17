@@ -806,9 +806,9 @@ function build(){
     CHS.NQ=new Chart('cNQ',{type:'bar',data:{
       labels:nqArr.map(d=>d.t),
       datasets:[
-        {label:'Mauvaise',data:nqArr.map(d=>d.mauvaise),backgroundColor:'rgba(192,57,43,.85)',borderRadius:2},
-        {label:'Loupé',data:nqArr.map(d=>d.loupe),backgroundColor:'rgba(41,128,185,.85)',borderRadius:2},
-        {label:'Non conf.',data:nqArr.map(d=>d.nonconforme),backgroundColor:'rgba(142,68,173,.85)',borderRadius:2}
+        {label:'Mauvaise',data:nqArr.map(d=>d.mauvaise),backgroundColor:'rgba(232,97,90,.85)',borderRadius:2},
+        {label:'Loupé',data:nqArr.map(d=>d.loupe),backgroundColor:'rgba(26,188,156,.85)',borderRadius:2},
+        {label:'Non conf.',data:nqArr.map(d=>d.nonconforme),backgroundColor:'rgba(44,62,80,.85)',borderRadius:2}
       ]
     },options:{responsive:true,animation:{duration:200},plugins:{legend:{display:true,position:'top',labels:{color:tC2,font:{size:9},boxWidth:8,padding:4}}},scales:{x:{stacked:true,grid:{color:gC},ticks:{color:tC2,font:{size:9}}},y:{stacked:true,grid:{color:gC},ticks:{color:tC,font:{size:9}}}}}});
   }
