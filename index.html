@@ -204,9 +204,9 @@ canvas{max-height:100px!important}
   <button id="fj" class="bof" onclick="setF('Junior')">Juniors</button>
   <label style="margin-left:8px">Shift :</label>
   <button id="fsh0" class="bon" onclick="setShift('all')">Tous</button>
-  <button id="fsh1" class="bof" onclick="setShift('05:00')">05h</button>
-  <button id="fsh2" class="bof" onclick="setShift('14:00')">14h</button>
-  <button id="fsh3" class="bof" onclick="setShift('23:00')">23h</button>
+  <button id="fsh1" class="bof" onclick="setShift('05:00')">🌅 05h</button>
+  <button id="fsh2" class="bof" onclick="setShift('14:00')">☀️ 14h</button>
+  <button id="fsh3" class="bof" onclick="setShift('23:00')">🌙 23h</button>
 </div>
 <div class="fbar">
   <div class="srch-wrap">
@@ -429,7 +429,7 @@ const oc=v=>v>=90?'#15803d':v>=70?'#a06600':'#c0392b';
 const kb=(v,o)=>{const r=v/o;return r>=1?'kok':r>=.85?'kwn':'kbd';};
 const setSp=(m,c)=>{const e=document.getElementById('sp');e.textContent=m;e.className='sp '+c;};
 const setSpNQ=(m,c)=>{const e=document.getElementById('spNQ');e.textContent=m;e.className='sp '+c;};
-const shiftLabel=s=>s==='05:00'?'05h':s==='14:00'?'14h':s==='23:00'?'23h':s;
+const shiftLabel=s=>s==='05:00'?'🌅 05h':s==='14:00'?'☀️ 14h':s==='23:00'?'🌙 23h':s;
 function setPeriod(p){
   PERIOD=p;
   ['pJ','pS','pM'].forEach(id=>document.getElementById(id).className='bof pbtn');
