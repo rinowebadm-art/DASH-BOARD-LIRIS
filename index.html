@@ -836,7 +836,7 @@ function build(){
   const nqL2=Object.values(NQ_DATA).reduce((s,v)=>s+v.loupe,0);
   const nqN2=Object.values(NQ_DATA).reduce((s,v)=>s+v.nonconforme,0);
   if(nqM2+nqL2+nqN2>0){
-    CHS.D3=new Chart('cD3',{type:'doughnut',data:{labels:['Mauvaise','Loupé','Non conforme'],datasets:[{data:[nqM2,nqL2,nqN2],backgroundColor:['#c0392b','#2980b9','#8e44ad'],borderWidth:2}]},options:dOp()});
+    CHS.D3=new Chart('cD3',{type:'doughnut',data:{labels:['Mauvaise','Loupé','Non conforme'],datasets:[{data:[nqM2,nqL2,nqN2],backgroundColor:['#E8615A','#1ABC9C','#2C3E50'],borderWidth:2}]},options:dOp()});
   }
   if(TAB==='g'){
     CHS.S=new Chart('cS',{type:'bar',data:{
