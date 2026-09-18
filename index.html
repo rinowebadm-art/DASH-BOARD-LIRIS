@@ -582,7 +582,8 @@ function recompute(fname,sn){
   const cR=fc(H,'sultats trait','sultats','resultat','result','clips trait','traitement');
   const cC=fc(H,'media clip','clip media','nb clip','transformation','transfo');
   const cP=fc(H,'temps de travail','temps travail','tps connect','temps connect','duree');
-  const cD=fc(H,'date','jour','period');
+  const cD=fc(H,'date de lecture','date lecture','date extraction','date export','date','jour','period','periode');
+  showDiag('Colonne date détectée : '+(cD||'AUCUNE — filtrage désactivé')+'\nColonnes : '+H.join(' | '));
   if(!cT||!cR){setSp('Colonnes introuvables','err');showDiag('Colonnes reçues :\n'+H.join('\n'));return;}
   const[pStart,pEnd]=periodRange();
   pEnd.setHours(23,59,59,999);
