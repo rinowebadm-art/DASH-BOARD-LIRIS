@@ -808,7 +808,7 @@ function build(){
       datasets:[
         {label:'Mauvaise',data:nqArr.map(d=>d.mauvaise),backgroundColor:'rgba(232,97,90,.85)',borderRadius:2},
         {label:'Loupé',data:nqArr.map(d=>d.loupe),backgroundColor:'rgba(26,188,156,.85)',borderRadius:2},
-        {label:'Non conf.',data:nqArr.map(d=>d.nonconforme),backgroundColor:'rgba(44,62,80,.85)',borderRadius:2}
+        {label:'Non conf.',data:nqArr.map(d=>d.nonconforme),backgroundColor:'rgba(245,197,24,.85)',borderRadius:2}
       ]
     },options:{responsive:true,animation:{duration:200},plugins:{legend:{display:true,position:'top',labels:{color:tC2,font:{size:9},boxWidth:8,padding:4}}},scales:{x:{stacked:true,grid:{color:gC},ticks:{color:tC2,font:{size:9}}},y:{stacked:true,grid:{color:gC},ticks:{color:tC,font:{size:9}}}}}});
   }
@@ -836,7 +836,7 @@ function build(){
   const nqL2=Object.values(NQ_DATA).reduce((s,v)=>s+v.loupe,0);
   const nqN2=Object.values(NQ_DATA).reduce((s,v)=>s+v.nonconforme,0);
   if(nqM2+nqL2+nqN2>0){
-    CHS.D3=new Chart('cD3',{type:'doughnut',data:{labels:['Mauvaise','Loupé','Non conforme'],datasets:[{data:[nqM2,nqL2,nqN2],backgroundColor:['#E8615A','#1ABC9C','#2C3E50'],borderWidth:2}]},options:dOp()});
+    CHS.D3=new Chart('cD3',{type:'doughnut',data:{labels:['Mauvaise','Loupé','Non conforme'],datasets:[{data:[nqM2,nqL2,nqN2],backgroundColor:['#E8615A','#1ABC9C','#F5C518'],borderWidth:2}]},options:dOp()});
   }
   if(TAB==='g'){
     CHS.S=new Chart('cS',{type:'bar',data:{
