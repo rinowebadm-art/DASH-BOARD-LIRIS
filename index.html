@@ -355,6 +355,7 @@ let BASE=(()=>{try{const s=localStorage.getItem('lb4');return s?JSON.parse(s):JS
 let LOSTH=(()=>{try{const s=localStorage.getItem('lh1');return s?JSON.parse(s):[];}catch{return[];}})();
 // ── NOUVEAUTÉ : stockage des lignes NQ brutes pour recalcul à chaque changement de période ──
 let DATA=[],RAWROWS=[],RAWNQROWS=[],NQCOLS=null,NQ_DATA={},TAB='g',FIL='all',SHFT='all',mfv='all',CHS={},GRP='top',SEARCH='',DARK=false;
+let LASTFNAME='',LASTSN='';
 let PERIOD='semaine',PDATE=new Date();
 function showDiag(msg){const el=document.getElementById('diag');el.textContent=msg;el.style.display='block';}
 function iso(d){return d.toISOString().slice(0,10);}
@@ -575,8 +576,10 @@ function lostHoursFor(trig,start,end){
   return LOSTH.filter(e=>{if(e.trigramme!==trig)return false;const d=new Date(e.date+'T00:00:00');return d>=start&&d<=end;}).reduce((s,e)=>s+(+e.heures||0),0);
 }
 function recompute(fname,sn){
-  const rows=RAWROWS;
+  const rows=RAWROWS
   if(!rows.length)return;
+  if(fname!==undefined)LASTFNAME=fname;
+  if(sn!==undefined)LASTSN=sn;
   const H=Object.keys(rows[0]);
   const cT=fc(H,'trigramme','trigr','login','agent','collab');
   const cR=fc(H,'sultats trait','sultats','resultat','result','clips trait','traitement');
@@ -611,7 +614,7 @@ function recompute(fname,sn){
       lost,occ:+(v.tps/base*100).toFixed(1),occNet:+(v.tps/baseNette*100).toFixed(1)};
   }).filter(d=>d.res>0||d.ph>0).sort((a,b)=>b.top-a.top);
   setSp(DATA.length+'/'+Object.keys(BASE).length+' agents','ok');
-  document.getElementById('dinfo').textContent=(fname?fname+' · ':'')+'onglet "'+sn+'" · '+DATA.length+' agents · '+PERIOD;
+  document.getElementById('dinfo').textContent=(LASTFNAME?LASTFNAME+' · ':'')+'onglet "'+LASTSN+'" · '+DATA.length+' agents · '+PERIOD;
   if(DATA.length)document.getElementById('diag').style.display='none';
   // Si NQ chargées, on les recalcule aussi (elles appellent build) ; sinon on build directement
   if(RAWNQROWS.length)recomputeNQ();
