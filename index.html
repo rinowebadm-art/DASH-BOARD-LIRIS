@@ -11,18 +11,24 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--txt);font-size:12px}
 .hd{background:linear-gradient(135deg,#1f2937,#2e75b6);padding:12px 20px;display:flex;flex-direction:row;align-items:center;justify-content:space-between;color:#fff}
-.hd h1{font-size:24px;font-weight:900;display:flex;align-items:center;gap:8px}
+.hd h1{font-size:19px;font-weight:900;display:flex;align-items:center;gap:8px}
 .badge{background:#c55a11;color:#fff;padding:2px 9px;border-radius:9px;font-size:11px;font-weight:700}
 .hd-r{text-align:right;font-size:10px;color:#dbe6f2;line-height:1.8}
 .tmbtn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:4px 11px;border-radius:14px;cursor:pointer;font-size:11px;font-weight:700;display:block;margin-bottom:4px}
 .tmbtn:hover{background:rgba(255,255,255,.28)}
-.imp{background:var(--bg2);padding:8px 20px;display:flex;flex-direction:row;align-items:center;gap:10px;border-bottom:1px solid var(--bd)}
-label.dz{flex:1;border:2px dashed var(--blue);border-radius:8px;padding:9px 14px;cursor:pointer;text-align:center;color:var(--txt3);display:block;background:var(--bg3)}
+.imp{background:var(--bg2);padding:8px 20px;display:flex;flex-direction:row;align-items:center;gap:10px;border-bottom:1px solid var(--bd);flex-wrap:wrap}
+label.dz{flex:1;min-width:180px;border:2px dashed var(--blue);border-radius:8px;padding:9px 14px;cursor:pointer;text-align:center;color:var(--txt3);display:block;background:var(--bg3)}
 label.dz strong{color:var(--blue)}
 label.dz small{display:block;font-size:10px;color:var(--txt4);margin-top:2px}
-label.dz2{flex:1;border:2px dashed #16a34a;border-radius:8px;padding:9px 14px;cursor:pointer;text-align:center;color:var(--txt3);display:block;background:var(--bg3)}
+label.dz2{flex:1;min-width:180px;border:2px dashed #16a34a;border-radius:8px;padding:9px 14px;cursor:pointer;text-align:center;color:var(--txt3);display:block;background:var(--bg3)}
 label.dz2 strong{color:#16a34a}
 label.dz2 small{display:block;font-size:10px;color:var(--txt4);margin-top:2px}
+label.dz3{flex:1;min-width:180px;border:2px dashed #9b59b6;border-radius:8px;padding:9px 14px;cursor:pointer;text-align:center;color:var(--txt3);display:block;background:var(--bg3)}
+label.dz3 strong{color:#9b59b6}
+label.dz3 small{display:block;font-size:10px;color:var(--txt4);margin-top:2px}
+label.dz4{flex:1;min-width:180px;border:2px dashed #a15117;border-radius:8px;padding:9px 14px;cursor:pointer;text-align:center;color:var(--txt3);display:block;background:var(--bg3)}
+label.dz4 strong{color:#a15117}
+label.dz4 small{display:block;font-size:10px;color:var(--txt4);margin-top:2px}
 input[type=file]{display:none}
 .sp{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
 .sp.idle{background:var(--bg3);color:var(--txt3)}.sp.ok{background:#dcf5e3;color:#15803d}.sp.err{background:#fde2e2;color:#c0392b}.sp.ld{background:#fef3d6;color:#a06600}
@@ -61,6 +67,8 @@ button{border:none;padding:4px 12px;border-radius:14px;cursor:pointer;font-size:
 .ab-title{font-weight:800;color:#a06600;white-space:nowrap}
 .ab-item{background:#fff8e1;color:#7a4f00;padding:2px 8px;border-radius:6px;font-weight:700;border:1px solid #f0d060;font-size:10px}
 .ab-close{margin-left:auto;cursor:pointer;color:#a06600;font-size:15px;font-weight:800;background:none;border:none;padding:1px 6px;border-radius:5px}
+.srcband{background:#eaf1fb;border-bottom:2px solid #2e75b6;padding:5px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:11px;color:#1c5a99}
+.srcband.hide{display:none}
 .main{padding:10px 16px}
 .krow{display:grid;gap:7px;margin-bottom:10px}
 .k8{grid-template-columns:repeat(8,1fr)}
@@ -75,6 +83,7 @@ button{border:none;padding:4px 12px;border-radius:14px;cursor:pointer;font-size:
 .kpi.dg{border-left-color:#1abc9c}
 .kpi.oc{border-left-color:#d4a017}
 .kpi.nq{border-left-color:#e74c3c}
+.kpi.pl{border-left-color:#16a085}
 .kl{font-size:9px;color:var(--txt3);text-transform:uppercase;letter-spacing:.4px}
 .kv{font-size:19px;font-weight:800;color:var(--txt);line-height:1.1}
 .ks{font-size:9px;color:var(--txt4)}
@@ -125,6 +134,9 @@ tr.alert-red:hover td{animation:none!important;background:#e8f0fb!important}
 .nqbd{background:#fde2e2;color:#c0392b;border:1px solid #f0a0a0}
 .nqna{background:var(--bg3);color:var(--txt4);border:1px solid var(--bd)}
 .nq-sep{border-left:2px solid rgba(231,76,60,.3);padding-left:8px}
+.pl-sep{border-left:2px solid rgba(22,160,133,.3);padding-left:8px}
+.ecpos{color:#15803d;font-weight:800}
+.ecneg{color:#c0392b;font-weight:800}
 .obg{background:var(--bd);border-radius:3px;height:7px;overflow:hidden;display:inline-block;width:55px;vertical-align:middle;margin-right:4px}
 .obr{height:7px;border-radius:3px}
 .mo{display:none;position:fixed;inset:0;background:rgba(20,30,45,.55);z-index:200;align-items:center;justify-content:center}
@@ -152,7 +164,7 @@ tr.alert-red:hover td{animation:none!important;background:#e8f0fb!important}
 .grpbtn{padding:3px 9px;font-size:10px}
 .diag{background:#1e293b;color:#94a3b8;font-family:monospace;font-size:10px;padding:8px 14px;border-radius:6px;margin-top:6px;word-break:break-all;white-space:pre-wrap;max-height:180px;overflow-y:auto;display:none}
 @media print{
-.imp,.fbar,.tabs,.aband,.mo,.grpbtn,.tmbtn{display:none!important}
+.imp,.fbar,.tabs,.aband,.mo,.grpbtn,.tmbtn,.srcband{display:none!important}
 .hd{background:#1f2937!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .tw{max-height:none!important;overflow:visible!important}
 canvas{max-height:100px!important}
@@ -162,7 +174,7 @@ canvas{max-height:100px!important}
 <body>
 <div class="hd">
   <div>
-    <h1>DASHBOARD SOFTWARE LIRIS <span class="badge" id="wk">S--</span></h1>
+    <h1>DASHBOARD LIRIS <span class="badge" id="wk">S--</span></h1>
     <div style="font-size:10px;color:#dbe6f2;margin-top:3px" id="dinfo">En attente de l'export_monitoring…</div>
     <div class="diag" id="diag"></div>
   </div>
@@ -186,6 +198,26 @@ canvas{max-height:100px!important}
     <small>Feuille "NQ Liris" · Catégorie · Validée=OK uniquement</small>
   </label>
   <div class="sp idle" id="spNQ">NQ non chargé</div>
+</div>
+<div class="imp">
+  <label class="dz3" for="fi3">
+    <input type="file" id="fi3" accept=".xlsx,.xls"/>
+    <strong>referentiel_agents.xlsx</strong> (partagé) ou clique pour choisir
+    <small>Trigramme · Nom · Prénom · Statut · Site · Shift · Objectif</small>
+  </label>
+  <div class="sp idle" id="spREF">Référentiel local (par défaut)</div>
+  <label class="dz4" for="fi4">
+    <input type="file" id="fi4" accept=".xlsx,.xls"/>
+    <strong>heures_perdues.xlsx</strong> (partagé) ou clique pour choisir
+    <small>Trigramme · Date · Motif · Heures</small>
+  </label>
+  <div class="sp idle" id="spLH">Heures perdues locales (par défaut)</div>
+</div>
+<div class="srcband hide" id="srcband">
+  <span>Source des données référentiel : <strong id="srcRefTxt">-</strong></span>
+  <span>·</span>
+  <span>Heures perdues : <strong id="srcLHTxt">-</strong></span>
+  <span style="margin-left:auto;color:var(--txt3)">Après une modification, réexporte et redépose le fichier sur l'espace partagé pour que tes collègues la voient.</span>
 </div>
 <div class="tabs">
   <div class="tab on" onclick="setTab('g',this)">Vue Globale</div>
@@ -262,9 +294,9 @@ canvas{max-height:100px!important}
       </div>
     </div>
     <div class="mf">
-      <div class="sv-ok" id="sv">Sauvegardé</div>
+      <div class="sv-ok" id="sv">Sauvegardé (local)</div>
       <button class="bda" onclick="if(confirm('Réinitialiser le référentiel ?'))resetB()">Réinitialiser</button>
-      <button class="bxl" onclick="exportBase()">Exporter BASE (.csv)</button>
+      <button class="bxl" onclick="exportBase()">Exporter referentiel_agents.xlsx</button>
       <button class="bof" onclick="closeMo()">Fermer</button>
     </div>
   </div>
@@ -301,8 +333,9 @@ canvas{max-height:100px!important}
       </div>
     </div>
     <div class="mf">
-      <div class="sv-ok" id="svLH">Sauvegardé</div>
+      <div class="sv-ok" id="svLH">Sauvegardé (local)</div>
       <button class="bda" onclick="if(confirm('Effacer toutes les heures perdues ?'))resetLH()">Tout effacer</button>
+      <button class="bxl" onclick="exportLH()">Exporter heures_perdues.xlsx</button>
       <button class="bof" onclick="closeMoLH()">Fermer</button>
     </div>
   </div>
@@ -377,6 +410,7 @@ let BASE=(()=>{try{const s=localStorage.getItem('lb4');return s?JSON.parse(s):JS
 let LOSTH=(()=>{try{const s=localStorage.getItem('lh1');return s?JSON.parse(s):[];}catch{return[];}})();
 let DATA=[],RAWROWS=[],NQ_DATA={},TAB='g',FIL='all',SHFT='all',mfv='all',CHS={},GRP='top',SEARCH='',DARK=false;
 let PERIOD='semaine',PDATE=new Date();
+let REF_SOURCE='Référentiel local par défaut',LH_SOURCE='Aucune (localStorage vide)';
 function showDiag(msg){const el=document.getElementById('diag');el.textContent=msg;el.style.display='block';}
 function iso(d){return d.toISOString().slice(0,10);}
 function weekNum(d){const u=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));u.setUTCDate(u.getUTCDate()+4-(u.getUTCDay()||7));return Math.ceil((((u-new Date(Date.UTC(u.getUTCFullYear(),0,1)))/86400000)+1)/7);}
@@ -404,15 +438,24 @@ function refreshLabels(){
   document.getElementById('wk').textContent=PERIOD==='jour'?'JOUR':PERIOD==='semaine'?'S'+weekNum(d):'MOIS';
   document.getElementById('hdate').textContent=d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 }
+function refreshSrcBand(){
+  const el=document.getElementById('srcband');
+  document.getElementById('srcRefTxt').textContent=REF_SOURCE;
+  document.getElementById('srcLHTxt').textContent=LH_SOURCE;
+  el.classList.remove('hide');
+}
 (()=>{
   document.getElementById('pdate').value=PDATE.toISOString().slice(0,10);
   refreshLabels();
   document.getElementById('basecount').textContent=Object.keys(BASE).length+' agents';
+  refreshSrcBand();
   const sq=document.getElementById('sq');
   sq.addEventListener('input',()=>{SEARCH=sq.value.toLowerCase().trim();if(DATA.length)renderCls(fd());});
   sq.addEventListener('keydown',e=>{if(e.key==='Enter'){SEARCH=sq.value.toLowerCase().trim();if(DATA.length)renderCls(fd());}});
-  document.getElementById('fi').onchange=function(){if(this.files[0])readXL(this.files[0]);};
-  document.getElementById('fi2').onchange=function(){if(this.files[0])readNQ(this.files[0]);};
+  document.getElementById('fi').onchange=function(){if(this.files[0])readXL(this.files[0]);this.value='';};
+  document.getElementById('fi2').onchange=function(){if(this.files[0])readNQ(this.files[0]);this.value='';};
+  document.getElementById('fi3').onchange=function(){if(this.files[0])readRefXL(this.files[0]);this.value='';};
+  document.getElementById('fi4').onchange=function(){if(this.files[0])readLHXL(this.files[0]);this.value='';};
 })();
 function toggleTheme(){
   DARK=!DARK;
@@ -429,6 +472,8 @@ const oc=v=>v>=90?'#15803d':v>=70?'#a06600':'#c0392b';
 const kb=(v,o)=>{const r=v/o;return r>=1?'kok':r>=.85?'kwn':'kbd';};
 const setSp=(m,c)=>{const e=document.getElementById('sp');e.textContent=m;e.className='sp '+c;};
 const setSpNQ=(m,c)=>{const e=document.getElementById('spNQ');e.textContent=m;e.className='sp '+c;};
+const setSpREF=(m,c)=>{const e=document.getElementById('spREF');e.textContent=m;e.className='sp '+c;};
+const setSpLH=(m,c)=>{const e=document.getElementById('spLH');e.textContent=m;e.className='sp '+c;};
 const shiftLabel=s=>s==='05:00'?'🌅 05h':s==='14:00'?'☀️ 14h':s==='23:00'?'🌙 23h':s;
 function setPeriod(p){
   PERIOD=p;
@@ -436,6 +481,7 @@ function setPeriod(p){
   document.getElementById(p==='jour'?'pJ':p==='semaine'?'pS':'pM').className='bon pbtn';
   refreshLabels();
   if(RAWROWS.length)recompute();
+  if(Object.keys(NQ_DATA).length>0&&RAWROWS.length)build();
 }
 function onDateChange(){
   const v=document.getElementById('pdate').value;
@@ -452,6 +498,88 @@ function fd(){
   if(FIL!=='all')d=d.filter(x=>x.s===FIL);
   if(SHFT!=='all')d=d.filter(x=>x.shift===SHFT);
   return d;
+}
+// ✅ NOUVEAU : lecture du référentiel agents depuis un fichier Excel partagé
+function readRefXL(f){
+  setSpREF('Lecture référentiel…','ld');
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const wb=XLSX.read(e.target.result,{type:'array',codepage:65001});
+      const sn=wb.SheetNames[0];
+      const rows=XLSX.utils.sheet_to_json(wb.Sheets[sn],{defval:'',raw:false});
+      if(!rows.length){setSpREF('Fichier vide','err');return;}
+      const H=Object.keys(rows[0]);
+      const cTri=fc(H,'trigramme','trigr');
+      const cNom=fc(H,'nom');
+      const cPre=fc(H,'prenom|prénom');
+      const cSta=fc(H,'statut');
+      const cSit=fc(H,'site');
+      const cShi=fc(H,'shift');
+      const cObj=fc(H,'objectif');
+      if(!cTri||!cNom){setSpREF('Colonnes introuvables','err');showDiag('Colonnes référentiel reçues :\n'+H.join('\n'));return;}
+      const newBase={};
+      rows.forEach(row=>{
+        const t=String(row[cTri]||'').trim().toUpperCase().slice(0,3);
+        if(!t||t.length<2)return;
+        newBase[t]={
+          nom:String(row[cNom]||'').trim(),
+          prenom:cPre?String(row[cPre]||'').trim():'',
+          s:cSta&&cl(String(row[cSta])).includes('junior')?'Junior':'Senior',
+          site:cSit&&cl(String(row[cSit])).includes('diego')?'DIEGO':'TANA',
+          shift:cShi?String(row[cShi]||'05:00').trim():'05:00',
+          obj:cObj?(parseInt(row[cObj])||90):90
+        };
+      });
+      BASE=newBase;
+      localStorage.setItem('lb4',JSON.stringify(BASE));
+      document.getElementById('basecount').textContent=Object.keys(BASE).length+' agents';
+      REF_SOURCE=f.name+' (importé le '+new Date().toLocaleString('fr-FR')+')';
+      refreshSrcBand();
+      setSpREF('Référentiel OK · '+Object.keys(BASE).length+' agents','ok');
+      if(RAWROWS.length)recompute();
+    }catch(err){setSpREF('Erreur : '+err.message,'err');showDiag('Erreur référentiel : '+err.message);}
+  };
+  r.onerror=()=>setSpREF('Erreur lecture','err');
+  r.readAsArrayBuffer(f);
+}
+// ✅ NOUVEAU : lecture des heures perdues depuis un fichier Excel partagé
+function readLHXL(f){
+  setSpLH('Lecture heures perdues…','ld');
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const wb=XLSX.read(e.target.result,{type:'array',codepage:65001});
+      const sn=wb.SheetNames[0];
+      const rows=XLSX.utils.sheet_to_json(wb.Sheets[sn],{defval:'',raw:false});
+      if(!rows.length){setSpLH('Fichier vide','err');return;}
+      const H=Object.keys(rows[0]);
+      const cTri=fc(H,'trigramme','trigr');
+      const cDate=fc(H,'date');
+      const cMot=fc(H,'motif');
+      const cHrs=fc(H,'heures','hrs','duree|durée');
+      if(!cTri||!cDate||!cHrs){setSpLH('Colonnes introuvables','err');showDiag('Colonnes heures perdues reçues :\n'+H.join('\n'));return;}
+      const newLH=[];
+      rows.forEach(row=>{
+        const t=String(row[cTri]||'').trim().toUpperCase().slice(0,3);
+        if(!t||t.length<2)return;
+        const dRaw=String(row[cDate]||'').trim();
+        const d=parseDateCell(dRaw);
+        const dateIso=d?iso(d):dRaw.slice(0,10);
+        const heures=parseFloat(String(row[cHrs]||0).replace(',','.'))||0;
+        if(heures<=0)return;
+        newLH.push({trigramme:t,date:dateIso,motif:cMot?String(row[cMot]||'Autre').trim():'Autre',heures});
+      });
+      LOSTH=newLH;
+      localStorage.setItem('lh1',JSON.stringify(LOSTH));
+      LH_SOURCE=f.name+' (importé le '+new Date().toLocaleString('fr-FR')+') · '+LOSTH.length+' entrées';
+      refreshSrcBand();
+      setSpLH('Heures perdues OK · '+LOSTH.length+' entrées','ok');
+      if(RAWROWS.length)recompute();
+    }catch(err){setSpLH('Erreur : '+err.message,'err');showDiag('Erreur heures perdues : '+err.message);}
+  };
+  r.onerror=()=>setSpLH('Erreur lecture','err');
+  r.readAsArrayBuffer(f);
 }
 function readNQ(f){
   setSpNQ('Lecture NQ…','ld');
@@ -514,7 +642,7 @@ function readNQ(f){
         'Total NQ : '+tot+' (Mauvaise:'+totM+' Loupé:'+totL+' NC:'+totN+')\n'+
         'Période : '+iso(pStart)+' → '+iso(pEnd)
       );
-      if(DATA.length)build();
+      build();
     }catch(err){setSpNQ('Erreur : '+err.message,'err');showDiag('Erreur NQ : '+err.message);}
   };
   r.onerror=()=>setSpNQ('Erreur lecture','err');
@@ -609,9 +737,13 @@ function recompute(fname,sn){
     const tx=v.res>0?+(v.rm/v.res).toFixed(3):0;
     const lost=lostHoursFor(t,pStart,pEnd);
     const baseNette=Math.max(base-lost,0.1);
+    const phPlan=+(v.res/baseNette).toFixed(2);
+    const ecart=+(ph-phPlan).toFixed(2);
+    const ecartPct=phPlan>0?+(((ph-phPlan)/phPlan)*100).toFixed(1):0;
     return{t,nom:b.nom,prenom:b.prenom,s:b.s,site:b.site,shift:b.shift,obj:b.obj,
       res:Math.round(v.res),rm:Math.round(v.rm),tps:v.tps,ph,top,tx,
-      lost,occ:+(v.tps/base*100).toFixed(1),occNet:+(v.tps/baseNette*100).toFixed(1)};
+      lost,occ:+(v.tps/base*100).toFixed(1),occNet:+(v.tps/baseNette*100).toFixed(1),
+      phPlan,ecart,ecartPct};
   }).filter(d=>d.res>0||d.ph>0).sort((a,b)=>b.top-a.top);
   setSp(DATA.length+'/'+Object.keys(BASE).length+' agents','ok');
   document.getElementById('dinfo').textContent=(fname?fname+' · ':'')+'onglet "'+sn+'" · '+DATA.length+' agents · '+PERIOD;
@@ -627,7 +759,8 @@ function exportXL(){
     const rM=nqRateFor('mauvaise',x.t,x.res,x.rm);
     const rN=nqRateFor('nonconforme',x.t,x.res,x.rm);
     return{'Trigramme':x.t,'Nom':x.nom,'Prénom':x.prenom,'Site':x.site,'Statut':x.s,'Shift':x.shift,
-      'Résultats':x.res,'Prod/h':x.ph,'Objectif':x.obj,'TOP %':+(x.top*100).toFixed(1),
+      'Résultats':x.res,'Prod/h Extract':x.ph,'Prod/h Planifié':x.phPlan,'Écart Prod/h':x.ecart,'Écart %':x.ecartPct,
+      'Objectif':x.obj,'TOP %':+(x.top*100).toFixed(1),
       'Transfo %':+(x.tx*100).toFixed(1),'Temps (h)':+x.tps.toFixed(1),'Hrs perdues':x.lost,
       'Occ. brute %':x.occ,'Occ. nette %':x.occNet,
       'NQ Total':nq?nq.total:'','NQ Mauvaise':nq?nq.mauvaise:'','NQ Loupé':nq?nq.loupe:'','NQ NC':nq?nq.nonconforme:'',
@@ -657,6 +790,8 @@ function rowHtml(d,i){
   const isAlert=d.top>0&&d.top<0.70;
   const nq=NQ_DATA[d.t];
   const nqTot=nq?nq.total:'-';
+  const ecCls=d.ecart>=0?'ecpos':'ecneg';
+  const ecSign=d.ecart>=0?'+':'';
   return'<tr class="'+(d.s.toLowerCase())+(isAlert?' alert-red':'')+'">'+
     '<td style="min-width:55px">'+rankBadge(i)+'</td>'+
     '<td class="tdl">'+d.t+'</td>'+
@@ -674,6 +809,9 @@ function rowHtml(d,i){
     '<td>'+(d.lost>0?'<span class="lhbadge">-'+d.lost+'h</span>':'<span style="color:var(--txt4)">-</span>')+'</td>'+
     '<td><span class="obg"><div class="obr" style="width:'+bw+'%;background:'+oc(d.occ)+'"></div></span><span style="color:'+oc(d.occ)+';font-weight:800;font-size:11px">'+d.occ+'%</span></td>'+
     '<td><span style="color:'+oc(d.occNet)+';font-weight:800;font-size:11px">'+d.occNet+'%</span></td>'+
+    '<td class="pl-sep" style="font-weight:700;color:var(--txt3)">'+d.phPlan.toFixed(1)+'</td>'+
+    '<td class="'+ecCls+'">'+ecSign+d.ecart.toFixed(1)+'</td>'+
+    '<td class="'+ecCls+'">'+ecSign+d.ecartPct+'%</td>'+
     '<td class="nq-sep" style="font-weight:700;color:var(--txt3)">'+nqTot+'</td>'+
     '<td>'+nqBadge('loupe',d.t,d.res,d.rm)+'</td>'+
     '<td>'+nqBadge('mauvaise',d.t,d.res,d.rm)+'</td>'+
@@ -692,12 +830,12 @@ function renderCls(data){
     [['05:00','Shift 05h'],['14:00','Shift 14h'],['23:00','Shift 23h']].forEach(([sh,label])=>{
       const grp=d.filter(x=>x.shift===sh).sort((a,b)=>b.top-a.top);
       if(!grp.length)return;
-      html+='<tr><td colspan="20" style="background:var(--bg3);color:var(--txt2);font-weight:800;padding:8px 12px;text-align:left">'+label+' — '+grp.length+' agents · TOP moy. '+(avg(grp,'top')*100).toFixed(1)+'%</td></tr>';
+      html+='<tr><td colspan="22" style="background:var(--bg3);color:var(--txt2);font-weight:800;padding:8px 12px;text-align:left">'+label+' — '+grp.length+' agents · TOP moy. '+(avg(grp,'top')*100).toFixed(1)+'%</td></tr>';
       html+=grp.map((x,i)=>rowHtml(x,i)).join('');
     });
   }
   const cb=document.getElementById('clsBody');
-  if(cb)cb.innerHTML=html||'<tr><td colspan="20" style="padding:20px;color:var(--txt4)">Aucun agent</td></tr>';
+  if(cb)cb.innerHTML=html||'<tr><td colspan="22" style="padding:20px;color:var(--txt4)">Aucun agent</td></tr>';
 }
 function build(){
   const data=fd().sort((a,b)=>b.top-a.top);
@@ -709,6 +847,8 @@ function build(){
   const avgOcc=data.length?+(data.reduce((s,d)=>s+d.occ,0)/data.length).toFixed(1):0;
   const avgOccNet=data.length?+(data.reduce((s,d)=>s+d.occNet,0)/data.length).toFixed(1):0;
   const totLost=data.reduce((s,d)=>s+d.lost,0);
+  const avgEcartPct=data.length?+(data.reduce((s,d)=>s+d.ecartPct,0)/data.length).toFixed(1):0;
+  const avgPhPlan=data.length?+(data.reduce((s,d)=>s+d.phPlan,0)/data.length).toFixed(1):0;
   const nqOk=Object.keys(NQ_DATA).length>0;
   const sumRes=data.reduce((s,d)=>s+d.res,0);
   const sumRm=data.reduce((s,d)=>s+d.rm,0);
@@ -726,6 +866,12 @@ function build(){
     mk('Taux Mauvaise',tM,nqOk?sumM+' / '+sumRm+' clips':'','nq','')+
     mk('Taux Non Conforme',tN,nqOk?sumN+' / '+sumRm+' clips':'','nq','')+
     '</div>';
+  const planBlock='<div class="krow k4">'+
+    mk('Prod/h moy. Extract',data.length?avg(data,'ph').toFixed(1):'-','temps réellement loggé','pl','')+
+    mk('Prod/h moy. Planifié',data.length?avgPhPlan:'-','temps dû - incidents','pl','')+
+    mk('Écart moyen',avgEcartPct+'%',avgEcartPct>=0?'Extract > Planifié':'Extract < Planifié','pl',avgEcartPct>=0?'kok':'kbd')+
+    mk('Heures perdues (période)',totLost+'h',data.length+' agents concernés','pl','')+
+    '</div>';
   let kh='';
   const bl=document.getElementById('baseLabel').textContent;
   if(TAB==='g'){
@@ -738,7 +884,7 @@ function build(){
       mk('TOP DIEGO',dgAll.length?(avg(dgAll,'top')*100).toFixed(1)+'%':'-',dgAll.length+' agents','dg','')+
       mk('Présence brute',avgOcc+'%',bl.split('·').slice(1).join('·').trim(),'oc','')+
       mk('Présence nette',avgOccNet+'%','hors '+totLost+'h perdues','oc','')+
-      '</div>'+nqBlock;
+      '</div>'+planBlock+nqBlock;
   }else{
     kh='<div class="krow k6">'+
       mk('Agents '+(TAB==='t'?'TANA':'DIEGO'),data.length,'Sr:'+sr.length+' Jr:'+jr.length,TAB==='t'?'tn':'dg','')+
@@ -747,7 +893,7 @@ function build(){
       mk('TOP',data.length?(avg(data,'top')*100).toFixed(1)+'%':'-','','gl','')+
       mk('Présence brute',avgOcc+'%','','oc','')+
       mk('Présence nette',avgOccNet+'%','hors '+totLost+'h perdues','oc','')+
-      '</div>'+nqBlock;
+      '</div>'+planBlock+nqBlock;
   }
   document.getElementById('main').innerHTML=kh+
     '<div class="r3">'+
@@ -758,6 +904,10 @@ function build(){
     '<div class="r2">'+
       '<div class="card"><div class="ct"><span class="dot" style="background:#d4a017"></span>Courbe TOP % pilotage</div><canvas id="cL" height="135"></canvas></div>'+
       '<div class="card"><div class="ct"><span class="dot" style="background:#9b59b6"></span>Sr vs Jr vs Objectif</div><canvas id="cC" height="135"></canvas></div>'+
+    '</div>'+
+    '<div class="r2b">'+
+      '<div class="card"><div class="ct"><span class="dot" style="background:#16a085"></span>Prod/h Extract vs Planifié (net incidents)</div><canvas id="cPlan" height="135"></canvas></div>'+
+      '<div class="card"><div class="ct"><span class="dot" style="background:#16a085"></span>Écart % par agent — Top écarts</div><canvas id="cEc" height="135"></canvas></div>'+
     '</div>'+
     '<div class="card" style="margin-bottom:8px">'+
       '<div class="ct"><span><span class="dot" style="background:#e74c3c"></span>CLASSEMENT — <span id="ccount">0</span> agents</span>'+
@@ -774,6 +924,9 @@ function build(){
         '<th>Résultats</th><th>Prod/h</th><th>Obj.</th>'+
         '<th>TOP %</th><th>Transfo</th><th>Temps</th><th>Hrs-</th>'+
         '<th>Occ.brute</th><th>Occ.nette</th>'+
+        '<th class="pl-sep" title="Résultats / (temps planifié période - heures perdues)">Prod/h Plan</th>'+
+        '<th title="Prod/h Extract - Prod/h Planifié">Écart</th>'+
+        '<th title="Écart en % du Prod/h Planifié">Écart %</th>'+
         '<th class="nq-sep" title="NQ Validée=OK">NQ</th>'+
         '<th title="Loupé / Résultats">Loupé%</th>'+
         '<th title="Mauvaise / Clips">Mauvaise%</th>'+
@@ -801,14 +954,14 @@ function build(){
   CHS.P=new Chart('cP',{type:'bar',data:{labels:d10p.map(d=>d.t),datasets:[{data:d10p.map(d=>d.ph),backgroundColor:d10p.map(d=>d.s==='Senior'?'rgba(46,117,182,.85)':'rgba(197,90,17,.85)'),borderRadius:3}]},options:bO(false,true)});
   const d10t=data.slice().sort((a,b)=>b.top-a.top).slice(0,10);
   CHS.T=new Chart('cT',{type:'bar',data:{labels:d10t.map(d=>d.t),datasets:[{data:d10t.map(d=>d.top),backgroundColor:d10t.map(d=>tc(d.top)),borderRadius:3}]},options:bO(true,true)});
-  const nqArr=Object.entries(NQ_DATA).map(([t,v])=>{const d=DATA.find(x=>x.t===t);const rate=d&&d.res>0?(v.total/d.res):0;return{t,...v,rate};}).filter(x=>x.rate>0).sort((a,b)=>b.total-a.total).slice(0,10);
+  const nqArr=Object.entries(NQ_DATA).map(([t,v])=>{const d=DATA.find(x=>x.t===t);const rate=d&&d.res>0?(v.total/d.res):0;return{t,...v,rate};}).filter(x=>x.rate>0).sort((a,b)=>b.rate-a.rate).slice(0,10);
   if(nqArr.length){
     CHS.NQ=new Chart('cNQ',{type:'bar',data:{
       labels:nqArr.map(d=>d.t),
       datasets:[
-        {label:'Mauvaise',data:nqArr.map(d=>d.mauvaise),backgroundColor:'rgba(232,97,90,.85)',borderRadius:2},
-        {label:'Loupé',data:nqArr.map(d=>d.loupe),backgroundColor:'rgba(26,188,156,.85)',borderRadius:2},
-        {label:'Non conf.',data:nqArr.map(d=>d.nonconforme),backgroundColor:'rgba(245,197,24,.85)',borderRadius:2}
+        {label:'Mauvaise',data:nqArr.map(d=>d.mauvaise),backgroundColor:'rgba(192,57,43,.85)',borderRadius:2},
+        {label:'Loupé',data:nqArr.map(d=>d.loupe),backgroundColor:'rgba(41,128,185,.85)',borderRadius:2},
+        {label:'Non conf.',data:nqArr.map(d=>d.nonconforme),backgroundColor:'rgba(142,68,173,.85)',borderRadius:2}
       ]
     },options:{responsive:true,animation:{duration:200},plugins:{legend:{display:true,position:'top',labels:{color:tC2,font:{size:9},boxWidth:8,padding:4}}},scales:{x:{stacked:true,grid:{color:gC},ticks:{color:tC2,font:{size:9}}},y:{stacked:true,grid:{color:gC},ticks:{color:tC,font:{size:9}}}}}});
   }
@@ -823,6 +976,15 @@ function build(){
     {label:'Juniors',data:[avg(jr,'ph'),avg(jr,'top')*100,avg(jr,'tx')*100],backgroundColor:'rgba(197,90,17,.85)',borderRadius:3},
     {label:'Objectif',data:[avg(data,'obj'),100,40],backgroundColor:'rgba(46,117,182,.15)',borderRadius:3,borderWidth:1,borderColor:'rgba(46,117,182,.3)'}
   ]},options:{responsive:true,animation:{duration:200},plugins:{legend:{display:true,labels:{color:tC2,font:{size:10}}}},scales:{x:{grid:{color:gC},ticks:{color:tC2,font:{size:10}}},y:{grid:{color:gC},ticks:{color:tC,font:{size:9}}}}}});
+  const d10pl=data.slice().sort((a,b)=>b.ph-a.ph).slice(0,12);
+  CHS.Plan=new Chart('cPlan',{type:'bar',data:{labels:d10pl.map(d=>d.t),datasets:[
+    {label:'Prod/h Extract',data:d10pl.map(d=>d.ph),backgroundColor:'rgba(22,160,133,.85)',borderRadius:3},
+    {label:'Prod/h Planifié (net incidents)',data:d10pl.map(d=>d.phPlan),backgroundColor:'rgba(22,160,133,.35)',borderRadius:3}
+  ]},options:{responsive:true,animation:{duration:200},plugins:{legend:{display:true,position:'bottom',labels:{color:tC2,font:{size:9},boxWidth:8,padding:4}}},scales:{x:{grid:{color:gC},ticks:{color:tC,font:{size:9}}},y:{grid:{color:gC},ticks:{color:tC,font:{size:9}}}}}});
+  const decMax=data.slice().sort((a,b)=>Math.abs(b.ecartPct)-Math.abs(a.ecartPct)).slice(0,12);
+  CHS.Ec=new Chart('cEc',{type:'bar',data:{labels:decMax.map(d=>d.t),datasets:[
+    {data:decMax.map(d=>d.ecartPct),backgroundColor:decMax.map(d=>d.ecartPct>=0?'rgba(21,128,61,.85)':'rgba(192,57,43,.85)'),borderRadius:3}
+  ]},options:{responsive:true,animation:{duration:200},plugins:{legend:{display:false}},indexAxis:'y',scales:{x:{grid:{color:gC},ticks:{color:tC,font:{size:9},callback:v=>v+'%'}},y:{grid:{color:gC},ticks:{color:tC2,font:{size:9}}}}}});
   const docc=data.slice().sort((a,b)=>b.occ-a.occ).slice(0,20);
   CHS.O=new Chart('cO',{type:'bar',data:{labels:docc.map(d=>d.t),datasets:[
     {label:'Brute %',data:docc.map(d=>d.occ),backgroundColor:docc.map(d=>oc(d.occ)),borderRadius:3},
@@ -836,7 +998,7 @@ function build(){
   const nqL2=Object.values(NQ_DATA).reduce((s,v)=>s+v.loupe,0);
   const nqN2=Object.values(NQ_DATA).reduce((s,v)=>s+v.nonconforme,0);
   if(nqM2+nqL2+nqN2>0){
-    CHS.D3=new Chart('cD3',{type:'doughnut',data:{labels:['Mauvaise','Loupé','Non conforme'],datasets:[{data:[nqM2,nqL2,nqN2],backgroundColor:['#E8615A','#1ABC9C','#F5C518'],borderWidth:2}]},options:dOp()});
+    CHS.D3=new Chart('cD3',{type:'doughnut',data:{labels:['Mauvaise','Loupé','Non conforme'],datasets:[{data:[nqM2,nqL2,nqN2],backgroundColor:['#c0392b','#2980b9','#8e44ad'],borderWidth:2}]},options:dOp()});
   }
   if(TAB==='g'){
     CHS.S=new Chart('cS',{type:'bar',data:{
@@ -886,10 +1048,15 @@ function addAg(){
   ['ntri','nnom','nprenom'].forEach(id=>document.getElementById(id).value='');
   saveB();rTbl();
 }
+// ✅ NOUVEAU : export du référentiel en .xlsx (au lieu de .csv) pour redéposer sur l'espace partagé
 function exportBase(){
-  const rows=[['Trigramme','Nom','Prénom','Statut','Site','Shift','Objectif'],...Object.entries(BASE).map(([t,v])=>[t,v.nom,v.prenom,v.s,v.site,v.shift,v.obj])];
-  const csv=rows.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(',')).join('\n');
-  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download='referentiel_agents.csv';a.click();
+  const rows=Object.entries(BASE).sort((a,b)=>a[0].localeCompare(b[0])).map(([t,v])=>(
+    {'Trigramme':t,'Nom':v.nom,'Prénom':v.prenom,'Statut':v.s,'Site':v.site,'Shift':v.shift,'Objectif':v.obj}
+  ));
+  const ws=XLSX.utils.json_to_sheet(rows);
+  const wb2=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb2,ws,'Referentiel');
+  XLSX.writeFile(wb2,'referentiel_agents.xlsx');
 }
 function saveLH(){localStorage.setItem('lh1',JSON.stringify(LOSTH));const e=document.getElementById('svLH');e.style.display='block';setTimeout(()=>e.style.display='none',1800);if(RAWROWS.length)recompute();}
 function fillLHSelect(){const sel=document.getElementById('lhtri');sel.innerHTML=Object.entries(BASE).sort((a,b)=>a[0].localeCompare(b[0])).map(([t,v])=>'<option value="'+t+'">'+t+' - '+v.nom+'</option>').join('');}
@@ -901,7 +1068,7 @@ function rLHTbl(){
   document.getElementById('lhcount').textContent=items.length+' entrées';
   const mo={'Panne':'Panne','Formation':'Formation','Réunion':'Réunion','Autre':'Autre'};
   document.getElementById('lhtbody').innerHTML=items.map(e=>
-    '<tr><td style="font-weight:800">'+e.trigramme+'</td><td class="tdn">'+(BASE[e.trigramme]&&BASE[e.trigramme].nom||'-')+'</td><td>'+e.date+'</td><td>'+(mo[e.motif]||'Autre')+' '+e.motif+'</td><td style="font-weight:700">'+e.heures+'h</td><td><button class="bda" style="padding:2px 8px;font-size:10px" onclick="rmLH('+e.i+')">x</button></td></tr>'
+    '<tr><td style="font-weight:800">'+e.trigramme+'</td><td class="tdn">'+(BASE[e.trigramme]&&BASE[e.trigramme].nom||'-')+'</td><td>'+e.date+'</td><td>'+(mo[e.motif]||'Autre')+'</td><td style="font-weight:700">'+e.heures+'h</td><td><button class="bda" style="padding:2px 8px;font-size:10px" onclick="rmLH('+e.i+')">x</button></td></tr>'
   ).join('')||'<tr><td colspan="6" style="padding:16px;color:var(--txt4)">Aucune entrée</td></tr>';
 }
 function addLH(){
@@ -916,6 +1083,14 @@ function addLH(){
 }
 function rmLH(i){LOSTH.splice(i,1);saveLH();rLHTbl();}
 function resetLH(){LOSTH=[];saveLH();rLHTbl();}
+// ✅ NOUVEAU : export des heures perdues en .xlsx pour redéposer sur l'espace partagé
+function exportLH(){
+  const rows=LOSTH.map(e=>({'Trigramme':e.trigramme,'Nom':(BASE[e.trigramme]&&BASE[e.trigramme].nom)||'','Date':e.date,'Motif':e.motif,'Heures':e.heures}));
+  const ws=XLSX.utils.json_to_sheet(rows);
+  const wb2=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb2,ws,'HeuresPerdues');
+  XLSX.writeFile(wb2,'heures_perdues.xlsx');
+}
 </script>
 </body>
 </html>
