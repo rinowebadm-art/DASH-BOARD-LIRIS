@@ -43,11 +43,6 @@ button{border:none;padding:4px 12px;border-radius:14px;cursor:pointer;font-size:
 .bpr:hover{background:#1c5a99;color:#fff}
 .bho{background:#fde9d8;color:#a15117}
 .bho:hover{background:#a15117;color:#fff}
-.b-tana{background:#f1e9fb;color:#7c4fbf}
-.b-tana:hover{background:#7c4fbf;color:#fff}
-.b-diego{background:#e2f7f4;color:#0f9b8e}
-.b-diego:hover{background:#0f9b8e;color:#fff}
-.b-tana.bon,.b-diego.bon{background:var(--blue);color:#fff}
 .pbtn{padding:4px 12px;border-radius:14px;font-size:11px;font-weight:700}
 .dpick{background:var(--ib);border:1px solid var(--ibd);color:var(--txt);border-radius:6px;padding:4px 8px;font-size:11px}
 .srch-wrap{display:flex;align-items:center;background:var(--ib);border:1px solid var(--ibd);border-radius:14px;overflow:hidden}
@@ -133,10 +128,6 @@ tr.alert-red:hover td{animation:none!important;background:#e8f0fb!important}
 .mh h2{font-size:14px;font-weight:800;color:var(--txt)}
 .mcl{padding:14px 18px;overflow-y:auto;flex:1}
 .mf{padding:10px 18px;border-top:1px solid var(--bd);display:flex;gap:8px;justify-content:flex-end;align-items:center}
-.mtbl{width:100%;border-collapse:collapse;font-size:12px}
-.mtbl thead th{background:var(--bg3);color:var(--txt3);padding:7px 10px;text-align:left;position:sticky;top:0;font-size:11px;font-weight:700;border-bottom:2px solid var(--blue)}
-.mtbl tbody tr:hover td{background:var(--bg3)}
-.mtbl td{padding:6px 10px;border-bottom:1px solid var(--bd);vertical-align:middle;color:var(--txt)}
 .ei{background:var(--ib);border:1px solid var(--ibd);color:var(--txt);border-radius:5px;padding:3px 7px;font-size:11px}
 .ei:focus{outline:none;border-color:var(--blue)}
 .ei.w80{width:80px}.ei.w60{width:60px}.ei.w110{width:110px}.ei.w130{width:130px}
@@ -214,7 +205,6 @@ canvas{max-height:100px!important}
   </div>
   <button class="bxl" onclick="exportXL()">Export Excel</button>
   <button class="bpr" onclick="window.print()">Imprimer</button>
-  <button class="bof" onclick="openMo()">Gérer agents</button>
   <button class="bho" onclick="openMoLH()">Heures perdues</button>
   <span id="finfo" style="color:var(--txt3);font-size:11px;margin-left:auto"></span>
 </div>
@@ -225,48 +215,6 @@ canvas{max-height:100px!important}
 </div>
 <div class="main" id="main">
   <div class="empty">Glisse ton <strong style="color:#c55a11">export_monitoring.xlsx</strong></div>
-</div>
-<div class="mo" id="mo" style="display:none" onclick="if(event.target===this)closeMo()">
-  <div class="mdl">
-    <div class="mh">
-      <h2>Référentiel Agents</h2>
-      <button onclick="closeMo()" style="background:none;border:none;color:var(--txt3);font-size:18px;cursor:pointer">x</button>
-    </div>
-    <div class="mcl">
-      <div class="mbar">
-        <input type="text" id="mq" placeholder="Nom, prénom ou trigramme…" oninput="rTbl()"/>
-        <button id="mfa" class="bon" onclick="mfil('all',this)">Tous</button>
-        <button class="bof" onclick="mfil('Senior',this)">Sr</button>
-        <button class="bof" onclick="mfil('Junior',this)">Jr</button>
-        <button class="bof b-tana" onclick="mfil('TANA',this)">TANA</button>
-        <button class="bof b-diego" onclick="mfil('DIEGO',this)">DIEGO</button>
-        <span style="color:var(--txt3);font-size:11px;margin-left:auto" id="mcount"></span>
-      </div>
-      <div style="overflow-x:auto">
-        <table class="mtbl">
-          <thead><tr><th>Tri.</th><th>Nom</th><th>Prénom</th><th>Site</th><th>Statut</th><th>Shift</th><th>Objectif</th><th></th></tr></thead>
-          <tbody id="mtbody"></tbody>
-        </table>
-      </div>
-      <div class="ador">
-        <span>Ajouter :</span>
-        <input type="text" class="ei w60" id="ntri" placeholder="TRI" maxlength="3"/>
-        <input type="text" class="ei w110" id="nnom" placeholder="Nom"/>
-        <input type="text" class="ei w110" id="nprenom" placeholder="Prénom"/>
-        <select class="ei" id="nst"><option value="Senior">Senior</option><option value="Junior">Junior</option></select>
-        <select class="ei" id="nsi"><option value="TANA">TANA</option><option value="DIEGO">DIEGO</option></select>
-        <select class="ei" id="nshift"><option value="05:00">05h</option><option value="14:00">14h</option><option value="23:00">23h</option></select>
-        <input type="number" class="ei w60" id="nobj" value="90" min="1" max="999"/>
-        <button class="bnew" onclick="addAg()">Ajouter</button>
-      </div>
-    </div>
-    <div class="mf">
-      <div class="sv-ok" id="sv">Sauvegardé</div>
-      <button class="bda" onclick="if(confirm('Réinitialiser le référentiel ?'))resetB()">Réinitialiser</button>
-      <button class="bxl" onclick="exportBase()">Exporter BASE (.csv)</button>
-      <button class="bof" onclick="closeMo()">Fermer</button>
-    </div>
-  </div>
 </div>
 <div class="mo" id="moLH" style="display:none" onclick="if(event.target===this)closeMoLH()">
   <div class="mdl">
@@ -280,8 +228,8 @@ canvas{max-height:100px!important}
         <span style="color:var(--txt3);font-size:11px;margin-left:auto" id="lhcount"></span>
       </div>
       <div style="overflow-x:auto">
-        <table class="mtbl">
-          <thead><tr><th>Tri.</th><th>Nom</th><th>Date</th><th>Motif</th><th>Heures</th><th></th></tr></thead>
+        <table class="mtbl" style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead><tr><th style="background:var(--bg3);color:var(--txt3);padding:7px 10px;text-align:left;font-size:11px;font-weight:700;border-bottom:2px solid var(--blue)">Tri.</th><th style="background:var(--bg3);color:var(--txt3);padding:7px 10px;text-align:left;font-size:11px;font-weight:700;border-bottom:2px solid var(--blue)">Nom</th><th style="background:var(--bg3);color:var(--txt3);padding:7px 10px;text-align:left;font-size:11px;font-weight:700;border-bottom:2px solid var(--blue)">Date</th><th style="background:var(--bg3);color:var(--txt3);padding:7px 10px;text-align:left;font-size:11px;font-weight:700;border-bottom:2px solid var(--blue)">Motif</th><th style="background:var(--bg3);color:var(--txt3);padding:7px 10px;text-align:left;font-size:11px;font-weight:700;border-bottom:2px solid var(--blue)">Heures</th><th style="background:var(--bg3);color:var(--txt3);padding:7px 10px;text-align:left;font-size:11px;font-weight:700;border-bottom:2px solid var(--blue)"></th></tr></thead>
           <tbody id="lhtbody"></tbody>
         </table>
       </div>
@@ -375,7 +323,9 @@ const DEF={
 let BASE=(()=>{try{const s=localStorage.getItem('lb4');return s?JSON.parse(s):JSON.parse(JSON.stringify(DEF));}catch{return JSON.parse(JSON.stringify(DEF));}})();
 let LOSTH=(()=>{try{const s=localStorage.getItem('lh1');return s?JSON.parse(s):[];}catch{return[];}})();
 let DATA=[],RAWROWS=[],NQ_DATA={},TAB='g',FIL='all',SHFT='all',mfv='all',CHS={},GRP='top',SEARCH='',DARK=false;
-let PERIOD='semaine',PDATE=new Date();
+let RAWNQROWS=[],NQCOLS=null;
+let PDATE=new Date();
+let PERIOD='semaine';
 function showDiag(msg){const el=document.getElementById('diag');el.textContent=msg;el.style.display='block';}
 function iso(d){return d.toISOString().slice(0,10);}
 function weekNum(d){const u=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));u.setUTCDate(u.getUTCDate()+4-(u.getUTCDay()||7));return Math.ceil((((u-new Date(Date.UTC(u.getUTCFullYear(),0,1)))/86400000)+1)/7);}
@@ -435,10 +385,16 @@ function setPeriod(p){
   document.getElementById(p==='jour'?'pJ':p==='semaine'?'pS':'pM').className='bon pbtn';
   refreshLabels();
   if(RAWROWS.length)recompute();
+  if(RAWNQROWS.length)recomputeNQ();
 }
 function onDateChange(){
   const v=document.getElementById('pdate').value;
-  if(v){PDATE=new Date(v+'T00:00:00');refreshLabels();if(RAWROWS.length)recompute();}
+  if(v){
+    PDATE=new Date(v+'T00:00:00');
+    refreshLabels();
+    if(RAWROWS.length)recompute();
+    if(RAWNQROWS.length)recomputeNQ();
+  }
 }
 function setTab(t,el){TAB=t;document.querySelectorAll('.tab').forEach(e=>e.classList.remove('on'));el.classList.add('on');if(DATA.length)build();}
 function setF(v){FIL=v;['fa','fs','fj'].forEach(id=>document.getElementById(id).className='bof');document.getElementById(v==='all'?'fa':v==='Senior'?'fs':'fj').className='bon';if(DATA.length)build();}
@@ -467,57 +423,64 @@ function readNQ(f){
       if(!cTri||!cDate){setSpNQ('Colonnes introuvables','err');showDiag('NQ colonnes reçues :\n'+H.join('\n'));return;}
       const cCat=fc(H,'categorie','catégorie','cat','type nq','nature');
       const cVal=fc(H,'valid');
-      const[pStart,pEnd]=periodRange();
-      pEnd.setHours(23,59,59,999);
-      const agg={};
-      let skipped=0,counted=0;
-      rows.forEach(row=>{
-        const t=String(row[cTri]||'').trim().toUpperCase().slice(0,3);
-        if(!t||t.length<2)return;
-        const d=parseDateCell(row[cDate]);
-        if(!d||d<pStart||d>pEnd)return;
-        if(cVal){
-          const vs=cl(String(row[cVal]||''));
-          if(vs!==''&&vs!=='ok'){skipped++;return;}
-        }
-        counted++;
-        if(!agg[t])agg[t]={total:0,mauvaise:0,loupe:0,nonconforme:0};
-        agg[t].total++;
-        const cat=cCat?cl(String(row[cCat]||'')):'';
-        if(cat.includes('mauvais'))agg[t].mauvaise++;
-        else if(cat.includes('loupe')||cat.includes('loup'))agg[t].loupe++;
-        else if(cat.includes('conforme'))agg[t].nonconforme++;
-        else{
-          const cL=fc(H,'constat nq loup','constat loupe');
-          const cN=fc(H,'constat nq nc','constat nc');
-          const vL=cL?cl(String(row[cL]||'')):'';
-          const vN=cN?cl(String(row[cN]||'')):'';
-          if(vL&&vL!=='nan')agg[t].loupe++;
-          else if(vN&&vN!=='nan')agg[t].nonconforme++;
-          else agg[t].mauvaise++;
-        }
-      });
-      NQ_DATA=agg;
-      const nb=Object.keys(agg).length;
-      const tot=Object.values(agg).reduce((s,v)=>s+v.total,0);
-      const totM=Object.values(agg).reduce((s,v)=>s+v.mauvaise,0);
-      const totL=Object.values(agg).reduce((s,v)=>s+v.loupe,0);
-      const totN=Object.values(agg).reduce((s,v)=>s+v.nonconforme,0);
-      setSpNQ('NQ OK · '+nb+' agents · '+tot+' NQ validées','ok');
-      showDiag(
-        'NQ chargées (Validée=OK seulement)\n'+
-        'Feuille : "'+sn+'"\n'+
-        'Col. Catégorie : '+(cCat||'NON TROUVÉE')+'\n'+
-        'Col. Validée   : '+(cVal||'NON TROUVÉE — toutes lignes retenues')+'\n'+
-        'Lignes retenues : '+counted+' | Exclues : '+skipped+'\n'+
-        'Total NQ : '+tot+' (Mauvaise:'+totM+' Loupé:'+totL+' NC:'+totN+')\n'+
-        'Période : '+iso(pStart)+' → '+iso(pEnd)
-      );
-      if(DATA.length)build();
+      const cL=fc(H,'constat nq loup','constat loupe');
+      const cN=fc(H,'constat nq nc','constat nc');
+      RAWNQROWS=rows;
+      NQCOLS={sn,cTri,cDate,cCat,cVal,cL,cN,H};
+      recomputeNQ();
     }catch(err){setSpNQ('Erreur : '+err.message,'err');showDiag('Erreur NQ : '+err.message);}
   };
   r.onerror=()=>setSpNQ('Erreur lecture','err');
   r.readAsArrayBuffer(f);
+}
+function recomputeNQ(){
+  if(!RAWNQROWS.length||!NQCOLS)return;
+  const{sn,cTri,cDate,cCat,cVal,cL,cN}=NQCOLS;
+  const[pStart,pEnd]=periodRange();
+  pEnd.setHours(23,59,59,999);
+  const agg={};
+  let skipped=0,counted=0;
+  RAWNQROWS.forEach(row=>{
+    const t=String(row[cTri]||'').trim().toUpperCase().slice(0,3);
+    if(!t||t.length<2)return;
+    const d=parseDateCell(row[cDate]);
+    if(!d||d<pStart||d>pEnd)return;
+    if(cVal){
+      const vs=cl(String(row[cVal]||''));
+      if(vs!==''&&vs!=='ok'){skipped++;return;}
+    }
+    counted++;
+    if(!agg[t])agg[t]={total:0,mauvaise:0,loupe:0,nonconforme:0};
+    agg[t].total++;
+    const cat=cCat?cl(String(row[cCat]||'')):'';
+    if(cat.includes('mauvais'))agg[t].mauvaise++;
+    else if(cat.includes('loupe')||cat.includes('loup'))agg[t].loupe++;
+    else if(cat.includes('conforme'))agg[t].nonconforme++;
+    else{
+      const vL=cL?cl(String(row[cL]||'')):'';
+      const vN=cN?cl(String(row[cN]||'')):'';
+      if(vL&&vL!=='nan')agg[t].loupe++;
+      else if(vN&&vN!=='nan')agg[t].nonconforme++;
+      else agg[t].mauvaise++;
+    }
+  });
+  NQ_DATA=agg;
+  const nb=Object.keys(agg).length;
+  const tot=Object.values(agg).reduce((s,v)=>s+v.total,0);
+  const totM=Object.values(agg).reduce((s,v)=>s+v.mauvaise,0);
+  const totL=Object.values(agg).reduce((s,v)=>s+v.loupe,0);
+  const totN=Object.values(agg).reduce((s,v)=>s+v.nonconforme,0);
+  setSpNQ('NQ OK · '+nb+' agents · '+tot+' NQ validées','ok');
+  showDiag(
+    'NQ chargées (Validée=OK seulement)\n'+
+    'Feuille : "'+sn+'"\n'+
+    'Col. Catégorie : '+(cCat||'NON TROUVÉE')+'\n'+
+    'Col. Validée   : '+(cVal||'NON TROUVÉE — toutes lignes retenues')+'\n'+
+    'Lignes retenues : '+counted+' | Exclues : '+skipped+'\n'+
+    'Total NQ : '+tot+' (Mauvaise:'+totM+' Loupé:'+totL+' NC:'+totN+')\n'+
+    'Période : '+iso(periodRange()[0])+' → '+iso(periodRange()[1])
+  );
+  if(DATA.length)build();
 }
 function nqRateFor(cat,t,res,rm){
   const nq=NQ_DATA[t];if(!nq)return null;
@@ -613,7 +576,7 @@ function recompute(fname,sn){
       lost,occ:+(v.tps/base*100).toFixed(1),occNet:+(v.tps/baseNette*100).toFixed(1)};
   }).filter(d=>d.res>0||d.ph>0).sort((a,b)=>b.top-a.top);
   setSp(DATA.length+'/'+Object.keys(BASE).length+' agents','ok');
-  document.getElementById('dinfo').textContent=(fname?fname+' · ':'')+'onglet "'+sn+'" · '+DATA.length+' agents · '+PERIOD;
+  if(fname)document.getElementById('dinfo').textContent=fname+' · onglet "'+sn+'" · '+DATA.length+' agents · '+PERIOD;
   if(DATA.length)document.getElementById('diag').style.display='none';
   build();
 }
@@ -718,7 +681,7 @@ function build(){
   const tL=nqOk&&sumRes?((sumL/sumRes)*100).toFixed(3)+'%':'-';
   const tM=nqOk&&sumRm?((sumM/sumRm)*100).toFixed(3)+'%':'-';
   const tN=nqOk&&sumRm?((sumN/sumRm)*100).toFixed(3)+'%':'-';
-  const mk=(l,v,s,c,bk)=>'<div class="kpi '+c+'" onclick="this.classList.toggle(\'pinned\')" title="Épingler"><div class="kb '+(bk||'')+'">'+(bk?bk.includes('kok')?'OBJ OK':'OBJ KO':'')+'</div><div class="kl">'+l+'</div><div class="kv">'+v+'</div><div class="ks">'+s+'</div><span class="pin-icon">*</span></div>';
+  const mk=(l,v,s,c,bk)=>'<div class="kpi '+c+'" onclick="this.classList.toggle(\'pinned\')" title="Épingler"><div class="kb '+(bk||'')+'">'+((bk?(bk.includes('kok')?'OBJ OK':'OBJ KO'):'')+'</div><div class="kl">'+l+'</div><div class="kv">'+v+'</div><div class="ks">'+s+'</div><span class="pin-icon">*</span></div>');
   const nqBlock='<div class="krow k4">'+
     mk('NQ Total validées',nqOk?sumTot:'-',nqOk?'Mauvaise:'+sumM+' Loupé:'+sumL+' NC:'+sumN:'Fichier NQ non chargé','nq','')+
     mk('Taux Loupé',tL,nqOk?sumL+' loupés / '+sumRes+' résultats':'','nq','')+
@@ -807,7 +770,7 @@ function build(){
       datasets:[
         {label:'Mauvaise',data:nqArr.map(d=>d.mauvaise),backgroundColor:'rgba(232,97,90,.85)',borderRadius:2},
         {label:'Loupé',data:nqArr.map(d=>d.loupe),backgroundColor:'rgba(26,188,156,.85)',borderRadius:2},
-        {label:'Non conf.',data:nqArr.map(d=>d.nonconforme),backgroundColor:'rgba(245,197,24,.85)',borderRadius:2}
+        {label:'Non conf.',data:nqArr.map(d=>d.nonconforme),backgroundColor:'rgba(44,62,80,.85)',borderRadius:2}
       ]
     },options:{responsive:true,animation:{duration:200},plugins:{legend:{display:true,position:'top',labels:{color:tC2,font:{size:9},boxWidth:8,padding:4}}},scales:{x:{stacked:true,grid:{color:gC},ticks:{color:tC2,font:{size:9}}},y:{stacked:true,grid:{color:gC},ticks:{color:tC,font:{size:9}}}}}});
   }
@@ -835,7 +798,7 @@ function build(){
   const nqL2=Object.values(NQ_DATA).reduce((s,v)=>s+v.loupe,0);
   const nqN2=Object.values(NQ_DATA).reduce((s,v)=>s+v.nonconforme,0);
   if(nqM2+nqL2+nqN2>0){
-    CHS.D3=new Chart('cD3',{type:'doughnut',data:{labels:['Mauvaise','Loupé','Non conforme'],datasets:[{data:[nqM2,nqL2,nqN2],backgroundColor:['#E8615A','#1ABC9C','#F5C518'],borderWidth:2}]},options:dOp()});
+    CHS.D3=new Chart('cD3',{type:'doughnut',data:{labels:['Mauvaise','Loupé','Non conforme'],datasets:[{data:[nqM2,nqL2,nqN2],backgroundColor:['#E8615A','#1ABC9C','#2C3E50'],borderWidth:2}]},options:dOp()});
   }
   if(TAB==='g'){
     CHS.S=new Chart('cS',{type:'bar',data:{
@@ -849,58 +812,16 @@ function build(){
     CHS.S=new Chart('cS',{type:'bar',data:{labels:data.map(d=>d.t),datasets:[{data:data.map(d=>d.top),backgroundColor:data.map(d=>tc(d.top)),borderRadius:3}]},options:{...bO(true,false),plugins:{legend:{display:false}}}});
   }
 }
-function saveB(){localStorage.setItem('lb4',JSON.stringify(BASE));document.getElementById('basecount').textContent=Object.keys(BASE).length+' agents';const e=document.getElementById('sv');e.style.display='block';setTimeout(()=>e.style.display='none',1800);if(RAWROWS.length)recompute();}
-function resetB(){Object.keys(BASE).forEach(k=>delete BASE[k]);Object.assign(BASE,JSON.parse(JSON.stringify(DEF)));saveB();rTbl();}
-function openMo(){document.getElementById('mq').value='';mfv='all';document.querySelectorAll('#mo .mbar button').forEach(b=>{b.classList.remove('bon');b.classList.add('bof');});document.getElementById('mfa').classList.remove('bof');document.getElementById('mfa').classList.add('bon');rTbl();const el=document.getElementById('mo');el.style.display='flex';el.classList.add('open');}
-function closeMo(){const el=document.getElementById('mo');el.style.display='none';el.classList.remove('open');}
-function mfil(v,btn){mfv=v;document.querySelectorAll('#mo .mbar button').forEach(b=>{b.classList.remove('bon');b.classList.add('bof');});btn.classList.remove('bof');btn.classList.add('bon');rTbl();}
-function rTbl(){
-  const q=document.getElementById('mq').value.toLowerCase().trim();
-  const items=Object.entries(BASE).filter(([t,v])=>{
-    if(q&&!t.toLowerCase().includes(q)&&!v.nom.toLowerCase().includes(q)&&!v.prenom.toLowerCase().includes(q))return false;
-    if(mfv==='Senior'||mfv==='Junior')return v.s===mfv;
-    if(mfv==='TANA'||mfv==='DIEGO')return v.site===mfv;
-    return true;
-  }).sort((a,b)=>a[0].localeCompare(b[0]));
-  document.getElementById('mcount').textContent=items.length+' agents';
-  document.getElementById('mtbody').innerHTML=items.map(([t,v])=>
-    '<tr>'+
-    '<td style="font-weight:800;font-size:13px">'+t+'</td>'+
-    '<td><input class="ei w110" type="text" value="'+v.nom+'" onchange="upField(\''+t+'\',\'nom\',this.value)"/></td>'+
-    '<td><input class="ei w110" type="text" value="'+v.prenom+'" onchange="upField(\''+t+'\',\'prenom\',this.value)"/></td>'+
-    '<td><select class="ei" onchange="upField(\''+t+'\',\'site\',this.value)"><option value="TANA"'+(v.site==='TANA'?' selected':'')+'>TANA</option><option value="DIEGO"'+(v.site==='DIEGO'?' selected':'')+'>DIEGO</option></select></td>'+
-    '<td><select class="ei" onchange="upField(\''+t+'\',\'s\',this.value)"><option value="Senior"'+(v.s==='Senior'?' selected':'')+'>Senior</option><option value="Junior"'+(v.s==='Junior'?' selected':'')+'>Junior</option></select></td>'+
-    '<td><select class="ei" onchange="upField(\''+t+'\',\'shift\',this.value)"><option value="05:00"'+(v.shift==='05:00'?' selected':'')+'>05h</option><option value="14:00"'+(v.shift==='14:00'?' selected':'')+'>14h</option><option value="23:00"'+(v.shift==='23:00'?' selected':'')+'>23h</option></select></td>'+
-    '<td><input class="ei w60" type="number" value="'+v.obj+'" min="1" max="999" onchange="upField(\''+t+'\',\'obj\',+this.value)"/></td>'+
-    '<td><button class="bda" style="padding:2px 8px;font-size:10px" onclick="rmAg(\''+t+'\')">x</button></td>'+
-    '</tr>'
-  ).join('');
-}
-function upField(t,k,v){if(BASE[t]){BASE[t][k]=k==='obj'?parseInt(v)||90:v;saveB();}}
-function rmAg(t){if(confirm('Retirer '+t+' ?')){delete BASE[t];saveB();rTbl();}}
-function addAg(){
-  const t=document.getElementById('ntri').value.toUpperCase().trim();
-  if(t.length!==3){alert('Trigramme = 3 lettres');return;}
-  BASE[t]={nom:document.getElementById('nnom').value.trim(),prenom:document.getElementById('nprenom').value.trim(),s:document.getElementById('nst').value,site:document.getElementById('nsi').value,shift:document.getElementById('nshift').value,obj:parseInt(document.getElementById('nobj').value)||90};
-  ['ntri','nnom','nprenom'].forEach(id=>document.getElementById(id).value='');
-  saveB();rTbl();
-}
-function exportBase(){
-  const rows=[['Trigramme','Nom','Prénom','Statut','Site','Shift','Objectif'],...Object.entries(BASE).map(([t,v])=>[t,v.nom,v.prenom,v.s,v.site,v.shift,v.obj])];
-  const csv=rows.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(',')).join('\n');
-  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download='referentiel_agents.csv';a.click();
-}
 function saveLH(){localStorage.setItem('lh1',JSON.stringify(LOSTH));const e=document.getElementById('svLH');e.style.display='block';setTimeout(()=>e.style.display='none',1800);if(RAWROWS.length)recompute();}
 function fillLHSelect(){const sel=document.getElementById('lhtri');sel.innerHTML=Object.entries(BASE).sort((a,b)=>a[0].localeCompare(b[0])).map(([t,v])=>'<option value="'+t+'">'+t+' - '+v.nom+'</option>').join('');}
 function openMoLH(){fillLHSelect();document.getElementById('lhq').value='';document.getElementById('lhdate').value=iso(new Date());rLHTbl();const el=document.getElementById('moLH');el.style.display='flex';el.classList.add('open');}
 function closeMoLH(){const el=document.getElementById('moLH');el.style.display='none';el.classList.remove('open');}
 function rLHTbl(){
   const q=document.getElementById('lhq').value.toLowerCase().trim();
-  const items=LOSTH.map((e,i)=>({...e,i})).filter(e=>{if(!q)return true;const n=(BASE[e.trigramme]&&BASE[e.trigramme].nom||'').toLowerCase();return e.trigramme.toLowerCase().includes(q)||n.includes(q);}).sort((a,b)=>b.date.localeCompare(a.date));
+  const items=LOSTH.map((e,i)=>({...e,i})).filter(e=>{if(!q)return true;const n=(BASE[e.trigramme]&&BASE[e.trigramme].nom||''). toLowerCase();return e.trigramme.toLowerCase().includes(q)||n.includes(q);}).sort((a,b)=>b.date.localeCompare(a.date));
   document.getElementById('lhcount').textContent=items.length+' entrées';
-  const mo={'Panne':'Panne','Formation':'Formation','Réunion':'Réunion','Autre':'Autre'};
   document.getElementById('lhtbody').innerHTML=items.map(e=>
-    '<tr><td style="font-weight:800">'+e.trigramme+'</td><td class="tdn">'+(BASE[e.trigramme]&&BASE[e.trigramme].nom||'-')+'</td><td>'+e.date+'</td><td>'+(mo[e.motif]||'Autre')+' '+e.motif+'</td><td style="font-weight:700">'+e.heures+'h</td><td><button class="bda" style="padding:2px 8px;font-size:10px" onclick="rmLH('+e.i+')">x</button></td></tr>'
+    '<tr><td style="font-weight:800">'+e.trigramme+'</td><td style="color:var(--txt5);font-size:11px">'+(BASE[e.trigramme]&&BASE[e.trigramme].nom||'-')+'</td><td>'+e.date+'</td><td>'+e.motif+'</td><td style="font-weight:700">'+e.heures+'h</td><td><button class="bda" style="padding:2px 8px;font-size:10px" onclick="rmLH('+e.i+')">x</button></td></tr>'
   ).join('')||'<tr><td colspan="6" style="padding:16px;color:var(--txt4)">Aucune entrée</td></tr>';
 }
 function addLH(){
@@ -918,3 +839,5 @@ function resetLH(){LOSTH=[];saveLH();rLHTbl();}
 </script>
 </body>
 </html>
+
+
