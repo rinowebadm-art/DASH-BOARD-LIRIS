@@ -189,7 +189,7 @@ tr.alert-red:hover td{animation:none!important;background:#e8f0fb!important}
 <div class="fbar">
   <div class="srch-wrap">
     <input class="srch" id="sq" type="text" placeholder="Rechercher agent…"/>
-    <button class="srch-btn" onclick="doSearch()">Go</button>
+    <button type="button" class="srch-btn" onclick="doSearch()">Go</button>
   </div>
   <button class="bxl" onclick="exportXL()">Export Excel</button>
   <button class="bpr" onclick="window.print()">Imprimer</button>
@@ -389,7 +389,7 @@ function refreshLabels(){
   refreshLabels();
   document.getElementById('basecount').textContent=Object.keys(BASE).length+' agents';
   const sq=document.getElementById('sq');
-  function doSearch(){SEARCH=document.getElementById('sq').value.toLowerCase().trim();if(DATA.length)renderCls(fd());}
+  function doSearch(){  const sq = document.getElementById('sq');  SEARCH = sq.value.trim().toLowerCase();  if(DATA.length){    build();  }}
   sq.addEventListener('input',doSearch);
   sq.addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
   document.getElementById('fi').onchange=function(){if(this.files[0])readXL(this.files[0]);};
