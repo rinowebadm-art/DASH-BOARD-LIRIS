@@ -748,6 +748,8 @@ function build(){
       mk('Présence nette',avgOccNet+'%','hors '+totLost+'h perdues','oc','')+
       '</div>'+nqBlock;
   }
+  Object.values(CHS).forEach(c=>c.destroy());
+  CHS={};
   document.getElementById('main').innerHTML=kh+
     '<div class="r3">'+
       '<div class="card"><div class="ct"><span class="dot" style="background:#2e75b6"></span>Prod/h — Top 10</div><canvas id="cP" height="105"></canvas></div>'+
@@ -790,8 +792,6 @@ function build(){
     '</div>';
   GRP='top';
   renderCls(data);
-  Object.values(CHS).forEach(c=>c.destroy());
-  CHS={};
   const gC=DARK?'#2d3f55':'#eef1f4';
   const tC=DARK?'#94a3b8':'#6b7280';
   const tC2=DARK?'#cbd5e1':'#374151';
@@ -817,9 +817,11 @@ function build(){
     {label:'100%',data:dl.map(()=>1),borderColor:'rgba(192,57,43,.7)',borderWidth:2,borderDash:[6,4],pointRadius:0},
     {label:'85%',data:dl.map(()=>.85),borderColor:'rgba(160,102,0,.6)',borderWidth:1.5,borderDash:[3,3],pointRadius:0}
   ]},options:{responsive:true,animation:{duration:200},plugins:{legend:{display:true,labels:{color:tC2,font:{size:10}}}},scales:{x:{grid:{color:gC},ticks:{color:tC,font:{size:8},maxRotation:45}},y:{grid:{color:gC},ticks:{color:tC,callback:v=>(v*100).toFixed(0)+'%',font:{size:9}}}}}});
+  const srFull=DATA.filter(d=>d.s==='Senior'&&(TAB==='g'||d.site===(TAB==='t'?'TANA':'DIEGO')));
+  const jrFull=DATA.filter(d=>d.s==='Junior'&&(TAB==='g'||d.site===(TAB==='t'?'TANA':'DIEGO')));
   CHS.C=new Chart('cC',{type:'bar',data:{labels:['Prod/h','TOP %','Transfo %'],datasets:[
-    {label:'Seniors',data:[avg(sr,'ph'),avg(sr,'top')*100,avg(sr,'tx')*100],backgroundColor:'rgba(46,117,182,.85)',borderRadius:3},
-    {label:'Juniors',data:[avg(jr,'ph'),avg(jr,'top')*100,avg(jr,'tx')*100],backgroundColor:'rgba(197,90,17,.85)',borderRadius:3},
+    {label:'Seniors',data:[avg(srFull,'ph'),avg(srFull,'top')*100,avg(srFull,'tx')*100],backgroundColor:'rgba(46,117,182,.85)',borderRadius:3},
+    {label:'Juniors',data:[avg(jrFull,'ph'),avg(jrFull,'top')*100,avg(jrFull,'tx')*100],backgroundColor:'rgba(197,90,17,.85)',borderRadius:3},
     {label:'Objectif',data:[avg(data,'obj'),100,40],backgroundColor:'rgba(46,117,182,.15)',borderRadius:3,borderWidth:1,borderColor:'rgba(46,117,182,.3)'}
   ]},options:{responsive:true,animation:{duration:200},plugins:{legend:{display:true,labels:{color:tC2,font:{size:10}}}},scales:{x:{grid:{color:gC},ticks:{color:tC2,font:{size:10}}},y:{grid:{color:gC},ticks:{color:tC,font:{size:9}}}}}});
   const docc=data.slice().sort((a,b)=>b.occ-a.occ).slice(0,20);
