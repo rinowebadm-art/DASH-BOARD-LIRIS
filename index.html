@@ -736,11 +736,11 @@ function build(){
       mk('Agents',data.length,'Sr:'+sr.length+' Jr:'+jr.length,'gl','')+
       mk('Prod/h Seniors',sr.length?avg(sr,'ph').toFixed(1):'-','obj:'+Math.round(avg(sr,'obj')),'',sr.length?kb(avg(sr,'ph'),avg(sr,'obj')):'')+
       mk('Prod/h Juniors',jr.length?avg(jr,'ph').toFixed(1):'-','obj:'+Math.round(avg(jr,'obj')),'jr',jr.length?kb(avg(jr,'ph'),avg(jr,'obj')):'')+
-      mk('TOP Global',data.length?(avg(data,'top')*100).toFixed(1)+'%':'-','vs objectifs','gl','')+
-      mk('TOP TANA',tnAll.length?(avg(tnAll,'top')*100).toFixed(1)+'%':'-',tnAll.length+' agents','tn','')+
-      mk('TOP DIEGO',dgAll.length?(avg(dgAll,'top')*100).toFixed(1)+'%':'-',dgAll.length+' agents','dg','')+
-      mk('Présence brute',avgOcc+'%',bl.split('·').slice(1).join('·').trim(),'oc','')+
-      mk('Présence nette',avgOccNet+'%','hors '+totLost+'h perdues','oc','')+
+      mk('Performance Global',data.length?(avg(data,'top')*100).toFixed(1)+'%':'-','vs objectifs','gl','')+
+      mk('Performance TANA',tnAll.length?(avg(tnAll,'top')*100).toFixed(1)+'%':'-',tnAll.length+' agents','tn','')+
+      mk('Performance DIEGO',dgAll.length?(avg(dgAll,'top')*100).toFixed(1)+'%':'-',dgAll.length+' agents','dg','')+
+      mk('Occupation brute',avgOcc+'%',bl.split('·').slice(1).join('·').trim(),'oc','')+
+      mk('Occupation nette',avgOccNet+'%','hors '+totLost+'h perdues','oc','')+
       '</div>'+nqBlock;
   }else{
     kh='<div class="krow k6">'+
