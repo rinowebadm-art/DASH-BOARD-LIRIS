@@ -358,7 +358,7 @@ let DATA=[],RAWROWS=[],RAWNQROWS=[],NQCOLS=null,NQ_DATA={},TAB='g',FIL='all',SHF
 let LASTFNAME='',LASTSN='';
 let PERIOD='semaine',PDATE=new Date();
 function showDiag(msg){const el=document.getElementById('diag');el.textContent=msg;el.style.display='block';}
-function iso(d){return d.toISOString().slice(0,10);}
+function iso(d){  const y=d.getFullYear();  const m=String(d.getMonth()+1).padStart(2,'0');  const day=String(d.getDate()).padStart(2,'0');  return y+'-'+m+'-'+day;}
 function weekNum(d){const u=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));u.setUTCDate(u.getUTCDate()+4-(u.getUTCDay()||7));return Math.ceil((((u-new Date(Date.UTC(u.getUTCFullYear(),0,1)))/86400000)+1)/7);}
 function weekRange(d){const wd=(d.getDay()+6)%7;const mon=new Date(d);mon.setDate(d.getDate()-wd);const sun=new Date(mon);sun.setDate(mon.getDate()+6);return[mon,sun];}
 function joursOuvres(y,m){let c=0;const nd=new Date(y,m+1,0).getDate();for(let i=1;i<=nd;i++){const dow=new Date(y,m,i).getDay();if(dow!==0&&dow!==6)c++;}return c;}
@@ -558,12 +558,24 @@ function readXL(f){
 function parseDateCell(v){
   if(!v)return null;
   const s=String(v).trim();
+  if(!s)return null;
   let m=s.match(/^(\d{4})-(\d{2})-(\d{2})/);
   if(m)return new Date(+m[1],+m[2]-1,+m[3]);
   m=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
-  if(m){let y=+m[3];if(y<100)y+=2000;return new Date(y,+m[2]-1,+m[1]);}
-  const n=parseFloat(s);
-  if(!isNaN(n)&&n>20000&&n<80000)return new Date(Date.UTC(1899,11,30)+n*86400000);
+  if(m){
+    let y=+m[3];if(y<100)y+=2000;
+    const day=+m[1],month=+m[2];
+    const d=new Date(y,month-1,day);
+    if(d.getDate()!==day||d.getMonth()!==month-1)return null;
+    return d;
+  }
+  const n=parseFloat(s.replace(',','.'));
+  if(!isNaN(n)&&n>18000&&n<80000){
+    const d=new Date(1899,11,30);
+    d.setDate(d.getDate()+Math.floor(n));
+    return d;
+  }
+  console.warn('[parseDateCell] Format non reconnu :',v);
   return null;
 }
 function parseTps(v){
