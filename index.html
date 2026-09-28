@@ -480,9 +480,7 @@ function recomputeNQ(){
     if(!t||t.length<2)return;
     const d=parseDateCell(row[cDate]);
     if(!d||d<pStart||d>pEnd)return;
-    if(cVal){
-      const vs=cl(String(row[cVal]||''));
-      if(vs!==''&&vs!=='ok'){skipped++;return;}
+    if(cVal){  const vs=cl(String(row[cVal]||''));  if(vs==='ko'||vs==='non'||vs==='non valide'||vs==='invalide'||vs==='nok'){skipped++;return;}
     }
     counted++;
     if(!agg[t])agg[t]={total:0,mauvaise:0,loupe:0,nonconforme:0};
