@@ -715,9 +715,9 @@ function build(){
   const nqOk=Object.keys(NQ_DATA).length>0;
   const sumRes=data.reduce((s,d)=>s+d.res,0);
   const sumRm=data.reduce((s,d)=>s+d.rm,0);
-  const sumL=data.reduce((s,d)=>s+((NQ_DATA[d.t]&&NQ_DATA[d.t].loupe)||0),0);
-  const sumM=data.reduce((s,d)=>s+((NQ_DATA[d.t]&&NQ_DATA[d.t].mauvaise)||0),0);
-  const sumN=data.reduce((s,d)=>s+((NQ_DATA[d.t]&&NQ_DATA[d.t].nonconforme)||0),0);
+  const sumL=Object.values(NQ_DATA).reduce((s,v)=>s+v.loupe,0);
+  const sumM=Object.values(NQ_DATA).reduce((s,v)=>s+v.mauvaise,0);
+  const sumN=Object.values(NQ_DATA).reduce((s,v)=>s+v.nonconforme,0);
   const sumTot=sumL+sumM+sumN;
   const tL=nqOk&&sumRes?((sumL/sumRes)*100).toFixed(3)+'%':'-';
   const tM=nqOk&&sumRm?((sumM/sumRm)*100).toFixed(3)+'%':'-';
