@@ -145,6 +145,7 @@ tr.alert-red:hover td{animation:none!important;background:#e8f0fb!important}
     <div class="diag" id="diag"></div>
   </div>
   <div class="hd-r">
+    <button class="tmbtn" onclick="unlockAdmin()">Déverrouiller admin</button>
     <button class="tmbtn" id="themeBtn" onclick="toggleTheme()">Mode sombre</button>
     <div id="agct">–</div>
     <div id="hdate"></div>
@@ -153,13 +154,13 @@ tr.alert-red:hover td{animation:none!important;background:#e8f0fb!important}
 </div>
 <div class="imp">
   <label class="dz" for="fi">
-    <input type="file" id="fi" accept=".xlsx,.xls"/>
+    <input type="file" id="fi" accept=".xlsx,.xls" disabled>
     <strong>Glisse l'export_monitoring ici</strong> ou clique pour choisir
     <small>Seuls les agents du référentiel sont affichés</small>
   </label>
   <div class="sp idle" id="sp">Aucun fichier</div>
   <label class="dz2" for="fi2">
-    <input type="file" id="fi2" accept=".xlsx,.xls"/>
+    <input type="file" id="fi2" accept=".xlsx,.xls" disabled>
     <strong>Glisse le fichier NQ ici</strong> ou clique pour choisir
     <small>Feuille "NQ Liris" · Catégorie · Validée=OK uniquement</small>
   </label>
@@ -286,6 +287,45 @@ tr.alert-red:hover td{animation:none!important;background:#e8f0fb!important}
   </div>
 </div>
 <script>
+const GH_OWNER = 'VOTRE_USER_GITHUB';const GH_REPO  = 'VOTRE_REPO';const GH_PATH  = 'data.json';const ADMIN_PASS = 'ChangezMoi123';let GH_TOKEN = '';let isAdmin = false;
+function unlockAdmin(){  
+  const p = prompt('Mot de passe admin :');  
+  if(p === ADMIN_PASS){    
+    GH_TOKEN = prompt('Collez votre Personal Access Token GitHub (jamais stocké) :');    
+    isAdmin = true;    
+    document.getElementById('fi').disabled = false;    
+    document.getElementById('fi2').disabled = false;    
+    alert('Mode admin activé.');  
+  } else alert('Mot de passe incorrect.');
+}
+async function loadSharedData(){  
+try{    
+  const res = await fetch(`https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/main/${GH_PATH}`);    
+  if(!res.ok) return;    
+  const json = await res.json();    
+  RAWROWS = json.rawrows || [];    
+  RAWNQROWS = json.rawnqrows || [];    
+  NQCOLS = json.nqcols || null;    
+  if(RAWROWS.length) recompute();  
+}catch(e){ console.warn('Pas de data.json existant encore.'); }
+}
+  async function pushToGitHub(){  
+    if(!isAdmin || !GH_TOKEN) return;  
+    const content = { rawrows: RAWROWS, rawnqrows: RAWNQROWS, nqcols: NQCOLS };  
+    const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(content))));  
+    const api = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;  
+    const cur = await fetch(api, {headers:{Authorization:`token ${GH_TOKEN}`}}).then(r=>r.ok?r.json():null);  
+    await fetch(api, {    
+      method:'PUT',    
+      headers:{Authorization:`token ${GH_TOKEN}`, 'Content-Type':'application/json'},    
+      body: JSON.stringify({      
+        message: 'Mise à jour dashboard '+new Date().toISOString(),      
+        content: b64,      
+        sha: cur ? cur.sha : undefined    
+      })  
+    });
+  }
+loadSharedData();
 const DEF={
 "ZTH":{"nom":"ANDRIANARIBAKO","prenom":"Tiana","s":"Senior","site":"TANA","shift":"05:00","obj":90},
 "ZNL":{"nom":"ANDRIAMAHEFA","prenom":"Nambinintsoa","s":"Senior","site":"TANA","shift":"23:00","obj":100},
@@ -462,6 +502,7 @@ function readNQ(f){
       RAWNQROWS=rows;
       NQCOLS={sn,cTri,cDate,cCat,cVal,cL,cN};
       recomputeNQ();
+      pushToGitHub();
     }catch(err){setSpNQ('Erreur : '+err.message,'err');showDiag('Erreur NQ : '+err.message);}
   };
   r.onerror=()=>setSpNQ('Erreur lecture','err');
@@ -548,6 +589,7 @@ function readXL(f){
       showDiag('Fichier : '+f.name+'\nOnglet : "'+sn+'" · '+rows.length+' lignes\nColonnes :\n'+H.join('\n'));
       RAWROWS=rows;
       recompute(f.name,sn);
+      pushToGitHub(); 
     }catch(err){setSp('Erreur : '+err.message,'err');showDiag('Erreur : '+err.message);}
   };
   r.onerror=()=>setSp('Erreur lecture','err');
