@@ -509,18 +509,12 @@ function readNQ(f){
   r.readAsArrayBuffer(f);
 }
 // ── NOUVEAUTÉ : recomputeNQ ré-agrège les NQ sur la fenêtre périodRange() courante ──
-function recomputeNQ(){
-  if(!RAWNQROWS.length||!NQCOLS)return;
-  const{sn,cTri,cDate,cCat,cVal,cL,cN}=NQCOLS;
-  const[pStart,pEnd]=periodRange();
-  pEnd.setHours(23,59,59,999);
-  const agg={};
-  let skipped=0,counted=0;
-  RAWNQROWS.forEach(row=>{
-    const t=String(row[cTri]||'').trim().toUpperCase().slice(0,3);
-    if(!t||t.length<2)return;
-    const d=parseDateCell(row[cDate]);
-    if(!d||d<pStart||d>pEnd)return;
+function recomputeNQ(){ 
+  if(!RAWNQROWS.length||!NQCOLS)return;  
+  const{sn,cTri,cDate,cCat,cVal,cL,cN}=NQCOLS;  const agg={};  
+  let skipped=0,counted=0;  
+  RAWNQROWS.forEach(row=>{    
+    const t=String(row[cTri]||'').trim().toUpperCase().slice(0,3);    if(!t||t.length<2)return;    
     if(cVal){  const vs=cl(String(row[cVal]||''));  if(vs==='ko'||vs==='nok'){skipped++;return;}
     }
     counted++;
@@ -544,16 +538,14 @@ function recomputeNQ(){
   const totM=Object.values(agg).reduce((s,v)=>s+v.mauvaise,0);
   const totL=Object.values(agg).reduce((s,v)=>s+v.loupe,0);
   const totN=Object.values(agg).reduce((s,v)=>s+v.nonconforme,0);
-  setSpNQ('NQ OK · '+nb+' agents · '+tot+' NQ validées','ok');
-  const[ps,pe]=periodRange();
-  showDiag(
-    'NQ chargées (toutes sauf KO)\n'+
-    'Feuille : "'+sn+'"\n'+
-    'Col. Catégorie : '+(cCat||'NON TROUVÉE')+'\n'+
-    'Col. Validée   : '+(cVal||'NON TROUVÉE — toutes lignes retenues')+'\n'+
-    'Lignes retenues : '+counted+' | Exclues : '+skipped+'\n'+
-    'Total NQ : '+tot+' (Mauvaise:'+totM+' Loupé:'+totL+' NC:'+totN+')\n'+
-    'Période : '+iso(ps)+' → '+iso(pe)
+  setSpNQ('NQ OK · '+nb+' agents · '+tot+' NQ validées (toutes dates)','ok');  
+  showDiag(    
+    'NQ chargées (toutes sauf KO, toutes dates)\n'+    
+    'Feuille : "'+sn+'"\n'+    
+    'Col. Catégorie : '+(cCat||'NON TROUVÉE')+'\n'+    
+    'Col. Validée   : '+(cVal||'NON TROUVÉE — toutes lignes retenues')+'\n'+    
+    'Lignes retenues : '+counted+' | Exclues : '+skipped+'\n'+    
+    'Total NQ : '+tot+' (Mauvaise:'+totM+' Loupé:'+totL+' NC:'+totN+')'
   );
   if(DATA.length)build();
 }
