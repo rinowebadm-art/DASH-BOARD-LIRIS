@@ -162,7 +162,7 @@ tr.alert-red:hover td{animation:none!important;background:#e8f0fb!important}
   <label class="dz2" for="fi2">
     <input type="file" id="fi2" accept=".xlsx,.xls" disabled>
     <strong>Glisse le fichier NQ ici</strong> ou clique pour choisir
-    <small>Feuille "NQ Liris" · Catégorie · Validée=OK uniquement</small>
+    <small>Feuille "NQ Liris" · Catégorie · Toutes sauf KO</small>
   </label>
   <div class="sp idle" id="spNQ">NQ non chargé</div>
 </div>
@@ -521,7 +521,7 @@ function recomputeNQ(){
     if(!t||t.length<2)return;
     const d=parseDateCell(row[cDate]);
     if(!d||d<pStart||d>pEnd)return;
-    if(cVal){  const vs=cl(String(row[cVal]||''));  if(vs==='ko'||vs==='non'||vs==='non valide'||vs==='invalide'||vs==='nok'){skipped++;return;}
+    if(cVal){  const vs=cl(String(row[cVal]||''));  if(vs==='ko'||vs==='nok'){skipped++;return;}
     }
     counted++;
     if(!agg[t])agg[t]={total:0,mauvaise:0,loupe:0,nonconforme:0};
@@ -547,7 +547,7 @@ function recomputeNQ(){
   setSpNQ('NQ OK · '+nb+' agents · '+tot+' NQ validées','ok');
   const[ps,pe]=periodRange();
   showDiag(
-    'NQ chargées (Validée=OK seulement)\n'+
+    'NQ chargées (toutes sauf KO)\n'+
     'Feuille : "'+sn+'"\n'+
     'Col. Catégorie : '+(cCat||'NON TROUVÉE')+'\n'+
     'Col. Validée   : '+(cVal||'NON TROUVÉE — toutes lignes retenues')+'\n'+
