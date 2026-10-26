@@ -545,7 +545,7 @@ function recomputeNQ(){
     'Lignes retenues : '+counted+' | Exclues : '+skipped+'\n'+    
     'Total NQ : '+tot+' (Mauvaise:'+totM+' Loupé:'+totL+' NC:'+totN+')'
   );
-  if(DATA.length)build();
+  if(DATA.length){addScores(DATA);build();}
 }
 function nqRateFor(cat,t,res,rm){
   const nq=NQ_DATA[t];if(!nq)return null;
@@ -618,7 +618,23 @@ function parseTps(v){
 function lostHoursFor(trig,start,end){
   return LOSTH.filter(e=>{if(e.trigramme!==trig)return false;const d=new Date(e.date+'T00:00:00');return d>=start&&d<=end;}).reduce((s,e)=>s+(+e.heures||0),0);
 }
-function recompute(fname,sn){
+const clamp=v=>Math.max(0,Math.min(1,v));
+  function qualScore(d){  
+    if(!Object.keys(NQ_DATA).length) return 1;  
+    const q=c=>{const r=nqRateFor(c,d.t,d.res,d.rm);if(r===null)return 1;const s=SEU[c];return clamp(1-(r-s)/(2*s));};  
+    return (q('loupe')+q('mauvaise')+q('nonconforme'))/3;}
+  function addScores(arr){  
+    const rs=arr.map(d=>d.res).sort((a,b)=>a-b);  
+    const p90=rs[Math.floor(rs.length*0.9)]||1;  
+    arr.forEach(d=>{    
+      d.sQ=qualScore(d);    
+      let s=100*(.30*clamp(d.top)+.15*clamp(d.res/p90)+.15*clamp(d.tx/0.40)+.15*clamp(d.occNet/100)+.25*d.sQ);    
+      if(d.sQ<.5) s=Math.min(s,70);    
+      d.score=+s.toFixed(1);  
+    });
+  }
+  
+  function recompute(fname,sn){
   const rows=RAWROWS
   if(!rows.length)return;
   if(fname!==undefined)LASTFNAME=fname;
@@ -661,7 +677,7 @@ function recompute(fname,sn){
   if(DATA.length)document.getElementById('diag').style.display='none';
   // Si NQ chargées, on les recalcule aussi (elles appellent build) ; sinon on build directement
   if(RAWNQROWS.length)recomputeNQ();
-  else build();
+  else{addScores(DATA);build();}
 }
 function exportXL(){
   if(!DATA.length){alert('Aucune donnée chargée.');return;}
@@ -714,6 +730,7 @@ function rowHtml(d,i){
     '<td style="font-weight:700">'+d.ph.toFixed(1)+'</td>'+
     '<td style="color:var(--txt3)">'+d.obj+'</td>'+
     '<td class="'+tk(d.top)+'" style="font-size:13px">'+(d.top*100).toFixed(1)+'%</td>'+
+    '<td style="font-weight:800">'+d.score+'</td>'+
     '<td>'+(d.tx*100).toFixed(1)+'%</td>'+
     '<td style="color:var(--txt5)">'+d.tps.toFixed(1)+'h</td>'+
     '<td>'+(d.lost>0?'<span class="lhbadge">-'+d.lost+'h</span>':'<span style="color:var(--txt4)">-</span>')+'</td>'+
@@ -732,10 +749,10 @@ function renderCls(data){
   if(el)el.textContent=d.length+(SEARCH?' / '+data.length:'');
   let html='';
   if(GRP==='top'){
-    html=d.slice().sort((a,b)=>b.top-a.top).map((x,i)=>rowHtml(x,i)).join('');
+    html=d.slice().sort((a,b)=>b.score-a.score).map((x,i)=>rowHtml(x,i)).join('');
   }else{
     [['05:00','Shift 05h'],['14:00','Shift 14h'],['23:00','Shift 23h']].forEach(([sh,label])=>{
-      const grp=d.filter(x=>x.shift===sh).sort((a,b)=>b.top-a.top);
+      const grp=d.filter(x=>x.shift===sh).sort((a,b)=>b.score-a.score);
       if(!grp.length)return;
       html+='<tr><td colspan="20" style="background:var(--bg3);color:var(--txt2);font-weight:800;padding:8px 12px;text-align:left">'+label+' — '+grp.length+' agents · TOP moy. '+(avg(grp,'top')*100).toFixed(1)+'%</td></tr>';
       html+=grp.map((x,i)=>rowHtml(x,i)).join('');
@@ -745,7 +762,7 @@ function renderCls(data){
   if(cb)cb.innerHTML=html||'<tr><td colspan="20" style="padding:20px;color:var(--txt4)">Aucun agent</td></tr>';
 }
 function build(){
-  const data=fd().sort((a,b)=>b.top-a.top);
+  const data=fd().sort((a,b)=>b.score-a.score);
   const sr=data.filter(d=>d.s==='Senior'),jr=data.filter(d=>d.s==='Junior');
   const tnAll=DATA.filter(d=>d.site==='TANA'),dgAll=DATA.filter(d=>d.site==='DIEGO');
   document.getElementById('agct').textContent=data.length+' agents · '+sr.length+' Sr · '+jr.length+' Jr';
@@ -809,7 +826,7 @@ function build(){
     '<div class="card" style="margin-bottom:8px">'+
       '<div class="ct"><span><span class="dot" style="background:#e74c3c"></span>CLASSEMENT — <span id="ccount">0</span> agents</span>'+
         '<span style="display:flex;gap:5px">'+
-          '<button id="gTop" class="bon grpbtn" onclick="setGrp(\'top\',this)">Trié TOP %</button>'+
+          '<button id="gTop" class="bon grpbtn" onclick="setGrp(\'top\',this)">Trié Score</button>'+
           '<button id="gShift" class="bof grpbtn" onclick="setGrp(\'shift\',this)">Par Shift</button>'+
         '</span></div>'+
       '<div class="tw"><table><thead><tr>'+
@@ -819,7 +836,7 @@ function build(){
         '<th style="text-align:left">Prénom</th>'+
         '<th>Site</th><th>Statut</th><th>Shift</th>'+
         '<th>Résultats</th><th>Prod/h</th><th>Obj.</th>'+
-        '<th>Performance %</th><th>Transfo</th><th>Temps</th><th>Hrs-</th>'+
+        '<th>Performance %</th><th>Score</th><th>Transfo</th><th>Temps</th><th>Hrs-</th>'+
         '<th>TOP.brute</th><th>TOP.nette</th>'+
         '<th class="nq-sep" title="NQ Validée=OK">NQ</th>'+
         '<th title="Loupé / Résultats">Loupé%</th>'+
