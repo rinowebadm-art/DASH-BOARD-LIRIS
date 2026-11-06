@@ -135,6 +135,350 @@ tr.alert-red:hover td{animation:none!important;background:#e8f0fb!important}
 .grpbtn{padding:3px 9px;font-size:10px}
 .diag{background:#1e293b;color:#94a3b8;font-family:monospace;font-size:10px;padding:8px 14px;border-radius:6px;margin-top:6px;word-break:break-all;white-space:pre-wrap;max-height:180px;overflow-y:auto;display:none}
 @media print{.imp,.fbar,.tabs,.aband,.mo,.grpbtn,.tmbtn{display:none!important}.hd{background:#1f2937!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.tw{max-height:none!important;overflow:visible!important}canvas{max-height:100px!important}}
+/* ===== INTERFACE LIRIS : cartes pastel ===== */
+:root {
+  --bg: #eef0f7;
+  --bg2: #ffffff;
+  --bg3: #f5f6fb;
+  --bd: #e4e7f2;
+  --bd2: #e4e7f2;
+  --txt: #343d60;
+  --txt2: #465174;
+  --txt3: #697493;
+  --txt4: #75809c;
+  --txt5: #465174;
+  --blue: #4a89c4;
+  --ib: #ffffff;
+  --ibd: #d8deed;
+  --pastel1: #d6f1fb;
+  --pastel2: #e4e0fb;
+  --pastel3: #d9f6ea;
+  --pastel4: #f6dffa;
+  --pastel5: #fde9d3;
+  --quality-bg: #e6e9f2;
+  --row-sr: #f6f9fd;
+  --row-jr: #fdf8f2;
+  --row-hover: #e8f0fb;
+}
+[data-theme="dark"] {
+  --bg: #12162b;
+  --bg2: #1b2038;
+  --bg3: #232948;
+  --bd: #343d60;
+  --bd2: #343d60;
+  --txt: #e6e9f7;
+  --txt2: #d3dcf1;
+  --txt3: #a3aecf;
+  --txt4: #a3aecf;
+  --txt5: #d3dcf1;
+  --blue: #6d9fd3;
+  --ib: #1b2038;
+  --ibd: #343d60;
+  --pastel1: #1f3b4d;
+  --pastel2: #2d2b52;
+  --pastel3: #1f4038;
+  --pastel4: #41284a;
+  --pastel5: #4a3624;
+  --quality-bg: #2a3150;
+  --row-sr: #1e2940;
+  --row-jr: #302b35;
+  --row-hover: #33415b;
+}
+body,
+button,
+input,
+select {
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+body {
+  font-size: 13px;
+}
+.hd {
+  background: #2b3358;
+  padding: 24px 28px;
+  gap: 20px;
+}
+.hd h1 {
+  font-size: clamp(20px, 2.4vw, 28px);
+  font-weight: 800;
+  line-height: 1.3;
+  flex-wrap: wrap;
+}
+.hd-r {
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.badge {
+  background: #cf7433;
+  padding: 5px 12px;
+  border-radius: 20px;
+}
+/* Imports conservés et accessibles */
+.imp {
+  padding: 12px 24px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+label.dz,
+label.dz2 {
+  min-width: 220px;
+  padding: 12px;
+  border-radius: 14px;
+}
+.fbar {
+  padding: 10px 24px;
+  gap: 8px;
+}
+button {
+  padding: 7px 12px;
+  border-radius: 20px;
+}
+.dpick,
+.ei {
+  border-radius: 8px;
+}
+.srch {
+  width: 190px;
+  padding: 7px 10px;
+}
+/* Onglets métier */
+.view-tabs {
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+  padding: 12px 24px 0;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--bd);
+}
+.view-tab {
+  background: transparent;
+  color: var(--txt3);
+  border: none;
+  border-radius: 16px 16px 0 0;
+  padding: 13px 17px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.view-tab.active {
+  background: #8b7cf0;
+  color: #ffffff;
+}
+/* Les onglets existants restent les filtres de site */
+.tabs {
+  padding: 6px 24px;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.tabs::before {
+  content: "Site :";
+  color: var(--txt3);
+  font-size: 12px;
+  margin-right: 5px;
+}
+.tab {
+  padding: 7px 14px;
+  border: none;
+  border-radius: 20px;
+}
+.tab.on {
+  background: var(--blue);
+  color: #ffffff;
+  border: none;
+}
+/* Cartes KPI */
+.main {
+  padding: 22px 24px;
+}
+.krow {
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.k8 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.k6 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.k4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.kpi {
+  min-width: 0;
+  min-height: 165px;
+  padding: 22px;
+  border: none;
+  border-radius: 18px;
+  box-shadow: none;
+  background: var(--pastel1);
+}
+.kpi:nth-child(5n + 2) { background: var(--pastel2); }
+.kpi:nth-child(5n + 3) { background: var(--pastel3); }
+.kpi:nth-child(5n + 4) { background: var(--pastel4); }
+.kpi:nth-child(5n + 5) { background: var(--pastel5); }
+.kpi.nq {
+  background: var(--quality-bg);
+}
+.kpi::before {
+  content: "◎";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-bottom: 14px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .45);
+  color: var(--txt);
+  font-size: 18px;
+}
+[data-theme="dark"] .kpi::before {
+  background: rgba(255, 255, 255, .12);
+}
+.kl {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--txt2);
+}
+.kv {
+  margin: 6px 0;
+  font-size: clamp(26px, 3vw, 38px);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.ks {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--txt3);
+}
+.kb {
+  top: 14px;
+  right: 14px;
+  font-size: 10px;
+  padding: 4px 8px;
+}
+.kpi:hover {
+  transform: none;
+  box-shadow: 0 4px 15px rgba(80, 90, 140, .12);
+}
+/* Graphiques et tableaux */
+.card {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--bd);
+  border-radius: 18px;
+  box-shadow: 0 4px 16px rgba(80, 90, 140, .06);
+}
+.ct {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0;
+  margin-bottom: 16px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.tw {
+  overflow: auto;
+}
+th,
+td {
+  padding: 11px 12px;
+  white-space: nowrap;
+}
+tr.senior td { background: var(--row-sr); }
+tr.junior td { background: var(--row-jr); }
+tr:hover td { background: var(--row-hover) !important; }
+/* Alerte visible sans clignotement */
+tr.alert-red.senior td,
+tr.alert-red.junior td {
+  animation: none;
+}
+tr.alert-red td:first-child {
+  box-shadow: inset 3px 0 #e74c3c;
+}
+/* Disposition utilisée par les nouveaux onglets */
+.main.ui-dashboard {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+.ui-dashboard > .krow {
+  grid-column: 1 / -1;
+  margin-bottom: 0;
+}
+.ui-dashboard > .r3,
+.ui-dashboard > .r2,
+.ui-dashboard > .r3d,
+.ui-dashboard > .r2b {
+  display: contents;
+}
+.ui-dashboard .ui-wide {
+  grid-column: 1 / -1;
+}
+.ui-hidden {
+  display: none !important;
+}
+@media (max-width: 1000px) {
+  .k8,
+  .k6,
+  .k4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 650px) {
+  .hd {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px 16px;
+  }
+  .hd-r {
+    text-align: left;
+  }
+  .main {
+    padding: 16px;
+  }
+  .imp,
+  .fbar,
+  .tabs {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .view-tabs {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .main.ui-dashboard,
+  .k8,
+  .k6,
+  .k4 {
+    grid-template-columns: 1fr;
+  }
+  .kpi {
+    min-height: 140px;
+  }
+  label.dz,
+  label.dz2 {
+    min-width: 100%;
+  }
+}
+@media print {
+  .view-tabs {
+    display: none !important;
+  }
+  .card,
+  .kpi {
+    break-inside: avoid;
+  }
+  .kpi {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
 </style>
 </head>
 <body>
@@ -981,6 +1325,111 @@ function addLH(){
 }
 function rmLH(i){LOSTH.splice(i,1);saveLH();rLHTbl();}
 function resetLH(){LOSTH=[];saveLH();rLHTbl();}
+/* ===== NAVIGATION D'INTERFACE UNIQUEMENT ===== */
+let UI_VIEW = 'overview';
+const UI_VIEWS = [
+  ['overview', 'Vue d’ensemble'],
+  ['production', 'Production'],
+  ['performance', 'Performance'],
+  ['quality', 'Qualité'],
+  ['agents', 'Agents'],
+  ['ranking', 'Classement'],
+  ['occupation', 'Occupation']
+];
+// Conserver la fonction existante et ses calculs.
+const originalLirisBuild = build;
+build = function () {
+  originalLirisBuild();
+  applyLirisInterface();
+};
+function createLirisNavigation() {
+  if (document.getElementById('lirisViewTabs')) return;
+  const siteTabs = document.querySelector('.tabs');
+  if (!siteTabs) return;
+  const nav = document.createElement('nav');
+  nav.id = 'lirisViewTabs';
+  nav.className = 'view-tabs';
+  nav.setAttribute('aria-label', 'Vues LIRIS');
+  UI_VIEWS.forEach(([id, label]) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'view-tab';
+    button.dataset.view = id;
+    button.textContent = label;
+    button.addEventListener('click', () => {
+      UI_VIEW = id;
+      applyLirisInterface();
+    });
+    nav.appendChild(button);
+  });
+  siteTabs.before(nav);
+  const globalSiteTab = siteTabs.querySelector('.tab');
+  if (globalSiteTab) globalSiteTab.textContent = 'Tous';
+}
+function applyLirisInterface() {
+  createLirisNavigation();
+  document.querySelectorAll('.view-tab').forEach(button => {
+    const active = button.dataset.view === UI_VIEW;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+  const main = document.getElementById('main');
+  if (!main || !main.querySelector('.krow')) return;
+  main.classList.add('ui-dashboard');
+  const productionKpis = main.querySelector('.krow:not(.k4)');
+  const qualityKpis = main.querySelector('.krow.k4');
+  if (productionKpis) {
+    productionKpis.classList.toggle(
+      'ui-hidden',
+      !['overview', 'production', 'performance', 'occupation']
+        .includes(UI_VIEW)
+    );
+  }
+  if (qualityKpis) {
+    qualityKpis.classList.toggle(
+      'ui-hidden',
+      !['overview', 'quality'].includes(UI_VIEW)
+    );
+  }
+  const visibleCharts = {
+    overview: ['cP', 'cS'],
+    production: ['cP', 'cC', 'cD1'],
+    performance: ['cT', 'cL', 'cD2', 'cS'],
+    quality: ['cNQ', 'cD3'],
+    agents: [],
+    ranking: [],
+    occupation: ['cO']
+  };
+  const selectedCharts = visibleCharts[UI_VIEW] || [];
+  main.querySelectorAll('.card').forEach(card => {
+    const canvas = card.querySelector('canvas');
+    const isAgentTable = Boolean(card.querySelector('#clsBody'));
+    const visible = isAgentTable
+      ? ['agents', 'ranking'].includes(UI_VIEW)
+      : Boolean(canvas && selectedCharts.includes(canvas.id));
+    card.classList.toggle('ui-hidden', !visible);
+    card.classList.toggle(
+      'ui-wide',
+      isAgentTable ||
+      (UI_VIEW === 'occupation' && canvas && canvas.id === 'cO')
+    );
+  });
+  requestAnimationFrame(() => {
+    Object.values(CHS).forEach(chart => {
+      if (chart.canvas && !chart.canvas.closest('.ui-hidden')) {
+        chart.resize();
+      }
+    });
+  });
+}
+// Rendre aussi le bouton Go fonctionnel.
+// La fonction doSearch actuelle est locale à ton initialisation.
+window.doSearch = function () {
+  SEARCH = document.getElementById('sq').value.trim().toLowerCase();
+  if (DATA.length) build();
+};
+createLirisNavigation();
+applyLirisInterface();
 </script>
 </body>
 </html>
