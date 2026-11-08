@@ -1745,7 +1745,7 @@ function build(){
         {label:'Loupé',data:nqArr.map(d=>d.loupe),backgroundColor:'rgba(26,188,156,.85)',borderRadius:2},
         {label:'Non conf.',data:nqArr.map(d=>d.nonconforme),backgroundColor:'rgba(245,197,24,.85)',borderRadius:2}
       ]
-    },options:{indexAxis:'y',maintainAspectRatio:false,responsive:true,animation:false,,plugins:{legend:{display:true,position:'top',labels:{color:tC2,font:{size:9},boxWidth:8,padding:4}}},scales:{x:{stacked:true,grid:{color:gC},ticks:{color:tC2,font:{size:9}}},y:{stacked:true,grid:{color:gC},ticks:{color:tC,font:{size:9}}}}}});
+    },options:{indexAxis:'y',maintainAspectRatio:false,responsive:true,animation:false,plugins:{legend:{display:true,position:'top',labels:{color:tC2,font:{size:9},boxWidth:8,padding:4}}},scales:{x:{stacked:true,grid:{color:gC},ticks:{color:tC2,font:{size:9}}},y:{stacked:true,grid:{color:gC},ticks:{color:tC,font:{size:9}}}}}});
   }
   const dl=data.slice().sort((a,b)=>b.top-a.top);
   CHS.L=new Chart('cL',{type:'line',data:{labels:dl.map(d=>d.t),datasets:[
