@@ -931,7 +931,82 @@ html[data-theme="dark"] .ui-dashboard .kpi {
     padding: 16px;
   }
 }
-  /* Fond pastel prioritaire, y compris pour les cartes Qualité */.ui-dashboard .krow .kpi {  background: var(--tile-light, #d6f1fb);}html[data-theme="dark"] .ui-dashboard .krow .kpi {  background: var(--tile-dark, #203c4e);}
+/* ===== FINITION ASAP POUR LIRIS ===== */
+html[data-theme="light"] {
+  --bg: #eef0f7;
+  --bg2: #ffffff;
+  --bg3: #f5f6fb;
+  --bd: #e4e7f2;
+  --bd2: #e4e7f2;
+  --txt: #3b4268;
+  --txt2: #3b4268;
+  --txt3: #7b83a6;
+}
+html[data-theme="dark"] {
+  --bg: #12162b;
+  --bg2: #1b2038;
+  --bg3: #232948;
+  --bd: #2f3659;
+  --bd2: #2f3659;
+  --txt: #e6e9f7;
+  --txt2: #e6e9f7;
+  --txt3: #9aa3c7;
+}
+body, button, input, select, table, th, td {
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+}
+.main.ui-dashboard {
+  padding: 18px 24px;
+  gap: 16px;
+  align-items: stretch;
+}
+.ui-dashboard .card,
+.ui-dashboard .card.ui-small {
+  padding: 18px;
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(80, 90, 140, .12);
+}
+html[data-theme="dark"] .ui-dashboard .card {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .45);
+}
+.ui-dashboard .ct {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .3px;
+  margin-bottom: 12px;
+}
+.ui-dashboard .krow .kpi {
+  background: var(--tile-light, #d6f1fb);
+  border: none;
+  border-radius: 18px;
+  padding: 20px 22px;
+}
+html[data-theme="dark"] .ui-dashboard .krow .kpi {
+  background: var(--tile-dark, #1f3b4d);
+}
+.chart-wrap,
+.ui-small .chart-wrap {
+  height: 300px;
+}
+/* Donuts ASAP : taille maîtrisée, légende sous le cercle */
+.chart-wrap.asap-donut {
+  height: 300px;
+  max-width: 390px;
+  margin: 0 auto;
+}
+@media (max-width: 750px) {
+  .main.ui-dashboard {
+    grid-template-columns: 1fr;
+    padding: 14px;
+  }
+  .chart-wrap,
+  .ui-small .chart-wrap,
+  .chart-wrap.asap-donut {
+    height: 280px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1670,26 +1745,26 @@ function build(){
         {label:'Loupé',data:nqArr.map(d=>d.loupe),backgroundColor:'rgba(26,188,156,.85)',borderRadius:2},
         {label:'Non conf.',data:nqArr.map(d=>d.nonconforme),backgroundColor:'rgba(245,197,24,.85)',borderRadius:2}
       ]
-    },options:{responsive:true,animation:{duration:200},plugins:{legend:{display:true,position:'top',labels:{color:tC2,font:{size:9},boxWidth:8,padding:4}}},scales:{x:{stacked:true,grid:{color:gC},ticks:{color:tC2,font:{size:9}}},y:{stacked:true,grid:{color:gC},ticks:{color:tC,font:{size:9}}}}}});
+    },options:{indexAxis:'y',maintainAspectRatio:false,responsive:true,animation:false,,plugins:{legend:{display:true,position:'top',labels:{color:tC2,font:{size:9},boxWidth:8,padding:4}}},scales:{x:{stacked:true,grid:{color:gC},ticks:{color:tC2,font:{size:9}}},y:{stacked:true,grid:{color:gC},ticks:{color:tC,font:{size:9}}}}}});
   }
   const dl=data.slice().sort((a,b)=>b.top-a.top);
   CHS.L=new Chart('cL',{type:'line',data:{labels:dl.map(d=>d.t),datasets:[
     {label:'TOP %',data:dl.map(d=>d.top),borderColor:'#d4a017',backgroundColor:'rgba(212,160,23,.08)',borderWidth:2,pointBackgroundColor:dl.map(d=>tc(d.top)),pointRadius:3,tension:.35,fill:true},
     {label:'100%',data:dl.map(()=>1),borderColor:'rgba(192,57,43,.7)',borderWidth:2,borderDash:[6,4],pointRadius:0},
     {label:'85%',data:dl.map(()=>.85),borderColor:'rgba(160,102,0,.6)',borderWidth:1.5,borderDash:[3,3],pointRadius:0}
-  ]},options:{responsive:true,animation:{duration:200},plugins:{legend:{display:true,labels:{color:tC2,font:{size:10}}}},scales:{x:{grid:{color:gC},ticks:{color:tC,font:{size:8},maxRotation:45}},y:{grid:{color:gC},ticks:{color:tC,callback:v=>(v*100).toFixed(0)+'%',font:{size:9}}}}}});
+  ]},options:{indexAxis:'y',maintainAspectRatio:false,responsive:true,animation:false,,plugins:{legend:{display:true,labels:{color:tC2,font:{size:10}}}},scales:{x:{grid:{color:gC},ticks:{color:tC,font:{size:8},maxRotation:45}},y:{grid:{color:gC},ticks:{color:tC,callback:v=>(v*100).toFixed(0)+'%',font:{size:9}}}}}});
   const srFull=DATA.filter(d=>d.s==='Senior'&&(TAB==='g'||d.site===(TAB==='t'?'TANA':'DIEGO')));
   const jrFull=DATA.filter(d=>d.s==='Junior'&&(TAB==='g'||d.site===(TAB==='t'?'TANA':'DIEGO')));
   CHS.C=new Chart('cC',{type:'bar',data:{labels:['Prod/h','TOP %','Transfo %'],datasets:[
     {label:'Seniors',data:[avg(srFull,'ph'),avg(srFull,'top')*100,avg(srFull,'tx')*100],backgroundColor:'rgba(46,117,182,.85)',borderRadius:3},
     {label:'Juniors',data:[avg(jrFull,'ph'),avg(jrFull,'top')*100,avg(jrFull,'tx')*100],backgroundColor:'rgba(197,90,17,.85)',borderRadius:3},
     {label:'Objectif',data:[avg(data,'obj'),100,40],backgroundColor:'rgba(46,117,182,.15)',borderRadius:3,borderWidth:1,borderColor:'rgba(46,117,182,.3)'}
-  ]},options:{responsive:true,animation:{duration:200},plugins:{legend:{display:true,labels:{color:tC2,font:{size:10}}}},scales:{x:{grid:{color:gC},ticks:{color:tC2,font:{size:10}}},y:{grid:{color:gC},ticks:{color:tC,font:{size:9}}}}}});
+  ]},options:{indexAxis:'y',maintainAspectRatio:false,responsive:true,animation:false,,plugins:{legend:{display:true,labels:{color:tC2,font:{size:10}}}},scales:{x:{grid:{color:gC},ticks:{color:tC2,font:{size:10}}},y:{grid:{color:gC},ticks:{color:tC,font:{size:9}}}}}});
   const docc=data.slice().sort((a,b)=>b.occ-a.occ).slice(0,20);
   CHS.O=new Chart('cO',{type:'bar',data:{labels:docc.map(d=>d.t),datasets:[
     {label:'Brute %',data:docc.map(d=>d.occ),backgroundColor:docc.map(d=>oc(d.occ)),borderRadius:3},
     {label:'Nette %',data:docc.map(d=>d.occNet),backgroundColor:'rgba(46,117,182,.55)',borderRadius:3}
-  ]},options:{responsive:true,animation:{duration:200},plugins:{legend:{display:true,labels:{color:tC2,font:{size:9}}}},scales:{x:{grid:{color:gC},ticks:{color:tC,font:{size:9}}},y:{grid:{color:gC},ticks:{color:tC,callback:v=>v+'%',font:{size:9}},max:120}}}});
+  ]},options:{indexAxis:'y',maintainAspectRatio:false,responsive:true,animation:false,,plugins:{legend:{display:true,labels:{color:tC2,font:{size:9}}}},scales:{x:{grid:{color:gC},ticks:{color:tC,font:{size:9}}},y:{grid:{color:gC},ticks:{color:tC,callback:v=>v+'%',font:{size:9}},max:120}}}});
   const dOp=()=>({responsive:true,animation:{duration:300},plugins:{legend:{display:true,position:'bottom',labels:{color:tC2,font:{size:9},boxWidth:10,padding:6}},tooltip:{callbacks:{label:c=>c.label+' : '+c.parsed+' ('+(c.parsed/c.dataset.data.reduce((a,b)=>a+b,0)*100).toFixed(1)+'%)'}}},cutout:'62%'});
   CHS.D1=new Chart('cD1',{type:'doughnut',data:{labels:['Seniors','Juniors'],datasets:[{data:[sr.length,jr.length],backgroundColor:['rgba(46,117,182,.85)','rgba(197,90,17,.85)'],borderWidth:2}]},options:dOp()});
   const z1=data.filter(d=>d.top>=1).length,z2=data.filter(d=>d.top>=.85&&d.top<1).length,z3=data.filter(d=>d.top>0&&d.top<.85).length;
@@ -1940,33 +2015,106 @@ window.doSearch = function () {
   SEARCH = document.getElementById('sq').value.trim().toLowerCase();
   if (DATA.length) build();
 };
-  /* Harmonisation visuelle uniquement */
+/* ===== GRAPHIQUES LIRIS : STYLE ASAP ===== */
+/* Même police que le dashboard ASAP */
+if (!document.getElementById('asapFont')) {
+  const font = document.createElement('link');
+  font.id = 'asapFont';
+  font.rel = 'stylesheet';
+  font.href =
+    'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap';
+  document.head.appendChild(font);
+}
+Chart.defaults.font.family = "'Inter','Segoe UI',sans-serif";
+/* Palette ASAP, y compris les anciennes couleurs RGBA */
+function couleurAsap(value) {
+  if (Array.isArray(value)) return value.map(couleurAsap);
+  if (typeof value !== 'string') return value;
+  const couleurs = {
+    '#2e75b6': '#4a89c4',
+    '#c55a11': '#cf7433',
+    '#2ecc71': '#3fc7ab',
+    '#16a34a': '#3fc7ab',
+    '#15803d': '#3fc7ab',
+    '#1abc9c': '#3fc7ab',
+    '#e74c3c': '#ee7770',
+    '#c0392b': '#ee7770',
+    '#e8615a': '#ee7770',
+    '#d4a017': '#f7cd3d',
+    '#a06600': '#f7cd3d',
+    '#f5c518': '#f7cd3d'
+  };
+  const couleur = value.toLowerCase().replace(/\s+/g, '');
+  if (couleurs[couleur]) return couleurs[couleur];
+  const rgba = couleur.match(
+    /^rgba?\((\d+),(\d+),(\d+)(?:,([\d.]+))?\)$/
+  );
+  if (!rgba) return value;
+  const hex = '#' + rgba.slice(1, 4)
+    .map(v => Number(v).toString(16).padStart(2, '0'))
+    .join('');
+  const remplacement = couleurs[hex];
+  if (!remplacement) return value;
+  /* Conserver la transparence des zones et séries secondaires */
+  const alpha = rgba[4] === undefined ? 1 : Number(rgba[4]);
+  if (alpha >= 0.8) return remplacement;
+  const rgb = [1, 3, 5]
+    .map(i => parseInt(remplacement.slice(i, i + 2), 16));
+  return `rgba(${rgb.join(',')},${alpha})`;
+}
+/* Total au centre : même présentation que ASAP */
+Chart.register({
+  id: 'lirisAsapCentre',
+  afterDraw(chart) {
+    if (chart.config.type !== 'doughnut') return;
+    const arc = chart.getDatasetMeta(0).data[0];
+    if (!arc) return;
+    const total = chart.data.datasets[0].data
+      .reduce((s, v) => s + (Number(v) || 0), 0);
+    const ctx = chart.ctx;
+    const couleur = getComputedStyle(document.documentElement)
+      .getPropertyValue('--txt').trim();
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = couleur || '#3b4268';
+    ctx.font = '800 26px Inter, sans-serif';
+    ctx.fillText(total.toLocaleString('fr-FR'), arc.x, arc.y - 6);
+    ctx.font = '600 11px Inter, sans-serif';
+    ctx.globalAlpha = 0.6;
+    ctx.fillText('Total', arc.x, arc.y + 16);
+    ctx.restore();
+  }
+});
 const interfaceLirisAvantRetouche = applyLirisInterface;
 applyLirisInterface = function () {
   interfaceLirisAvantRetouche();
   const main = document.getElementById('main');
   if (!main || !main.querySelector('.krow')) return;
   const palette = [
-    ['#d6f1fb', '#203c4e'],
-    ['#e4e0fb', '#302d50'],
-    ['#d9f6ea', '#214237'],
-    ['#fde9d3', '#493626']
+    ['#d6f1fb', '#1f3b4d'],
+    ['#e4e0fb', '#2d2b52'],
+    ['#d9f6ea', '#1f4038'],
+    ['#f6dffa', '#41284a'],
+    ['#fde9d3', '#4a3624']
   ];
   main.querySelectorAll('.krow').forEach(row => {
-    const visibles = [...row.querySelectorAll('.kpi')]
+    const cards = [...row.querySelectorAll('.kpi')]
       .filter(card => !card.classList.contains('ui-hidden'));
-    visibles.forEach((card, index) => {
-      const couleurs = palette[index % palette.length];
+    cards.forEach((card, i) => {
+      const couleurs = card.classList.contains('nq')
+        ? ['#e6e9f2', '#2a3150']
+        : palette[i % palette.length];
       card.style.setProperty('--tile-light', couleurs[0]);
       card.style.setProperty('--tile-dark', couleurs[1]);
     });
   });
   const titres = {
-    cL: 'Performance par agent, du meilleur au moins élevé',
+    cL: 'Performance par agent',
     cP: 'Productivité horaire · Top 10',
     cT: 'Atteinte de l’objectif · Top 10',
     cNQ: 'Agents avec le plus de NQ · Top 10',
-    cD2: 'Répartition des agents par niveau de performance',
+    cD2: 'Répartition des performances',
     cO: 'Occupation brute et nette · Top 20'
   };
   main.querySelectorAll('.card').forEach(card => {
@@ -1976,29 +2124,27 @@ applyLirisInterface = function () {
     if (titre && titres[canvas.id]) {
       titre.textContent = titres[canvas.id];
     }
-    /* Vue d’ensemble : un grand graphique,
-       puis deux rangées de deux graphiques */
     if (UI_VIEW === 'overview') {
       card.classList.remove('ui-small');
       card.classList.toggle('ui-wide', canvas.id === 'cL');
     }
+    /* Retirer les anciennes hauteurs forcées */
     const wrapper = canvas.parentElement;
     if (wrapper.classList.contains('chart-wrap')) {
-      wrapper.style.height =
-        ['cP', 'cT', 'cNQ'].includes(canvas.id)
-          ? '400px'
-          : '360px';
+      wrapper.style.removeProperty('height');
+      wrapper.classList.toggle(
+        'asap-donut',
+        ['cD1', 'cD2', 'cD3'].includes(canvas.id)
+      );
     }
   });
   requestAnimationFrame(() => {
     const css = getComputedStyle(document.documentElement);
-    const texte = css.getPropertyValue('--txt2').trim();
-    const grille = DARK
-      ? 'rgba(179,187,207,.12)'
-      : 'rgba(83,101,122,.12)';
+    const texte = css.getPropertyValue('--txt3').trim();
+    const grille = css.getPropertyValue('--bd').trim();
     Object.values(CHS).forEach(chart => {
-      if (!chart.canvas ||
-          chart.canvas.closest('.ui-hidden')) return;
+      if (!chart.canvas || chart.canvas.closest('.ui-hidden')) return;
+      const type = chart.config.type;
       chart.options.maintainAspectRatio = false;
       chart.options.animation = false;
       const legend = chart.options.plugins?.legend;
@@ -2008,54 +2154,50 @@ applyLirisInterface = function () {
           ...legend.labels,
           color: texte,
           usePointStyle: true,
-          boxWidth: 10,
-          padding: 16,
-          font: { size: 12 }
+          boxWidth: 8,
+          padding: 12,
+          font: { family: 'Inter', size: 11 }
         };
       }
-      /* NQ : barres horizontales empilées */
-      if (chart.canvas.id === 'cNQ') {  chart.options.indexAxis = 'y';  chart.options.scales.x.type = 'linear';  chart.options.scales.x.beginAtZero = true;  chart.options.scales.x.stacked = true;  chart.options.scales.y.type = 'category';  chart.options.scales.y.stacked = true;}
-      Object.entries(chart.options.scales || {})
-        .forEach(([axe, scale]) => {
-          scale.ticks = {
-            ...scale.ticks,
-            color: texte,
-            font: { size: 12 },
-            maxRotation: 0,
-            autoSkip: true
-          };
-          scale.grid = {
-            ...scale.grid,
-            color: grille,
-            drawTicks: false
-          };
-          scale.border = { display: false };
-          if (chart.config.type === 'bar') {
-            const horizontal =
-              chart.options.indexAxis === 'y';
-            const axeValeurs = horizontal ? 'x' : 'y';
-            if (axe === axeValeurs) scale.beginAtZero = true;
-          }
-        });
-      /* Ne pas couper les occupations supérieures à 120 % */
+      chart.data.datasets.forEach(dataset => {
+        dataset.backgroundColor = couleurAsap(dataset.backgroundColor);
+        dataset.borderColor = couleurAsap(dataset.borderColor);
+        dataset.pointBackgroundColor =
+          couleurAsap(dataset.pointBackgroundColor);
+        if (type === 'bar') {
+          dataset.borderRadius = 4;
+          dataset.maxBarThickness = 24;
+        }
+        if (type === 'doughnut') {
+          dataset.borderWidth = 0;
+          dataset.borderRadius = 10;
+          dataset.spacing = 3;
+          dataset.hoverOffset = 0;
+        }
+      });
+      if (type === 'doughnut') {
+        chart.options.cutout = '72%';
+      } else {
+        const horizontal = chart.options.indexAxis === 'y';
+        Object.entries(chart.options.scales || {})
+          .forEach(([axe, scale]) => {
+            scale.ticks = {
+              ...scale.ticks,
+              color: texte,
+              font: { family: 'Inter', size: 11 }
+            };
+            scale.grid = {
+              ...scale.grid,
+              color: grille
+            };
+            if (type === 'bar' && axe === (horizontal ? 'x' : 'y')) {
+              scale.beginAtZero = true;
+            }
+          });
+      }
       if (chart.canvas.id === 'cO') {
         delete chart.options.scales.y.max;
       }
-      chart.data.datasets.forEach(dataset => {
-        if (chart.config.type === 'bar') {
-          dataset.borderRadius = 5;
-          dataset.maxBarThickness = 24;
-        }
-        if (chart.config.type === 'line') {
-          dataset.tension = 0;
-          dataset.pointRadius =
-            dataset.label === 'TOP %' ? 2 : 0;
-        }
-        if (chart.config.type === 'doughnut') {
-          dataset.borderWidth = 0;
-          dataset.hoverOffset = 5;
-        }
-      });
       chart.resize();
       chart.update('none');
     });
