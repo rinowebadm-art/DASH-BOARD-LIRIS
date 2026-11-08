@@ -1046,7 +1046,7 @@ try{
       })  
     });
   }
-loadSharedData();
+
 const DEF={
 "ZNL":{"nom":"ANDRIAMAHEFA","prenom":"Nambinintsoa","s":"Senior","site":"TANA","shift":"23:00","obj":100},
 "ZRN":{"nom":"RANAIVOARIMANANA","prenom":"Rivo","s":"Senior","site":"TANA","shift":"23:00","obj":100},
@@ -1825,8 +1825,7 @@ function applyLirisInterface() {
       'ui-small',
       UI_VIEW === 'overview' && chartPosition >= 2
     );
-    const isLastOddChart =      selectedCharts.length % 2 !== 0 &&      chartPosition === selectedCharts.length - 1;    card.classList.toggle(      'ui-wide',      isTable ||      UI_VIEW === 'occupation' ||      (UI_VIEW !== 'overview' && isLastOddChart)    );
-    );
+   const isLastOddChart =  selectedCharts.length % 2 !== 0 &&  chartPosition === selectedCharts.length - 1;card.classList.toggle(  'ui-wide',  isTable ||  UI_VIEW === 'occupation' ||  (UI_VIEW !== 'overview' && isLastOddChart));
     // Ordonner les graphiques suivant la vue choisie.
     card.style.order = isTable ? '20' : String(chartPosition + 1);
     // Donner une hauteur stable aux graphiques.
@@ -1866,7 +1865,8 @@ window.doSearch = function () {
   if (DATA.length) build();
 };
 createLirisNavigation();
-applyLirisInterface();
+  applyLirisInterface();
+  loadSharedData();
 </script>
 </body>
 </html>
