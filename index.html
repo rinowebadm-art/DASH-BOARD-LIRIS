@@ -745,6 +745,117 @@ tr:hover td { background: var(--row-hover) !important; }
     max-height: none !important;
   }
 }
+  /* Correction : thèmes et occupation de l'espace */
+html[data-theme="light"] {
+  color-scheme: light;
+  --bg: #eef2f6;
+  --bg2: #ffffff;
+  --bg3: #e7edf4;
+  --bd: #cfd8e3;
+  --bd2: #cfd8e3;
+  --txt: #182638;
+  --txt2: #283b50;
+  --txt3: #53657a;
+  --txt4: #64748b;
+  --txt5: #34465a;
+  --blue: #1976d2;
+  --ib: #ffffff;
+  --ibd: #bdcad9;
+  --row-sr: #ffffff;
+  --row-jr: #f5f7fa;
+  --row-hover: #e3effb;
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #191c27;
+  --bg2: #242735;
+  --bg3: #2c3040;
+  --bd: #393e50;
+  --bd2: #393e50;
+  --txt: #f4f5fa;
+  --txt2: #e0e4ee;
+  --txt3: #b3bbcf;
+  --txt4: #a1abc1;
+  --txt5: #d2d8e6;
+  --blue: #329bff;
+  --ib: #242735;
+  --ibd: #42495e;
+  --row-sr: #242735;
+  --row-jr: #292c3b;
+  --row-hover: #353c51;
+}
+.main.ui-dashboard {
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding: 12px;
+  gap: 10px;
+}
+.ui-dashboard > .krow {
+  gap: 10px;
+}
+.ui-dashboard .kpi {
+  min-height: 100px;
+  padding: 12px;
+}
+.ui-dashboard .card {
+  padding: 12px;
+  border-radius: 10px;
+}
+.ui-dashboard .ct {
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+.chart-wrap {
+  height: 300px;
+}
+.ui-small .chart-wrap {
+  height: 260px;
+}
+#themeBtn {
+  display: block !important;
+}
+@media (max-width: 650px) {
+  .main.ui-dashboard {
+    padding: 8px;
+    gap: 8px;
+  }
+  .chart-wrap,
+  .ui-small .chart-wrap {
+    height: 250px;
+  }
+}
+/* Bandeau lisible dans les deux thèmes */
+.hd {
+  color: var(--txt);
+}
+.hd-r,
+#dinfo {
+  color: var(--txt3) !important;
+}
+.tmbtn {
+  background: var(--bg2);
+  border: 1px solid var(--bd);
+  color: var(--txt);
+}
+.tmbtn:hover {
+  background: var(--bg3);
+}
+/* Remplir les rangées de KPI, même avec moins de cartes */
+.ui-dashboard > .krow {
+  grid-template-columns:
+    repeat(var(--kpi-columns, 4), minmax(0, 1fr));
+}
+@media (max-width: 1000px) {
+  .ui-dashboard > .krow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 650px) {
+  .ui-dashboard > .krow {
+    grid-template-columns: 1fr;
+  }
+}
 </style>
 </head>
 <body>
@@ -1639,11 +1750,7 @@ function applyLirisInterface() {
     button.classList.toggle('active', active);
     button.setAttribute('aria-pressed', String(active));
   });
-  // Le nouveau style reste sombre, comme le modèle.
-  DARK = true;
-  document.documentElement.setAttribute('data-theme', 'dark');
-  const themeButton = document.getElementById('themeBtn');
-  if (themeButton) themeButton.style.display = 'none';
+ 
   const main = document.getElementById('main');
   if (!main || !main.querySelector('.krow')) return;
   main.classList.add('ui-dashboard');
@@ -1688,7 +1795,7 @@ function applyLirisInterface() {
       card.classList.toggle('ui-hidden', !visible);
       if (visible) visibleCount++;
     });
-    productionKpis.classList.toggle('ui-hidden', visibleCount === 0);
+    productionKpis.classList.toggle('ui-hidden', visibleCount === 0);productionKpis.style.setProperty(  '--kpi-columns',  String(Math.max(1, visibleCount)));
   }
   // La qualité a sa propre vue pour éviter trois rangées de KPI.
   if (qualityKpis) {
@@ -1718,9 +1825,7 @@ function applyLirisInterface() {
       'ui-small',
       UI_VIEW === 'overview' && chartPosition >= 2
     );
-    card.classList.toggle(
-      'ui-wide',
-      isTable || UI_VIEW === 'occupation'
+    const isLastOddChart =      selectedCharts.length % 2 !== 0 &&      chartPosition === selectedCharts.length - 1;    card.classList.toggle(      'ui-wide',      isTable ||      UI_VIEW === 'occupation' ||      (UI_VIEW !== 'overview' && isLastOddChart)    );
     );
     // Ordonner les graphiques suivant la vue choisie.
     card.style.order = isTable ? '20' : String(chartPosition + 1);
@@ -1732,17 +1837,21 @@ function applyLirisInterface() {
       wrapper.appendChild(canvas);
     }
   });
-  requestAnimationFrame(() => {
+ requestAnimationFrame(() => {
+    const css = getComputedStyle(document.documentElement);
+    const textColor = css.getPropertyValue('--txt2').trim();
+    const tickColor = css.getPropertyValue('--txt3').trim();
+    const gridColor = css.getPropertyValue('--bd').trim();
     Object.values(CHS).forEach(chart => {
       if (!chart.canvas || chart.canvas.closest('.ui-hidden')) return;
       chart.options.maintainAspectRatio = false;
       chart.options.animation = false;
       if (chart.options.plugins?.legend?.labels) {
-        chart.options.plugins.legend.labels.color = '#d2d8e6';
+        chart.options.plugins.legend.labels.color = textColor;
       }
       Object.values(chart.options.scales || {}).forEach(scale => {
-        if (scale.ticks) scale.ticks.color = '#b3bbcf';
-        if (scale.grid) scale.grid.color = '#393e50';
+        if (scale.ticks) scale.ticks.color = tickColor;
+        if (scale.grid) scale.grid.color = gridColor;
       });
       chart.resize();
       chart.update('none');
