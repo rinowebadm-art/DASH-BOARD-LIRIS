@@ -856,6 +856,82 @@ html[data-theme="dark"] {
     grid-template-columns: 1fr;
   }
 }
+  /* Harmonisation visuelle LIRIS */
+.main.ui-dashboard {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 24px;
+  gap: 20px;
+  align-items: stretch;
+}
+.ui-dashboard > .krow {
+  gap: 18px;
+}
+.ui-dashboard .card,
+.ui-dashboard .card.ui-small {
+  grid-column: span 1;
+  padding: 22px;
+  border-radius: 18px;
+}
+.ui-dashboard .card.ui-wide {
+  grid-column: 1 / -1;
+}
+.ui-dashboard .kpi {
+  background: var(--tile-light, #d6f1fb);
+  color: #26364b;
+  min-height: 145px;
+  padding: 22px;
+  border-radius: 18px;
+  text-align: left;
+}
+html[data-theme="dark"] .ui-dashboard .kpi {
+  background: var(--tile-dark, #203c4e);
+  color: #f1f5f9;
+}
+.ui-dashboard .kpi .kl,
+.ui-dashboard .kpi .kv,
+.ui-dashboard .kpi .ks {
+  color: inherit;
+}
+.ui-dashboard .kl {
+  font-size: 13px;
+  font-weight: 600;
+}
+.ui-dashboard .kv {
+  margin: 12px 0 8px;
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 600;
+  overflow-wrap: normal;
+}
+.ui-dashboard .ks {
+  font-size: 12px;
+  opacity: .85;
+}
+.ui-dashboard .ct {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 18px;
+}
+.chart-wrap,
+.ui-small .chart-wrap {
+  height: 360px;
+}
+.ui-dashboard .tw {
+  max-height: 650px;
+}
+@media (max-width: 750px) {
+  .main.ui-dashboard {
+    grid-template-columns: 1fr;
+    padding: 14px;
+    gap: 16px;
+  }
+  .ui-dashboard .card,
+  .ui-dashboard .card.ui-small,
+  .ui-dashboard .card.ui-wide {
+    grid-column: 1 / -1;
+    padding: 16px;
+  }
+}
+  /* Fond pastel prioritaire, y compris pour les cartes Qualité */.ui-dashboard .krow .kpi {  background: var(--tile-light, #d6f1fb);}html[data-theme="dark"] .ui-dashboard .krow .kpi {  background: var(--tile-dark, #203c4e);}
 </style>
 </head>
 <body>
@@ -1863,6 +1939,127 @@ function applyLirisInterface() {
 window.doSearch = function () {
   SEARCH = document.getElementById('sq').value.trim().toLowerCase();
   if (DATA.length) build();
+};
+  /* Harmonisation visuelle uniquement */
+const interfaceLirisAvantRetouche = applyLirisInterface;
+applyLirisInterface = function () {
+  interfaceLirisAvantRetouche();
+  const main = document.getElementById('main');
+  if (!main || !main.querySelector('.krow')) return;
+  const palette = [
+    ['#d6f1fb', '#203c4e'],
+    ['#e4e0fb', '#302d50'],
+    ['#d9f6ea', '#214237'],
+    ['#fde9d3', '#493626']
+  ];
+  main.querySelectorAll('.krow').forEach(row => {
+    const visibles = [...row.querySelectorAll('.kpi')]
+      .filter(card => !card.classList.contains('ui-hidden'));
+    visibles.forEach((card, index) => {
+      const couleurs = palette[index % palette.length];
+      card.style.setProperty('--tile-light', couleurs[0]);
+      card.style.setProperty('--tile-dark', couleurs[1]);
+    });
+  });
+  const titres = {
+    cL: 'Performance par agent, du meilleur au moins élevé',
+    cP: 'Productivité horaire · Top 10',
+    cT: 'Atteinte de l’objectif · Top 10',
+    cNQ: 'Agents avec le plus de NQ · Top 10',
+    cD2: 'Répartition des agents par niveau de performance',
+    cO: 'Occupation brute et nette · Top 20'
+  };
+  main.querySelectorAll('.card').forEach(card => {
+    const canvas = card.querySelector('canvas');
+    if (!canvas) return;
+    const titre = card.querySelector('.ct');
+    if (titre && titres[canvas.id]) {
+      titre.textContent = titres[canvas.id];
+    }
+    /* Vue d’ensemble : un grand graphique,
+       puis deux rangées de deux graphiques */
+    if (UI_VIEW === 'overview') {
+      card.classList.remove('ui-small');
+      card.classList.toggle('ui-wide', canvas.id === 'cL');
+    }
+    const wrapper = canvas.parentElement;
+    if (wrapper.classList.contains('chart-wrap')) {
+      wrapper.style.height =
+        ['cP', 'cT', 'cNQ'].includes(canvas.id)
+          ? '400px'
+          : '360px';
+    }
+  });
+  requestAnimationFrame(() => {
+    const css = getComputedStyle(document.documentElement);
+    const texte = css.getPropertyValue('--txt2').trim();
+    const grille = DARK
+      ? 'rgba(179,187,207,.12)'
+      : 'rgba(83,101,122,.12)';
+    Object.values(CHS).forEach(chart => {
+      if (!chart.canvas ||
+          chart.canvas.closest('.ui-hidden')) return;
+      chart.options.maintainAspectRatio = false;
+      chart.options.animation = false;
+      const legend = chart.options.plugins?.legend;
+      if (legend) {
+        legend.position = 'bottom';
+        legend.labels = {
+          ...legend.labels,
+          color: texte,
+          usePointStyle: true,
+          boxWidth: 10,
+          padding: 16,
+          font: { size: 12 }
+        };
+      }
+      /* NQ : barres horizontales empilées */
+      if (chart.canvas.id === 'cNQ') {  chart.options.indexAxis = 'y';  chart.options.scales.x.type = 'linear';  chart.options.scales.x.beginAtZero = true;  chart.options.scales.x.stacked = true;  chart.options.scales.y.type = 'category';  chart.options.scales.y.stacked = true;}
+      Object.entries(chart.options.scales || {})
+        .forEach(([axe, scale]) => {
+          scale.ticks = {
+            ...scale.ticks,
+            color: texte,
+            font: { size: 12 },
+            maxRotation: 0,
+            autoSkip: true
+          };
+          scale.grid = {
+            ...scale.grid,
+            color: grille,
+            drawTicks: false
+          };
+          scale.border = { display: false };
+          if (chart.config.type === 'bar') {
+            const horizontal =
+              chart.options.indexAxis === 'y';
+            const axeValeurs = horizontal ? 'x' : 'y';
+            if (axe === axeValeurs) scale.beginAtZero = true;
+          }
+        });
+      /* Ne pas couper les occupations supérieures à 120 % */
+      if (chart.canvas.id === 'cO') {
+        delete chart.options.scales.y.max;
+      }
+      chart.data.datasets.forEach(dataset => {
+        if (chart.config.type === 'bar') {
+          dataset.borderRadius = 5;
+          dataset.maxBarThickness = 24;
+        }
+        if (chart.config.type === 'line') {
+          dataset.tension = 0;
+          dataset.pointRadius =
+            dataset.label === 'TOP %' ? 2 : 0;
+        }
+        if (chart.config.type === 'doughnut') {
+          dataset.borderWidth = 0;
+          dataset.hoverOffset = 5;
+        }
+      });
+      chart.resize();
+      chart.update('none');
+    });
+  });
 };
 createLirisNavigation();
   applyLirisInterface();
