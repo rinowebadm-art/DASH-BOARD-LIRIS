@@ -2041,7 +2041,7 @@ function renderLirisAgentPanel() {
   select.setAttribute('aria-label', 'Choisir un agent');
   select.style.cssText =
     'width:100%;max-width:480px;padding:12px;margin-bottom:18px;' +
-    'background:var(--card);color:var(--txt);' +
+    'background:var(--bg2);color:var(--txt);' +
     'border:1px solid var(--bd);border-radius:12px;';
   agents.forEach(agent => {
     const option = document.createElement('option');
@@ -2717,11 +2717,7 @@ styleOverviewDonuts.textContent = `
     grid-column: span 1 !important;
     min-width: 0;
   }
-  .overview-donuts .chart-wrap.asap-donut {
-    width: 100%;
-    max-width: 390px;
-    height: 300px;
-  }
+  .overview-donuts .chart-wrap.asap-donut {  width: 100%;  max-width: 480px;  height: 380px;}
   .overview-donuts .donut-empty {
     height: 300px;
     display: flex;
