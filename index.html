@@ -2517,6 +2517,99 @@ applyLirisInterface = function () {
   suivant.addEventListener('click', () => avancerPeriode(1));
   refreshLabels();
 })();
+  /* ===== VUE D’ENSEMBLE : UNIQUEMENT 3 DONUTS ===== */
+const styleOverviewDonuts = document.createElement('style');
+styleOverviewDonuts.textContent = `
+  .main.ui-dashboard.overview-donuts {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+  }
+  .overview-donuts .card.overview-donut {
+    grid-column: span 1 !important;
+    min-width: 0;
+  }
+  .overview-donuts .chart-wrap.asap-donut {
+    width: 100%;
+    max-width: 390px;
+    height: 300px;
+  }
+  .overview-donuts .donut-empty {
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--txt3);
+    padding: 20px;
+  }
+  @media (max-width: 900px) {
+    .main.ui-dashboard.overview-donuts {
+      grid-template-columns: 1fr;
+    }
+  }
+`;
+document.head.appendChild(styleOverviewDonuts);
+const interfaceAvantTroisDonuts = applyLirisInterface;
+applyLirisInterface = function () {
+  interfaceAvantTroisDonuts();
+  const main = document.getElementById('main');
+  if (!main) return;
+  const overview = UI_VIEW === 'overview';
+  main.classList.toggle('overview-donuts', overview);
+  // Nettoyage lorsqu’on quitte la Vue d’ensemble.
+  main.querySelectorAll('.overview-donut').forEach(card => {
+    card.classList.remove('overview-donut');
+  });
+  main.querySelectorAll('.donut-empty').forEach(el => el.remove());
+  if (!overview || !main.querySelector('.krow')) return;
+  // Masquer toutes les cartes KPI de cette vue.
+  main.querySelectorAll('.krow').forEach(row => {
+    row.classList.add('ui-hidden');
+  });
+  const donuts = [
+    ['cD1', 'Seniors / Juniors', 'D1'],
+    ['cD2', 'Répartition des performances', 'D2'],
+    ['cD3', 'NQ par catégorie', 'D3']
+  ];
+  // Masquer tous les graphiques et le classement.
+  main.querySelectorAll('.card').forEach(card => {
+    card.classList.add('ui-hidden');
+  });
+  // Afficher seulement les trois donuts.
+  donuts.forEach(([canvasId, titre, chartKey], index) => {
+    const canvas = document.getElementById(canvasId);
+    const card = canvas?.closest('.card');
+    if (!card) return;
+    card.classList.remove('ui-hidden', 'ui-small', 'ui-wide');
+    card.classList.add('overview-donut');
+    card.style.order = String(index + 1);
+    const heading = card.querySelector('.ct');
+    if (heading) heading.textContent = titre;
+    const wrapper = canvas.parentElement;
+    wrapper.classList.add('asap-donut');
+    // Le donut qualité n’existe pas si aucun NQ n’est compté.
+    // Garder sa carte visible avec un message explicite.
+    if (!CHS[chartKey]) {
+      wrapper.classList.add('ui-hidden');
+      const message = document.createElement('div');
+      message.className = 'donut-empty';
+      message.textContent = NQCOLS
+        ? 'Aucune NQ comptabilisée pour les agents et la période sélectionnés.'
+        : 'Fichier NQ non chargé.';
+      card.appendChild(message);
+    } else {
+      wrapper.classList.remove('ui-hidden');
+    }
+  });
+  requestAnimationFrame(() => {
+    ['D1', 'D2', 'D3'].forEach(key => {
+      const chart = CHS[key];
+      if (!chart) return;
+      chart.resize();
+      chart.update('none');
+    });
+  });
+};
 createLirisNavigation();
   applyLirisInterface();
   loadSharedData();
