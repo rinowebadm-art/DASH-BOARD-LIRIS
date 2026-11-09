@@ -1004,6 +1004,74 @@ html[data-theme="dark"] .ui-dashboard .krow .kpi {
 }
 /* Donuts agrandis */.chart-wrap.asap-donut {  width: 100%;  max-width: 480px;  height: 380px;  margin: 0 auto;}@media (max-width: 750px) {  .chart-wrap.asap-donut {    max-width: 100%;    height: 340px;  }}
 /* Masquer les détails techniques du bandeau */#diag,#dinfo {  display: none !important;}
+/* ===== RELIEF ET COULEURS PLUS VIVES ===== */
+/* Cartes légèrement surélevées */
+#main #lirisOverview .ov-tile,
+#main #lirisOverview .ov-panel {
+  border: 1px solid rgba(255, 255, 255, .65);
+  border-radius: 22px;
+  box-shadow:
+    0 16px 32px rgba(59, 66, 104, .13),
+    0 4px 8px rgba(59, 66, 104, .05),
+    inset 0 1px 0 rgba(255, 255, 255, .75);
+}
+/* Même palette : bleu, lavande, menthe, orange */
+html[data-theme="light"] #main #lirisOverview .ov-tile:nth-child(1) {
+  background: linear-gradient(135deg, #e1f6ff, #a9dfff);
+}
+html[data-theme="light"] #main #lirisOverview .ov-tile:nth-child(2) {
+  background: linear-gradient(135deg, #eee9ff, #c4b7fa);
+}
+html[data-theme="light"] #main #lirisOverview .ov-tile:nth-child(3) {
+  background: linear-gradient(135deg, #e0fff1, #9ee8cc);
+}
+html[data-theme="light"] #main #lirisOverview .ov-tile:nth-child(4) {
+  background: linear-gradient(135deg, #fff0df, #ffc88f);
+}
+/* Carte principale : relief plus marqué */
+#main #lirisOverview .ov-performance {
+  background: linear-gradient(145deg, #60a9e7, #357ab8);
+  border-color: rgba(255, 255, 255, .3);
+  box-shadow:
+    0 20px 36px rgba(53, 122, 184, .28),
+    inset 0 1px 0 rgba(255, 255, 255, .4);
+}
+#main #lirisOverview .ov-performance .ov-big {
+  text-shadow: 0 3px 8px rgba(0, 0, 0, .14);
+}
+/* Fiches de suivi : relief discret */
+#main #lirisOverview .ov-agent {
+  box-shadow: 0 5px 12px rgba(59, 66, 104, .07);
+}
+/* Adaptation au mode sombre */
+html[data-theme="dark"] #main #lirisOverview .ov-tile,
+html[data-theme="dark"] #main #lirisOverview .ov-panel {
+  border-color: rgba(255, 255, 255, .1);
+  box-shadow:
+    0 16px 32px rgba(0, 0, 0, .3),
+    inset 0 1px 0 rgba(255, 255, 255, .08);
+}
+html[data-theme="dark"] #main #lirisOverview .ov-performance {
+  box-shadow: 0 18px 34px rgba(0, 0, 0, .35);
+}
+/* Léger mouvement au survol, seulement avec une souris */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  #main #lirisOverview .ov-tile,
+  #main #lirisOverview .ov-agent {
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  #main #lirisOverview .ov-tile:hover,
+  #main #lirisOverview .ov-agent:hover {
+    transform: translateY(-3px);
+  }
+}
+@media print {
+  #main #lirisOverview .ov-tile,
+  #main #lirisOverview .ov-panel,
+  #main #lirisOverview .ov-agent {
+    box-shadow: none;
+  }
+}
 </style>
 </head>
 <body>
