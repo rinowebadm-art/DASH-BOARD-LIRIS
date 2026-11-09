@@ -1287,65 +1287,7 @@ html[data-theme="dark"] #main #lirisOverview .ov-performance {
 }
   /* Masquer le diagnostic de chargement */#dataLoadStatus {  display: none !important;}
 </style>
-  <script>
-Chart.register({
-  id: 'barresPlusLarges',
-  beforeUpdate(chart) {
-    const quotidien = chart.canvas.id === 'ovDailyChart';
-    chart.data.datasets.forEach(dataset => {
-      const type = dataset.type || chart.config.type;
-      if (type !== 'bar') return;
-      dataset.barThickness = 'flex';
-      dataset.maxBarThickness = quotidien ? 32 : 55;
-      dataset.categoryPercentage = quotidien ? 0.92 : 0.98;
-      dataset.barPercentage = quotidien ? 0.92 : 1;
-    });
-    if (!quotidien) return;
-    const css = getComputedStyle(document.documentElement);
-    const texte = css.getPropertyValue('--txt3').trim();
-    const bordure = css.getPropertyValue('--bd').trim();
-    const x = chart.options.scales?.x;
-    const y = chart.options.scales?.y;
-    if (x) {
-      x.grid = {
-        ...x.grid,
-        display: false
-      };
-      x.border = {
-        ...x.border,
-        display: false
-      };
-      x.ticks = {
-        ...x.ticks,
-        color: texte,
-        autoSkip: true,
-        maxTicksLimit: chart.width < 600 ? 6 : 10,
-        minRotation: 0,
-        maxRotation: 0,
-        padding: 10,
-        font: { size: 12 }
-      };
-    }
-    if (y) {
-      y.grid = {
-        ...y.grid,
-        color: bordure,
-        drawTicks: false
-      };
-      y.border = {
-        ...y.border,
-        display: false
-      };
-      y.ticks = {
-        ...y.ticks,
-        color: texte,
-        maxTicksLimit: 6,
-        padding: 12,
-        font: { size: 12 }
-      };
-    }
-  }
-});
+  <script>Chart.register({  id: 'barresPlusLarges',  beforeUpdate(chart) {    const quotidien = chart.canvas.id === 'ovDailyChart';    chart.data.datasets.forEach(dataset => {      const type = dataset.type || chart.config.type;      if (type !== 'bar') return;      dataset.barThickness = quotidien ? 32 : 'flex';      dataset.maxBarThickness = quotidien ? 32 : 55;      dataset.categoryPercentage = quotidien ? 0.90 : 0.98;      dataset.barPercentage = quotidien ? 0.95 : 1;    });  }});</script>
 </script>
 <style>#main .chart-wrap:not(.asap-donut):not(:has(#cO)),#main .ui-small .chart-wrap:not(.asap-donut):not(:has(#cO)) {  height: 420px !important;}@media (max-width: 750px) {  #main .chart-wrap:not(.asap-donut):not(:has(#cO)),  #main .ui-small .chart-wrap:not(.asap-donut):not(:has(#cO)) {    height: 340px !important;  }}</style>
 
