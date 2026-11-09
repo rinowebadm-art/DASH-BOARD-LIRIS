@@ -1173,22 +1173,154 @@ html[data-theme="dark"] #main #lirisOverview .ov-performance {
     box-shadow: none;
   }
 }
+  /* En-tête LIRIS, présentation du modèle ASAP */
+.hd {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px 28px;
+  background: linear-gradient(110deg, #2b3156, #4a89c4);
+  color: #fff;
+  border: none;
+}
+.hd .header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+.hd .header-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  border: 1px solid rgba(255,255,255,.35);
+  border-radius: 15px;
+  background: rgba(255,255,255,.16);
+  color: #fff;
+  font-size: 25px;
+}
+.hd .header-title h1 {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  color: #fff;
+  font-size: clamp(18px, 1.4vw, 25px);
+  font-weight: 800;
+  letter-spacing: .7px;
+  line-height: 1.3;
+}
+.hd .header-accent {
+  color: #ffd0a3;
+}
+.hd .badge {
+  margin-left: 6px;
+  padding: 3px 10px;
+  background: #cf7433;
+  color: #fff;
+  border-radius: 9px;
+  font-size: 12px;
+  letter-spacing: 0;
+}
+.hd .header-subtitle {
+  margin: 4px 0 0;
+  color: rgba(255,255,255,.75);
+  font-size: 12px;
+  font-weight: 600;
+}
+.hd .hd-r {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  flex-shrink: 0;
+  text-align: right;
+}
+.hd .hd-r #themeBtn {
+  display: inline-flex !important;
+  align-items: center;
+  margin: 0;
+  padding: 5px 12px;
+  border: 1px solid rgba(255,255,255,.35);
+  border-radius: 20px;
+  background: rgba(255,255,255,.16);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+.hd .hd-r #themeBtn:hover {
+  background: rgba(255,255,255,.28);
+}
+.hd .hd-r #hdate {
+  display: block !important;
+  margin: 0;
+  color: #fff !important;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.hd .header-technical {
+  display: none !important;
+}
+@media (max-width: 650px) {
+  .hd {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+    gap: 14px;
+  }
+  .hd .hd-r {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .hd .header-title h1 {
+    font-size: 18px;
+  }
+}
 </style>
 </head>
 <body>
-<div class="hd">
-  <div>
-    <h1>DASHBOARD SOFTWARE PRODUCTION LIRIS <span class="badge" id="wk">S--</span></h1>
-    <div style="font-size:10px;color:#dbe6f2;margin-top:3px" id="dinfo">En attente de l'export_monitoring…</div>
-    <div class="diag" id="diag"></div>
+<header class="hd">
+  <div class="header-left">
+    <div class="header-icon" aria-hidden="true">▦</div>
+
+    <div class="header-title">
+      <h1>
+        DASHBOARD SOFTWARE
+        <span class="header-accent">PRODUCTION LIRIS</span>
+        <span class="badge" id="wk">S--</span>
+      </h1>
+      <p class="header-subtitle">Production · Performance · Qualité</p>
+    </div>
   </div>
+
   <div class="hd-r">
-    <button class="tmbtn" id="themeBtn" onclick="toggleTheme()">Mode sombre</button>
-    <div id="agct">–</div>
+    <button type="button"
+            class="tmbtn"
+            id="themeBtn"
+            onclick="toggleTheme()">
+      Mode sombre
+    </button>
     <div id="hdate"></div>
-    <div>Base : <span id="baseLabel">40h / semaine</span> · <span id="basecount">62 agents</span></div>
   </div>
-</div>
+
+  <!-- Identifiants conservés pour les fonctions existantes -->
+  <div class="header-technical" hidden>
+    <div id="dinfo"></div>
+    <div class="diag" id="diag"></div>
+    <div id="agct"></div>
+    <span id="baseLabel"></span>
+    <span id="basecount"></span>
+  </div>
+</header>
 <div class="imp" style="display:none;">
   <label class="dz" for="fi">
     <input type="file" id="fi" accept=".xlsx,.xls" disabled>
@@ -3728,6 +3860,35 @@ applyLirisInterface = function () {
 createLirisNavigation();
   applyLirisInterface();
   loadSharedData();
+/* Synchronisation de la date et du bouton de thème */
+(function () {
+  function actualiserEntete() {
+    const [debut, fin] = periodRange();
+    const format = date => date.toLocaleDateString('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+    document.getElementById('hdate').textContent =
+      PERIOD === 'jour'
+        ? format(debut)
+        : format(debut) + ' → ' + format(fin);
+    const bouton = document.getElementById('themeBtn');
+    bouton.textContent = DARK ? 'Mode clair' : 'Mode sombre';
+    bouton.setAttribute('aria-pressed', String(DARK));
+  }
+  const anciensLibelles = refreshLabels;
+  refreshLabels = function () {
+    anciensLibelles();
+    actualiserEntete();
+  };
+  const ancienToggle = toggleTheme;
+  toggleTheme = function () {
+    ancienToggle();
+    actualiserEntete();
+  };
+  actualiserEntete();
+})();
 </script>
 </body>
 </html>
