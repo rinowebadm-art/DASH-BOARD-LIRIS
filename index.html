@@ -4139,6 +4139,105 @@ createLirisNavigation();
   refreshLabels();
   if (RAWROWS.length) recompute();
 })();
+  (function installerDetailQualiteAgent() {
+  const renduInitial = renderLirisAgentPanel;
+  renderLirisAgentPanel = function () {
+    renduInitial();
+    const panel = document.getElementById('lirisAgentPanel');
+    if (!panel || UI_VIEW !== 'agents') return;
+    const section = document.createElement('section');
+    section.style.cssText =
+      'margin-top:24px;padding:20px;background:var(--bg2);' +
+      'border:1px solid var(--bd);border-radius:16px;';
+    const titre = document.createElement('h3');
+    titre.textContent = 'Détails qualité · ' + LIRIS_AGENT_SELECTION;
+    titre.style.marginBottom = '12px';
+    section.appendChild(titre);
+    panel.appendChild(section);
+    const message = document.createElement('p');
+    message.style.cssText = 'color:var(--txt2);margin-bottom:14px;';
+    section.appendChild(message);
+    if (!RAWNQROWS.length || !NQCOLS) {
+      message.textContent = 'Données NQ non chargées.';
+      return;
+    }
+    const entetes = Object.keys(RAWNQROWS[0]);
+    const exact = nom => entetes.find(h => cl(h) === cl(nom));
+    const cDate = exact('Date réalisation');
+    const cTri = exact('Trigramme') || NQCOLS.cTri;
+    const cVal = exact('Validation') || NQCOLS.cVal;
+    const cCat = exact('Catégorie') || NQCOLS.cCat;
+    const cConstat = exact('Constat NQ');
+    const cComment = exact('Commentaires');
+    const cOutil = exact('Outil');
+    if (!cDate || !cTri) {
+      message.textContent =
+        'Colonne Date réalisation ou Trigramme introuvable.';
+      return;
+    }
+    const [debut, fin] = periodRange();
+    const selection = String(LIRIS_AGENT_SELECTION).toUpperCase();
+    const lignes = [];
+    RAWNQROWS.forEach(row => {
+      const tri = String(row[cTri] || '')
+        .trim().toUpperCase().slice(0, 3);
+      if (tri !== selection) return;
+      if (cVal && cl(row[cVal]) === 'ko') return;
+      if (cOutil && cl(row[cOutil]) !== 'liris') return;
+      const date = parseDateCell(row[cDate]);
+      if (!date || date < debut || date > fin) return;
+      lignes.push({ row, date });
+    });
+    lignes.sort((a, b) => b.date - a.date);
+    message.textContent =
+      lignes.length.toLocaleString('fr-FR') +
+      ' RC · Date réalisation · KO exclus' +
+      (cOutil ? ' · LIRIS uniquement' : '') + '.';
+    if (!lignes.length) {
+      message.textContent += ' Aucun détail pour cette sélection.';
+      return;
+    }
+    const zone = document.createElement('div');
+    zone.style.cssText =
+      'overflow:auto;max-height:500px;margin-top:12px;';
+    const table = document.createElement('table');
+    table.style.cssText = 'width:100%;min-width:700px;';
+    const thead = document.createElement('thead');
+    const trEntete = document.createElement('tr');
+    ['Date réalisation', 'Catégorie', 'Constat NQ',
+     'Validation', 'Commentaires'].forEach(label => {
+      const th = document.createElement('th');
+      th.textContent = label;
+      th.style.textAlign = 'left';
+      trEntete.appendChild(th);
+    });
+    thead.appendChild(trEntete);
+    table.appendChild(thead);
+    const tbody = document.createElement('tbody');
+    lignes.forEach(({ row, date }) => {
+      const tr = document.createElement('tr');
+      const valeurs = [
+        date.toLocaleDateString('fr-FR'),
+        cCat ? row[cCat] : '',
+        cConstat ? row[cConstat] : '',
+        cVal ? row[cVal] : '',
+        cComment ? row[cComment] : ''
+      ];
+      valeurs.forEach(value => {
+        const td = document.createElement('td');
+        td.textContent = String(value ?? '').trim() || '—';
+        td.style.cssText =
+          'text-align:left;vertical-align:top;white-space:pre-wrap;';
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    zone.appendChild(table);
+    section.appendChild(zone);
+  };
+  if (UI_VIEW === 'agents') renderLirisAgentPanel();
+})();
 </script>
 </body>
 </html>
