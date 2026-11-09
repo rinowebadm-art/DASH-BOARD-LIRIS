@@ -2229,11 +2229,43 @@ function build(){
   const gC=DARK?'#2d3f55':'#eef1f4';
   const tC=DARK?'#94a3b8':'#6b7280';
   const tC2=DARK?'#cbd5e1':'#374151';
-  const bO=(pct,h)=>({responsive:true,animation:{duration:200},plugins:{legend:{display:false}},indexAxis:h?'y':'x',scales:{x:{grid:{color:gC},ticks:{color:tC,font:{size:9},...(pct?{callback:v=>(v*100).toFixed(0)+'%'}:{})}},y:{grid:{color:gC},ticks:{color:tC2,font:{size:9}}}}});
+  const bO = (pct, horizontal) => ({
+  responsive: true,
+  maintainAspectRatio: false,
+  animation: { duration: 200 },
+  plugins: {
+    legend: { display: false }
+  },
+  indexAxis: horizontal ? 'y' : 'x',
+  scales: {
+    x: {
+      beginAtZero: horizontal,
+      grid: { color: gC },
+      ticks: {
+        color: tC,
+        font: { size: 10 },
+        ...(pct && horizontal
+          ? { callback: v => (v * 100).toFixed(0) + '%' }
+          : {})
+      }
+    },
+    y: {
+      beginAtZero: !horizontal,
+      grid: { color: gC },
+      ticks: {
+        color: tC2,
+        font: { size: 10 },
+        ...(pct && !horizontal
+          ? { callback: v => (v * 100).toFixed(0) + '%' }
+          : {})
+      }
+    }
+  }
+});
   const d10p=data.slice().sort((a,b)=>b.ph-a.ph).slice(0,10);
-  CHS.P=new Chart('cP',{type:'bar',data:{labels:d10p.map(d=>d.t),datasets:[{data:d10p.map(d=>d.ph),backgroundColor:d10p.map(d=>d.s==='Senior'?'rgba(46,117,182,.85)':'rgba(197,90,17,.85)'),borderRadius:3}]},options:bO(false,true)});
+  CHS.P=new Chart('cP',{type:'bar',data:{labels:d10p.map(d=>d.t),datasets:[{data:d10p.map(d=>d.ph),backgroundColor:d10p.map(d=>d.s==='Senior'?'rgba(46,117,182,.85)':'rgba(197,90,17,.85)'),borderRadius:3}]},options:bO(false,false)});
   const d10t=data.slice().sort((a,b)=>b.top-a.top).slice(0,10);
-  CHS.T=new Chart('cT',{type:'bar',data:{labels:d10t.map(d=>d.t),datasets:[{data:d10t.map(d=>d.top),backgroundColor:d10t.map(d=>tc(d.top)),borderRadius:3}]},options:bO(true,true)});
+  CHS.T=new Chart('cT',{type:'bar',data:{labels:d10t.map(d=>d.t),datasets:[{data:d10t.map(d=>d.top),backgroundColor:d10t.map(d=>tc(d.top)),borderRadius:3}]},options:bO(true,false)});
   const dataT=new Set(data.map(x=>x.t));
   const nqArr=Object.entries(NQ_DATA).filter(([t])=>dataT.has(t)).map(([t,v])=>{const d=data.find(x=>x.t===t);const rate=d&&d.res>0?(v.total/d.res):0;return{t,...v,rate};}).filter(x=>x.rate>0).sort((a,b)=>b.total-a.total).slice(0,10);
   if(nqArr.length){
