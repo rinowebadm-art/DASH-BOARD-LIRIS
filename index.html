@@ -1772,7 +1772,7 @@ function readNQ(f){
       if(!rows.length){setSpNQ('Feuille NQ vide','err');return;}
       const H=Object.keys(rows[0]);
       const cTri=fc(H,'trigramme','trigr','login','agent');
-      const cDate=fc(H,'date de lecture','date lecture','date');
+      const cDate = H.find(h => cl(h) === 'date realisation');
       if(!cTri||!cDate){setSpNQ('Colonnes introuvables','err');showDiag('NQ colonnes reçues :\n'+H.join('\n'));return;}
       const cCat=fc(H,'categorie','catégorie','cat','type nq','nature');
       const cVal=fc(H,'valid');
@@ -1791,13 +1791,14 @@ function readNQ(f){
 // ── NOUVEAUTÉ : recomputeNQ ré-agrège les NQ sur la fenêtre périodRange() courante ──
 function recomputeNQ(){ 
   if(!RAWNQROWS.length||!NQCOLS)return;  
+  const dateRealisation = Object.keys(RAWNQROWS[0])  .find(h => cl(h) === 'date realisation');if (!dateRealisation) {  NQ_DATA = {};  addScores(DATA);  build();  setSpNQ('Erreur : colonne Date réalisation absente', 'err');  return;}NQCOLS.cDate = dateRealisation;
   const{sn,cTri,cDate,cCat,cVal,cL,cN}=NQCOLS;  const agg={};  
   let skipped=0,counted=0;  
   RAWNQROWS.forEach(row=>{
     const [start, end] = periodRange();
     const date = parseDateCell(row[cDate]);if (!date || date < start || date > end) return;
     const t=String(row[cTri]||'').trim().toUpperCase().slice(0,3);    if(!t||t.length<2)return;    
-    if(cVal){  const vs=cl(String(row[cVal]||''));  if(vs==='ko'||vs==='nok'){skipped++;return;}
+    if(cVal){  const vs=cl(String(row[cVal]||''));  if(vs==='ko'){skipped++;return;}
     }
     counted++;
     if(!agg[t])agg[t]={total:0,mauvaise:0,loupe:0,nonconforme:0};
