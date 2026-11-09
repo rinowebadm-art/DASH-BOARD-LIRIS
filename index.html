@@ -1288,6 +1288,7 @@ html[data-theme="dark"] #main #lirisOverview .ov-performance {
   /* Masquer le diagnostic de chargement */#dataLoadStatus {  display: none !important;}
 </style>
   <script>Chart.register({  id: 'barresPlusLarges',  beforeUpdate(chart) {    chart.data.datasets.forEach(dataset => {      const type = dataset.type || chart.config.type;      if (type !== 'bar') return;      dataset.barThickness = 'flex';dataset.maxBarThickness = 55;dataset.categoryPercentage = 0.98;dataset.barPercentage = 1;});  }});</script>
+<style>#main .chart-wrap:not(.asap-donut):not(:has(#cO)),#main .ui-small .chart-wrap:not(.asap-donut):not(:has(#cO)) {  height: 420px !important;}@media (max-width: 750px) {  #main .chart-wrap:not(.asap-donut):not(:has(#cO)),  #main .ui-small .chart-wrap:not(.asap-donut):not(:has(#cO)) {    height: 340px !important;  }}</style>
 </head>
 <body>
 <header class="hd">
