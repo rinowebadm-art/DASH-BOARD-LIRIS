@@ -2309,6 +2309,214 @@ applyLirisInterface = function () {
     });
   });
 };
+  /* ===== SÉLECTEURS JOUR / SEMAINE / MOIS ===== */
+(function installerSelecteursPeriode() {
+  const dateInput = document.getElementById('pdate');
+  if (!dateInput || document.getElementById('periodSelectors')) return;
+  const zone = document.createElement('span');
+  zone.id = 'periodSelectors';
+  zone.style.cssText =
+    'display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap';
+  dateInput.after(zone);
+  // Année commune aux sélecteurs semaine et mois.
+  const annee = document.createElement('input');
+  annee.type = 'number';
+  annee.className = 'dpick';
+  annee.min = '1900';
+  annee.max = '9999';
+  annee.style.width = '85px';
+  annee.setAttribute('aria-label', 'Année');
+  // Sélection explicite du numéro de semaine.
+  const semaine = document.createElement('select');
+  semaine.className = 'dpick';
+  semaine.setAttribute('aria-label', 'Semaine');
+  // Sélection explicite du mois.
+  const mois = document.createElement('select');
+  mois.className = 'dpick';
+  mois.setAttribute('aria-label', 'Mois');
+  const nomsMois = [
+    'Janvier', 'Février', 'Mars', 'Avril',
+    'Mai', 'Juin', 'Juillet', 'Août',
+    'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  ];
+  nomsMois.forEach((nom, index) => {
+    const option = document.createElement('option');
+    option.value = String(index);
+    option.textContent = nom;
+    mois.appendChild(option);
+  });
+  const precedent = document.createElement('button');
+  precedent.type = 'button';
+  precedent.className = 'bof';
+  precedent.textContent = '‹ Précédent';
+  const suivant = document.createElement('button');
+  suivant.type = 'button';
+  suivant.className = 'bof';
+  suivant.textContent = 'Suivant ›';
+  const resume = document.createElement('span');
+  resume.style.cssText = 'color:var(--txt3);font-size:11px';
+  resume.setAttribute('aria-live', 'polite');
+  zone.append(annee, semaine, mois, precedent, suivant, resume);
+  /*
+    Une semaine ISO appartient à l'année de son jeudi.
+    Exemple : certains jours de fin décembre appartiennent
+    à la première semaine de l'année suivante.
+  */
+  function anneeISO(date) {
+    const jeudi = new Date(date);
+    jeudi.setHours(0, 0, 0, 0);
+    jeudi.setDate(
+      jeudi.getDate() + 4 - (jeudi.getDay() || 7)
+    );
+    return jeudi.getFullYear();
+  }
+  function nombreSemaines(year) {
+    return weekNum(new Date(year, 11, 28));
+  }
+  function lundiISO(year, numero) {
+    const quatreJanvier = new Date(year, 0, 4);
+    quatreJanvier.setHours(0, 0, 0, 0);
+    const lundi = new Date(quatreJanvier);
+    lundi.setDate(
+      quatreJanvier.getDate() -
+      ((quatreJanvier.getDay() + 6) % 7) +
+      (numero - 1) * 7
+    );
+    return lundi;
+  }
+  function remplirSemaines(year, numero) {
+    semaine.replaceChildren();
+    const maximum = nombreSemaines(year);
+    const selection = Math.max(1, Math.min(numero, maximum));
+    for (let n = 1; n <= maximum; n++) {
+      const lundi = lundiISO(year, n);
+      const dimanche = new Date(lundi);
+      dimanche.setDate(dimanche.getDate() + 6);
+      const option = document.createElement('option');
+      option.value = String(n);
+      option.textContent =
+        'S' + String(n).padStart(2, '0') +
+        ' · ' + iso(lundi) + ' → ' + iso(dimanche);
+      semaine.appendChild(option);
+    }
+    semaine.value = String(selection);
+  }
+  function synchroniserSelecteurs() {
+    dateInput.value = iso(PDATE);
+    const estJour = PERIOD === 'jour';
+    const estSemaine = PERIOD === 'semaine';
+    const estMois = PERIOD === 'mois';
+    dateInput.style.display = estJour ? '' : 'none';
+    annee.style.display = estJour ? 'none' : '';
+    semaine.style.display = estSemaine ? '' : 'none';
+    mois.style.display = estMois ? '' : 'none';
+    if (estSemaine) {
+      const year = anneeISO(PDATE);
+      annee.value = String(year);
+      remplirSemaines(year, weekNum(PDATE));
+    } else {
+      annee.value = String(PDATE.getFullYear());
+    }
+    mois.value = String(PDATE.getMonth());
+    const [start, end] = periodRange();
+    if (estJour) {
+      resume.textContent = iso(start);
+    } else if (estSemaine) {
+      resume.textContent =
+        'Semaine ' + weekNum(PDATE) +
+        ' · du ' + iso(start) + ' au ' + iso(end);
+    } else {
+      resume.textContent =
+        nomsMois[PDATE.getMonth()] + ' ' + PDATE.getFullYear() +
+        ' · du ' + iso(start) + ' au ' + iso(end);
+    }
+    ['pJ', 'pS', 'pM'].forEach(id => {
+      document.getElementById(id).className = 'bof pbtn';
+    });
+    const actif = estJour ? 'pJ' : estSemaine ? 'pS' : 'pM';
+    document.getElementById(actif).className = 'bon pbtn';
+    precedent.title = estJour
+      ? 'Jour précédent'
+      : estSemaine ? 'Semaine précédente' : 'Mois précédent';
+    suivant.title = estJour
+      ? 'Jour suivant'
+      : estSemaine ? 'Semaine suivante' : 'Mois suivant';
+  }
+  /*
+    Conserver tes libellés existants, puis synchroniser
+    les nouveaux champs après chaque changement.
+  */
+  const anciensLibelles = refreshLabels;
+  refreshLabels = function () {
+    anciensLibelles();
+    synchroniserSelecteurs();
+  };
+  function recalculerPeriode() {
+    refreshLabels();
+    /*
+      recompute() recalcule déjà les NQ lorsqu'elles sont chargées :
+      inutile d'appeler une seconde fois recomputeNQ().
+    */
+    if (RAWROWS.length) {
+      recompute();
+    } else if (RAWNQROWS.length && NQCOLS) {
+      recomputeNQ();
+    }
+  }
+  // Remplacer le comportement des boutons existants.
+  setPeriod = function (periode) {
+    if (!['jour', 'semaine', 'mois'].includes(periode)) return;
+    PERIOD = periode;
+    recalculerPeriode();
+  };
+  // Le calendrier reste utilisé uniquement en mode Jour.
+  onDateChange = function () {
+    const valeur = dateInput.value;
+    if (!valeur) return;
+    const date = parseDateCell(valeur);
+    if (!date) return;
+    PDATE = date;
+    recalculerPeriode();
+  };
+  function lireSelection() {
+    const year = Number(annee.value);
+    if (!Number.isInteger(year) || year < 1900 || year > 9999) {
+      return;
+    }
+    if (PERIOD === 'semaine') {
+      const numero = Math.max(
+        1,
+        Math.min(Number(semaine.value) || 1, nombreSemaines(year))
+      );
+      PDATE = lundiISO(year, numero);
+    } else if (PERIOD === 'mois') {
+      PDATE = new Date(year, Number(mois.value), 1);
+    }
+    recalculerPeriode();
+  }
+  annee.addEventListener('change', lireSelection);
+  semaine.addEventListener('change', lireSelection);
+  mois.addEventListener('change', lireSelection);
+  function avancerPeriode(direction) {
+    const date = new Date(PDATE);
+    date.setHours(0, 0, 0, 0);
+    if (PERIOD === 'jour') {
+      date.setDate(date.getDate() + direction);
+    } else if (PERIOD === 'semaine') {
+      date.setDate(date.getDate() + direction * 7);
+    } else {
+      // Éviter le débordement d'un 31 vers le mois d'après.
+      date.setDate(1);
+      date.setMonth(date.getMonth() + direction);
+    }
+    if (date.getFullYear() < 1900 || date.getFullYear() > 9999) return;
+    PDATE = date;
+    recalculerPeriode();
+  }
+  precedent.addEventListener('click', () => avancerPeriode(-1));
+  suivant.addEventListener('click', () => avancerPeriode(1));
+  refreshLabels();
+})();
 createLirisNavigation();
   applyLirisInterface();
   loadSharedData();
