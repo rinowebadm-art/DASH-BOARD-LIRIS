@@ -3078,14 +3078,11 @@ applyLirisInterface = function () {
       const legend = chart.options.plugins?.legend;
       if (legend) {
         legend.position = 'bottom';
-        legend.labels = {
-          ...legend.labels,
-          color: texte,
-          usePointStyle: true,
-          boxWidth: 8,
-          padding: 12,
-          font: { family: 'Inter', size: 12 }
-        };
+      legend.labels.color = texte;
+        legend.labels.usePointStyle = true;
+        legend.labels.boxWidth = 8;
+        legend.labels.padding = 12;
+        legend.labels.font = { family: 'Inter', size: 12 };
       }
       chart.data.datasets.forEach(dataset => {
         dataset.backgroundColor = couleurAsap(dataset.backgroundColor);
@@ -3126,15 +3123,9 @@ applyLirisInterface = function () {
         const horizontal = chart.options.indexAxis === 'y';
         Object.entries(chart.options.scales || {})
           .forEach(([axe, scale]) => {
-            scale.ticks = {
-              ...scale.ticks,
-              color: texte,
-              font: { family: 'Inter', size: 11 }
-            };
-            scale.grid = {
-              ...scale.grid,
-              color: grille
-            };
+            scale.ticks.color = texte;
+            scale.ticks.font = { family: 'Inter', size: 11 };
+            scale.grid.color = grille;
             if (type === 'bar' && axe === (horizontal ? 'x' : 'y')) {
               scale.beginAtZero = true;
             }
