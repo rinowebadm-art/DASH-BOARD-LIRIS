@@ -1287,8 +1287,328 @@ html[data-theme="dark"] #main #lirisOverview .ov-performance {
 }
   /* Masquer le diagnostic de chargement */#dataLoadStatus {  display: none !important;}
 </style>
-  <script>Chart.register({  id: 'barresPlusLarges',  beforeUpdate(chart) {    chart.data.datasets.forEach(dataset => {      const type = dataset.type || chart.config.type;      if (type !== 'bar') return;      const quotidien = chart.canvas.id === 'ovDailyChart';      dataset.barThickness = quotidien ? 32 : 'flex';      dataset.maxBarThickness = quotidien ? 32 : 55;      dataset.categoryPercentage = quotidien ? 0.90 : 0.98;      dataset.barPercentage = quotidien ? 0.95 : 1;    });  }});</script>
+  <script>
+Chart.register({
+  id: 'barresPlusLarges',
+  beforeUpdate(chart) {
+    const quotidien = chart.canvas.id === 'ovDailyChart';
+    chart.data.datasets.forEach(dataset => {
+      const type = dataset.type || chart.config.type;
+      if (type !== 'bar') return;
+      dataset.barThickness = 'flex';
+      dataset.maxBarThickness = quotidien ? 32 : 55;
+      dataset.categoryPercentage = quotidien ? 0.92 : 0.98;
+      dataset.barPercentage = quotidien ? 0.92 : 1;
+    });
+    if (!quotidien) return;
+    const css = getComputedStyle(document.documentElement);
+    const texte = css.getPropertyValue('--txt3').trim();
+    const bordure = css.getPropertyValue('--bd').trim();
+    const x = chart.options.scales?.x;
+    const y = chart.options.scales?.y;
+    if (x) {
+      x.grid = {
+        ...x.grid,
+        display: false
+      };
+      x.border = {
+        ...x.border,
+        display: false
+      };
+      x.ticks = {
+        ...x.ticks,
+        color: texte,
+        autoSkip: true,
+        maxTicksLimit: chart.width < 600 ? 6 : 10,
+        minRotation: 0,
+        maxRotation: 0,
+        padding: 10,
+        font: { size: 12 }
+      };
+    }
+    if (y) {
+      y.grid = {
+        ...y.grid,
+        color: bordure,
+        drawTicks: false
+      };
+      y.border = {
+        ...y.border,
+        display: false
+      };
+      y.ticks = {
+        ...y.ticks,
+        color: texte,
+        maxTicksLimit: 6,
+        padding: 12,
+        font: { size: 12 }
+      };
+    }
+  }
+});
+</script>
 <style>#main .chart-wrap:not(.asap-donut):not(:has(#cO)),#main .ui-small .chart-wrap:not(.asap-donut):not(:has(#cO)) {  height: 420px !important;}@media (max-width: 750px) {  #main .chart-wrap:not(.asap-donut):not(:has(#cO)),  #main .ui-small .chart-wrap:not(.asap-donut):not(:has(#cO)) {    height: 340px !important;  }}</style>
+<style id="liris-finition-visuelle">
+/* Présentation uniquement : couleurs actuelles conservées */
+body {
+  line-height: 1.5;
+}
+.hd {
+  padding: 22px 28px;
+}
+button, input, select {
+  min-height: 36px;
+}
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+}
+.tabs, .fbar {
+  gap: 10px;
+  padding: 12px 24px;
+}
+.srch-wrap {
+  border-radius: 12px;
+}
+.srch {
+  width: 210px;
+}
+/* Navigation */
+#lirisViewTabs {
+  gap: 8px;
+  padding: 14px;
+}
+#lirisViewTabs .view-tab {
+  border-radius: 12px;
+  min-height: 44px;
+  padding: 12px 16px;
+  font-size: 13px;
+  text-align: left;
+}
+#lirisViewTabs .view-tab:not(.active):hover {
+  background: var(--bg3);
+}
+/* Grille et cartes */
+#main.main.ui-dashboard {
+  padding: 24px;
+  gap: 22px;
+  align-items: stretch;
+}
+#main.ui-dashboard > .krow {
+  gap: 16px;
+}
+#main.ui-dashboard .card,
+#main.ui-dashboard .card.ui-small {
+  padding: 22px;
+  border-radius: 20px;
+}
+#main.ui-dashboard .krow .kpi {
+  min-height: 150px;
+  padding: 22px;
+  border-radius: 20px;
+}
+#main .kl {
+  font-size: 13px;
+  line-height: 1.4;
+}
+#main .kv {
+  font-size: clamp(28px, 2.5vw, 40px);
+  line-height: 1.15;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  margin: 12px 0 8px;
+}
+#main .ct {
+  font-size: 16px;
+  font-weight: 650;
+  letter-spacing: 0;
+  margin-bottom: 20px;
+}
+/* Vue d'ensemble */
+#main #lirisOverview {
+  width: 100%;
+  min-width: 0;
+}
+#main #lirisOverview .ov-heading {
+  margin-bottom: 22px;
+}
+#main #lirisOverview .ov-heading h2 {
+  font-size: clamp(22px, 2vw, 28px);
+  font-weight: 650;
+}
+#main #lirisOverview .ov-top {
+  gap: 18px;
+  margin-bottom: 24px;
+}
+#main #lirisOverview .ov-tile {
+  padding: 24px;
+  min-height: 150px;
+}
+#main #lirisOverview .ov-label {
+  font-size: 13px;
+  font-weight: 600;
+}
+#main #lirisOverview .ov-value {
+  font-size: clamp(28px, 2.5vw, 40px);
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  margin: 12px 0;
+}
+#main #lirisOverview .ov-layout {
+  grid-template-columns: minmax(240px, 1fr) minmax(0, 2fr);
+  gap: 22px;
+  align-items: stretch;
+}
+#main #lirisOverview .ov-panel {
+  padding: 24px;
+}
+#main #lirisOverview .ov-panel h3 {
+  font-size: 16px;
+  font-weight: 650;
+}
+#main #lirisOverview .ov-performance {
+  grid-column: 1;
+  grid-row: 1;
+}
+#main #lirisOverview .ov-daily {
+  grid-column: 2;
+  grid-row: 1;
+}
+#main #lirisOverview .ov-sites {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+#main #lirisOverview .ov-chart {
+  height: 350px;
+  margin-top: 24px;
+}
+#main #lirisOverview .ov-followup {
+  margin-top: 24px;
+}
+#main #lirisOverview .ov-agent {
+  padding: 18px;
+  border-radius: 14px;
+}
+/* Fiche agent et qualité */
+#main #lirisAgentPanel > h2 {
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+#main .qa-section {
+  padding: 24px;
+  border-radius: 20px;
+}
+#main .qa-grid {
+  gap: 16px;
+}
+#main .qa-card {
+  padding: 20px;
+  border-radius: 14px;
+}
+#main .qa-value {
+  font-size: 32px;
+  font-weight: 600;
+}
+#main .qa-table th,
+#main .qa-table td {
+  padding: 14px 16px;
+}
+#main .tw {
+  border: 1px solid var(--bd);
+  border-radius: 12px;
+}
+/* Menu latéral sur grand écran */
+@media screen and (min-width: 1200px) {
+  #lirisViewTabs {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: 208px;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background: var(--bg2);
+    border-right: 1px solid var(--bd);
+    border-bottom: none;
+    padding: 26px 14px;
+  }
+  #lirisViewTabs::before {
+    content: "LIRIS";
+    color: var(--txt);
+    font-size: 24px;
+    font-weight: 750;
+    padding: 0 14px 24px;
+    letter-spacing: 1px;
+  }
+  #lirisViewTabs .view-tab {
+    width: 100%;
+    flex-shrink: 0;
+  }
+  body > .hd,
+  body > .imp,
+  body > .tabs,
+  body > .fbar,
+  body > .aband,
+  body > #dataLoadStatus {
+    margin-left: 208px;
+  }
+  body > #main {
+    margin-left: 208px;
+    width: calc(100% - 208px);
+  }
+}
+/* Tablette */
+@media screen and (max-width: 900px) {
+  #main #lirisOverview .ov-layout {
+    grid-template-columns: 1fr;
+  }
+  #main #lirisOverview .ov-performance,
+  #main #lirisOverview .ov-daily,
+  #main #lirisOverview .ov-sites {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+}
+/* Mobile */
+@media screen and (max-width: 750px) {
+  #main.main.ui-dashboard {
+    padding: 14px;
+    gap: 16px;
+  }
+  #lirisViewTabs {
+    flex-direction: row;
+    overflow-x: auto;
+  }
+  #lirisViewTabs .view-tab {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  #main #lirisOverview .ov-sites,
+  #main #lirisOverview .ov-agent-list {
+    grid-template-columns: 1fr;
+  }
+  #main #lirisOverview .ov-panel,
+  #main #lirisOverview .ov-tile {
+    padding: 18px;
+  }
+  #main #lirisOverview .ov-chart {
+    height: 290px;
+  }
+}
+@media print {
+  #lirisViewTabs {
+    display: none !important;
+  }
+  body > #main {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+}
+</style>
 </head>
 <body>
 <header class="hd">
