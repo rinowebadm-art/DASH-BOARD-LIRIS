@@ -2004,6 +2004,169 @@ function createLirisNavigation() {
   const globalSiteTab = siteTabs.querySelector('.tab');
   if (globalSiteTab) globalSiteTab.textContent = 'Tous';
 }
+  /* ===== FICHE INDIVIDUELLE AGENT ===== */
+let LIRIS_AGENT_SELECTION = '';
+let LIRIS_AGENT_CHART = null;
+function renderLirisAgentPanel() {
+  const main = document.getElementById('main');
+  if (!main) return;
+  if (LIRIS_AGENT_CHART) {
+    LIRIS_AGENT_CHART.destroy();
+    LIRIS_AGENT_CHART = null;
+  }
+  const ancien = document.getElementById('lirisAgentPanel');
+  if (ancien) ancien.remove();
+  if (UI_VIEW !== 'agents') return;
+  const agents = fd().slice().sort((a, b) =>
+    String(a.nom || '').localeCompare(String(b.nom || ''))
+  );
+  const panel = document.createElement('section');
+  panel.id = 'lirisAgentPanel';
+  panel.style.cssText =
+    'grid-column:1/-1;width:100%;order:1;min-width:0;';
+  const titre = document.createElement('h2');
+  titre.textContent = 'Suivi individuel';
+  panel.appendChild(titre);
+  if (!agents.length) {
+    const message = document.createElement('p');
+    message.textContent = 'Aucun agent pour les filtres sélectionnés.';
+    panel.appendChild(message);
+    main.appendChild(panel);
+    return;
+  }
+  if (!agents.some(agent => agent.t === LIRIS_AGENT_SELECTION)) {
+    LIRIS_AGENT_SELECTION = agents[0].t;
+  }
+  const select = document.createElement('select');
+  select.setAttribute('aria-label', 'Choisir un agent');
+  select.style.cssText =
+    'width:100%;max-width:480px;padding:12px;margin-bottom:18px;' +
+    'background:var(--card);color:var(--txt);' +
+    'border:1px solid var(--bd);border-radius:12px;';
+  agents.forEach(agent => {
+    const option = document.createElement('option');
+    option.value = agent.t;
+    option.textContent =
+      agent.t + ' · ' + agent.prenom + ' ' + agent.nom;
+    select.appendChild(option);
+  });
+  select.value = LIRIS_AGENT_SELECTION;
+  select.addEventListener('change', () => {
+    LIRIS_AGENT_SELECTION = select.value;
+    renderLirisAgentPanel();
+  });
+  panel.appendChild(select);
+  const agent = agents.find(
+    item => item.t === LIRIS_AGENT_SELECTION
+  );
+  const identite = document.createElement('p');
+  identite.textContent =
+    agent.site + ' · ' + agent.s + ' · ' +
+    shiftLabel(agent.shift) + ' · Période sélectionnée';
+  identite.style.cssText = 'color:var(--txt2);margin:0 0 18px;';
+  panel.appendChild(identite);
+  const grille = document.createElement('div');
+  grille.style.cssText =
+    'display:grid;grid-template-columns:' +
+    'repeat(auto-fit,minmax(155px,1fr));gap:12px;';
+  const nombre = (valeur, decimales = 1) =>
+    Number.isFinite(Number(valeur))
+      ? Number(valeur).toLocaleString('fr-FR', {
+          maximumFractionDigits: decimales
+        })
+      : '—';
+  const metriques = [
+    ['Résultats traités', nombre(agent.res, 0)],
+    ['Productivité / h', nombre(agent.ph)],
+    ['Objectif / h', nombre(agent.obj)],
+    ['Atteinte objectif', nombre(agent.top * 100) + ' %'],
+    ['Transformation', nombre(agent.tx * 100) + ' %'],
+    ['Occupation nette', nombre(agent.occNet) + ' %'],
+    ['Temps enregistré', nombre(agent.tps) + ' h'],
+    ['Heures perdues', nombre(agent.lost) + ' h']
+  ];
+  metriques.forEach(([libelle, valeur]) => {
+    const carte = document.createElement('div');
+    carte.style.cssText =
+      'padding:18px;background:var(--card);' +
+      'border:1px solid var(--bd);border-radius:14px;';
+    const label = document.createElement('div');
+    label.textContent = libelle;
+    label.style.cssText =
+      'font-size:12px;color:var(--txt2);margin-bottom:8px;';
+    const chiffre = document.createElement('div');
+    chiffre.textContent = valeur;
+    chiffre.style.cssText =
+      'font-size:26px;font-weight:600;font-variant-numeric:tabular-nums;';
+    carte.append(label, chiffre);
+    grille.appendChild(carte);
+  });
+  panel.appendChild(grille);
+  const qualite = document.createElement('p');
+  const nq = NQ_DATA[agent.t];
+  qualite.textContent = NQCOLS === null
+    ? 'Qualité : données NQ non chargées.'
+    : nq
+      ? 'NQ comptabilisées : ' + nombre(nq.total, 0) +
+        ' · Mauvaise : ' + nombre(nq.mauvaise, 0) +
+        ' · Loupé : ' + nombre(nq.loupe, 0) +
+        ' · Non conforme : ' + nombre(nq.nonconforme, 0)
+      : 'Aucune NQ comptabilisée pour cet agent dans la sélection.';
+  qualite.style.cssText = 'color:var(--txt2);margin:18px 0;';
+  panel.appendChild(qualite);
+  const graphique = document.createElement('div');
+  graphique.style.cssText =
+    'height:280px;position:relative;width:100%;min-width:0;';
+  const canvas = document.createElement('canvas');
+  graphique.appendChild(canvas);
+  panel.appendChild(graphique);
+  main.appendChild(panel);
+  const css = getComputedStyle(document.documentElement);
+  const couleurTexte =
+    css.getPropertyValue('--txt2').trim() || '#475569';
+  LIRIS_AGENT_CHART = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: ['Productivité réelle', 'Objectif individuel'],
+      datasets: [{
+        label: 'Résultats par heure',
+        data: [Number(agent.ph) || 0, Number(agent.obj) || 0],
+        backgroundColor: ['#2e75b6', '#94a3b8'],
+        borderRadius: 8,
+        maxBarThickness: 48
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      indexAxis: 'y',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: contexte =>
+              nombre(contexte.parsed.x) + ' résultats / h'
+          }
+        }
+      },
+      scales: {
+        x: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Résultats par heure',
+            color: couleurTexte
+          },
+          ticks: { color: couleurTexte }
+        },
+        y: {
+          ticks: { color: couleurTexte },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+}
 function applyLirisInterface() {
   createLirisNavigation();
   document.querySelectorAll('.view-tab').forEach(button => {
@@ -2076,7 +2239,7 @@ function applyLirisInterface() {
     const canvas = card.querySelector('canvas');
     const isTable = Boolean(card.querySelector('#clsBody'));
     const visible = isTable
-      ? ['agents', 'ranking'].includes(UI_VIEW)
+      ? UI_VIEW === 'ranking'
       : Boolean(canvas && selectedCharts.includes(canvas.id));
     card.classList.toggle('ui-hidden', !visible);
     const chartPosition = canvas
@@ -2097,6 +2260,7 @@ function applyLirisInterface() {
       wrapper.appendChild(canvas);
     }
   });
+  renderLirisAgentPanel();
  requestAnimationFrame(() => {
     const css = getComputedStyle(document.documentElement);
     const textColor = css.getPropertyValue('--txt2').trim();
