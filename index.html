@@ -2706,90 +2706,116 @@ applyLirisInterface = function () {
   suivant.addEventListener('click', () => avancerPeriode(1));
   refreshLabels();
 })();
-  /* ===== VUE D’ENSEMBLE : UNIQUEMENT 3 DONUTS ===== */
-const styleOverviewDonuts = document.createElement('style');
-styleOverviewDonuts.textContent = `
-  .main.ui-dashboard.overview-donuts {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+/* ===== VUE D’ENSEMBLE : HIÉRARCHIE VISUELLE ===== */
+const styleLirisOverview = document.createElement('style');
+styleLirisOverview.textContent = `
+  .main.ui-dashboard.liris-overview {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 20px;
     align-items: stretch;
   }
-  .overview-donuts .card.overview-donut {
-    grid-column: span 1 !important;
-    min-width: 0;
+  .liris-overview > .krow {
+    grid-column: 1 / -1;
   }
-  .overview-donuts .chart-wrap.asap-donut {  width: 100%;  max-width: 480px;  height: 380px;}
-  .overview-donuts .donut-empty {
-    height: 300px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: var(--txt3);
-    padding: 20px;
+  .liris-overview .kpi {
+    min-height: 145px;
+    padding: 22px;
+    text-align: left;
   }
-  @media (max-width: 900px) {
-    .main.ui-dashboard.overview-donuts {
+  .liris-overview .card {
+    grid-column: span 4 !important;
+    padding: 22px;
+    border-radius: 20px;
+  }
+  .liris-overview .overview-summary {
+    grid-column: span 4 !important;
+  }
+  .liris-overview .overview-main {
+    grid-column: span 8 !important;
+  }
+  .liris-overview .overview-summary .chart-wrap,
+  .liris-overview .overview-main .chart-wrap {
+    height: 350px;
+  }
+  .liris-overview .overview-secondary .chart-wrap {
+    height: 270px;
+  }
+  .liris-overview .chart-wrap.asap-donut {
+    width: 100%;
+    max-width: none;
+  }
+  @media (max-width: 1000px) {
+    .main.ui-dashboard.liris-overview {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .liris-overview .card {
+      grid-column: 1 / -1 !important;
+    }
+  }
+  @media (max-width: 650px) {
+    .main.ui-dashboard.liris-overview {
       grid-template-columns: 1fr;
+      padding: 14px;
+      gap: 16px;
+    }
+    .liris-overview .card {
+      padding: 16px;
+    }
+    .liris-overview .overview-summary .chart-wrap,
+    .liris-overview .overview-main .chart-wrap {
+      height: 300px;
     }
   }
 `;
-document.head.appendChild(styleOverviewDonuts);
-const interfaceAvantTroisDonuts = applyLirisInterface;
+document.head.appendChild(styleLirisOverview);
+const interfaceAvantOverviewVisuel = applyLirisInterface;
 applyLirisInterface = function () {
-  interfaceAvantTroisDonuts();
+  interfaceAvantOverviewVisuel();
   const main = document.getElementById('main');
   if (!main) return;
   const overview = UI_VIEW === 'overview';
-  main.classList.toggle('overview-donuts', overview);
-  // Nettoyage lorsqu’on quitte la Vue d’ensemble.
-  main.querySelectorAll('.overview-donut').forEach(card => {
-    card.classList.remove('overview-donut');
-  });
-  main.querySelectorAll('.donut-empty').forEach(el => el.remove());
-  if (!overview || !main.querySelector('.krow')) return;
-  // Masquer toutes les cartes KPI de cette vue.
-  main.querySelectorAll('.krow').forEach(row => {
-    row.classList.add('ui-hidden');
-  });
-  const donuts = [
-    ['cD1', 'Seniors / Juniors', 'D1'],
-    ['cD2', 'Répartition des performances', 'D2'],
-    ['cD3', 'NQ par catégorie', 'D3']
-  ];
-  // Masquer tous les graphiques et le classement.
+  main.classList.toggle('liris-overview', overview);
   main.querySelectorAll('.card').forEach(card => {
-    card.classList.add('ui-hidden');
+    card.classList.remove(
+      'overview-summary',
+      'overview-main',
+      'overview-secondary'
+    );
   });
-  // Afficher seulement les trois donuts.
-  donuts.forEach(([canvasId, titre, chartKey], index) => {
-    const canvas = document.getElementById(canvasId);
+  if (!overview || !main.querySelector('.krow')) return;
+  // Les KPI restent gérés par la fonction d’origine.
+  // Aucun calcul ni aucune donnée n’est modifié.
+  const disposition = [
+    ['cD2', 'overview-summary', 'Répartition des performances'],
+    ['cL',  'overview-main', 'Performance par agent'],
+    ['cP',  'overview-secondary', 'Productivité horaire · Top 10'],
+    ['cNQ', 'overview-secondary', 'Agents avec le plus de NQ · Top 10'],
+    ['cO',  'overview-secondary', 'Occupation brute et nette · Top 10']
+  ];
+  disposition.forEach(([id, classe, titre], index) => {
+    const canvas = document.getElementById(id);
     const card = canvas?.closest('.card');
-    if (!card) return;
-    card.classList.remove('ui-hidden', 'ui-small', 'ui-wide');
-    card.classList.add('overview-donut');
+    if (!card || card.classList.contains('ui-hidden')) return;
+    card.classList.remove('ui-small', 'ui-wide');
+    card.classList.add(classe);
     card.style.order = String(index + 1);
     const heading = card.querySelector('.ct');
     if (heading) heading.textContent = titre;
-    const wrapper = canvas.parentElement;
-    wrapper.classList.add('asap-donut');
-    // Le donut qualité n’existe pas si aucun NQ n’est compté.
-    // Garder sa carte visible avec un message explicite.
-    if (!CHS[chartKey]) {
-      wrapper.classList.add('ui-hidden');
-      const message = document.createElement('div');
-      message.className = 'donut-empty';
-      message.textContent = NQCOLS
-        ? 'Aucune NQ comptabilisée pour les agents et la période sélectionnés.'
-        : 'Fichier NQ non chargé.';
-      card.appendChild(message);
-    } else {
-      wrapper.classList.remove('ui-hidden');
+  });
+  // Sans graphique NQ disponible, les deux cartes
+  // restantes remplissent la dernière rangée.
+  const secondaires = [
+    ...main.querySelectorAll('.overview-secondary')
+  ];
+  secondaires.forEach(card => {
+    card.style.removeProperty('grid-column');
+    if (secondaires.length === 2) {
+      card.style.setProperty('grid-column', 'span 6', 'important');
     }
   });
   requestAnimationFrame(() => {
-    ['D1', 'D2', 'D3'].forEach(key => {
-      const chart = CHS[key];
-      if (!chart) return;
+    Object.values(CHS).forEach(chart => {
+      if (!chart.canvas || chart.canvas.closest('.ui-hidden')) return;
       chart.resize();
       chart.update('none');
     });
