@@ -1976,11 +1976,7 @@ const UI_VIEWS = [
   ['occupation', 'Occupation']
 ];
 // Conserver la fonction existante et ses calculs.
-const originalLirisBuild = build;
-build = function () {
-  originalLirisBuild();
-  applyLirisInterface();
-};
+const originalLirisBuild = build;build = function () {  clearLirisOverview();  if (LIRIS_AGENT_CHART) {    LIRIS_AGENT_CHART.destroy();    LIRIS_AGENT_CHART = null;  }  originalLirisBuild();  applyLirisInterface();};
 function createLirisNavigation() {
   if (document.getElementById('lirisViewTabs')) return;
   const siteTabs = document.querySelector('.tabs');
@@ -2088,7 +2084,7 @@ function renderLirisAgentPanel() {
   metriques.forEach(([libelle, valeur]) => {
     const carte = document.createElement('div');
     carte.style.cssText =
-      'padding:18px;background:var(--card);' +
+      'padding:18px;background:var(--bg2);' +
       'border:1px solid var(--bd);border-radius:14px;';
     const label = document.createElement('div');
     label.textContent = libelle;
@@ -2267,7 +2263,7 @@ function applyLirisInterface() {
     const tickColor = css.getPropertyValue('--txt3').trim();
     const gridColor = css.getPropertyValue('--bd').trim();
     Object.values(CHS).forEach(chart => {
-      if (!chart.canvas || chart.canvas.closest('.ui-hidden')) return;
+      if (  !chart.canvas ||  chart.canvas.closest('.ui-hidden, .ov-hidden')) return;
       chart.options.maintainAspectRatio = false;
       chart.options.animation = false;
       if (chart.options.plugins?.legend?.labels) {
@@ -2706,120 +2702,608 @@ applyLirisInterface = function () {
   suivant.addEventListener('click', () => avancerPeriode(1));
   refreshLabels();
 })();
-/* ===== VUE D’ENSEMBLE : HIÉRARCHIE VISUELLE ===== */
-const styleLirisOverview = document.createElement('style');
-styleLirisOverview.textContent = `
-  .main.ui-dashboard.liris-overview {
-    grid-template-columns: repeat(12, minmax(0, 1fr));
+/* ===== NOUVELLE VUE D’ENSEMBLE LIRIS ===== */
+const lirisOverviewStyle = document.createElement('style');
+lirisOverviewStyle.textContent = `
+  .ov-hidden {
+    display: none !important;
+  }
+  #lirisOverview {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
+    color: var(--txt);
+  }
+  #lirisOverview * {
+    box-sizing: border-box;
+  }
+  #lirisOverview .ov-heading {
+    margin-bottom: 20px;
+  }
+  #lirisOverview .ov-heading h2 {
+    font-size: 25px;
+    font-weight: 650;
+    margin-bottom: 6px;
+  }
+  #lirisOverview .ov-muted {
+    color: var(--txt3);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  #lirisOverview .ov-top {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  #lirisOverview .ov-tile {
+    background: var(--bg2);
+    border: 1px solid var(--bd);
+    border-radius: 18px;
+    padding: 20px;
+    min-width: 0;
+  }
+  #lirisOverview .ov-tile:nth-child(1) {
+    background: #d6f1fb;
+    color: #1f3b4d;
+  }
+  #lirisOverview .ov-tile:nth-child(2) {
+    background: #e4e0fb;
+    color: #2d2b52;
+  }
+  #lirisOverview .ov-tile:nth-child(3) {
+    background: #d9f6ea;
+    color: #1f4038;
+  }
+  #lirisOverview .ov-tile:nth-child(4) {
+    background: #fde9d3;
+    color: #4a3624;
+  }
+  [data-theme="dark"] #lirisOverview .ov-tile:nth-child(1) {
+    background: #1f3b4d;
+    color: var(--txt);
+  }
+  [data-theme="dark"] #lirisOverview .ov-tile:nth-child(2) {
+    background: #2d2b52;
+    color: var(--txt);
+  }
+  [data-theme="dark"] #lirisOverview .ov-tile:nth-child(3) {
+    background: #1f4038;
+    color: var(--txt);
+  }
+  [data-theme="dark"] #lirisOverview .ov-tile:nth-child(4) {
+    background: #4a3624;
+    color: var(--txt);
+  }
+  #lirisOverview .ov-label {
+    font-size: 12px;
+    opacity: .8;
+    margin-bottom: 10px;
+  }
+  #lirisOverview .ov-value {
+    font-size: clamp(23px, 2.4vw, 34px);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 7px;
+  }
+  #lirisOverview .ov-note {
+    font-size: 11px;
+    opacity: .75;
+    line-height: 1.5;
+  }
+  #lirisOverview .ov-layout {
+    display: grid;
+    grid-template-columns:
+      minmax(0, 1fr) minmax(0, .8fr) minmax(0, 1.8fr);
     gap: 20px;
     align-items: stretch;
   }
-  .liris-overview > .krow {
-    grid-column: 1 / -1;
-  }
-  .liris-overview .kpi {
-    min-height: 145px;
-    padding: 22px;
-    text-align: left;
-  }
-  .liris-overview .card {
-    grid-column: span 4 !important;
-    padding: 22px;
+  #lirisOverview .ov-panel {
+    background: var(--bg2);
+    border: 1px solid var(--bd);
     border-radius: 20px;
+    padding: 22px;
+    min-width: 0;
   }
-  .liris-overview .overview-summary {
-    grid-column: span 4 !important;
+  #lirisOverview .ov-panel h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
   }
-  .liris-overview .overview-main {
-    grid-column: span 8 !important;
+  #lirisOverview .ov-performance {
+    background: #4a89c4;
+    border: none;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
-  .liris-overview .overview-summary .chart-wrap,
-  .liris-overview .overview-main .chart-wrap {
-    height: 350px;
+  #lirisOverview .ov-performance .ov-muted {
+    color: rgba(255,255,255,.8);
   }
-  .liris-overview .overview-secondary .chart-wrap {
-    height: 270px;
+  #lirisOverview .ov-gauge {
+    position: relative;
+    height: 175px;
+    margin: 12px 0;
   }
-  .liris-overview .chart-wrap.asap-donut {
-    width: 100%;
-    max-width: none;
+  #lirisOverview .ov-big {
+    font-size: 44px;
+    font-weight: 600;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
   }
-  @media (max-width: 1000px) {
-    .main.ui-dashboard.liris-overview {
+  #lirisOverview .ov-performance-note {
+    text-align: center;
+    margin: 6px 0 20px;
+  }
+  #lirisOverview .ov-facts {
+    border-top: 1px solid rgba(255,255,255,.25);
+    padding-top: 16px;
+    display: grid;
+    gap: 12px;
+  }
+  #lirisOverview .ov-fact {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 12px;
+  }
+  #lirisOverview .ov-sites {
+    display: grid;
+    gap: 20px;
+  }
+  #lirisOverview .ov-site-value {
+    font-size: 32px;
+    font-weight: 600;
+    margin: 14px 0;
+  }
+  #lirisOverview .ov-meter {
+    height: 7px;
+    background: var(--bd);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  #lirisOverview .ov-meter span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+  }
+  #lirisOverview .ov-chart {
+    position: relative;
+    height: 310px;
+    margin-top: 22px;
+  }
+  #lirisOverview .ov-followup {
+    margin-top: 20px;
+  }
+  #lirisOverview .ov-agent-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+  #lirisOverview .ov-agent {
+    background: var(--bg3);
+    color: var(--txt);
+    border: 1px solid var(--bd);
+    border-radius: 12px;
+    padding: 14px;
+    text-align: left;
+    cursor: pointer;
+    min-width: 0;
+  }
+  #lirisOverview .ov-agent:hover {
+    border-color: var(--blue);
+  }
+  #lirisOverview .ov-agent strong,
+  #lirisOverview .ov-agent span {
+    display: block;
+  }
+  #lirisOverview .ov-agent span {
+    margin-top: 6px;
+    color: var(--txt3);
+    font-size: 11px;
+    line-height: 1.5;
+  }
+  @media (max-width: 1050px) {
+    #lirisOverview .ov-top {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-    .liris-overview .card {
-      grid-column: 1 / -1 !important;
+    #lirisOverview .ov-layout {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    #lirisOverview .ov-daily {
+      grid-column: 1 / -1;
     }
   }
   @media (max-width: 650px) {
-    .main.ui-dashboard.liris-overview {
+    #lirisOverview .ov-layout,
+    #lirisOverview .ov-agent-list {
       grid-template-columns: 1fr;
-      padding: 14px;
-      gap: 16px;
     }
-    .liris-overview .card {
-      padding: 16px;
+    #lirisOverview .ov-tile {
+      padding: 15px;
     }
-    .liris-overview .overview-summary .chart-wrap,
-    .liris-overview .overview-main .chart-wrap {
-      height: 300px;
+    #lirisOverview .ov-panel {
+      padding: 18px;
+    }
+    #lirisOverview .ov-chart {
+      height: 260px;
+    }
+  }
+  @media print {
+    #lirisOverview .ov-panel,
+    #lirisOverview .ov-tile {
+      break-inside: avoid;
     }
   }
 `;
-document.head.appendChild(styleLirisOverview);
-const interfaceAvantOverviewVisuel = applyLirisInterface;
-applyLirisInterface = function () {
-  interfaceAvantOverviewVisuel();
+document.head.appendChild(lirisOverviewStyle);
+let lirisOverviewCharts = [];
+function clearLirisOverview() {
+  lirisOverviewCharts.forEach(chart => chart.destroy());
+  lirisOverviewCharts = [];
+  document.getElementById('lirisOverview')?.remove();
+  const main = document.getElementById('main');
+  if (main) {
+    [...main.children].forEach(child => {
+      child.classList.remove('ov-hidden');
+    });
+  }
+}
+function renderLirisOverview() {
+  if (UI_VIEW !== 'overview') return;
   const main = document.getElementById('main');
   if (!main) return;
-  const overview = UI_VIEW === 'overview';
-  main.classList.toggle('liris-overview', overview);
-  main.querySelectorAll('.card').forEach(card => {
-    card.classList.remove(
-      'overview-summary',
-      'overview-main',
-      'overview-secondary'
+  const agents = fd().filter(agent => {
+    if (!SEARCH) return true;
+    return [
+      agent.t,
+      agent.nom,
+      agent.prenom
+    ].some(value =>
+      String(value || '').toLowerCase().includes(SEARCH)
     );
   });
-  if (!overview || !main.querySelector('.krow')) return;
-  // Les KPI restent gérés par la fonction d’origine.
-  // Aucun calcul ni aucune donnée n’est modifié.
-  const disposition = [
-    ['cD2', 'overview-summary', 'Répartition des performances'],
-    ['cL',  'overview-main', 'Performance par agent'],
-    ['cP',  'overview-secondary', 'Productivité horaire · Top 10'],
-    ['cNQ', 'overview-secondary', 'Agents avec le plus de NQ · Top 10'],
-    ['cO',  'overview-secondary', 'Occupation brute et nette · Top 10']
-  ];
-  disposition.forEach(([id, classe, titre], index) => {
-    const canvas = document.getElementById(id);
-    const card = canvas?.closest('.card');
-    if (!card || card.classList.contains('ui-hidden')) return;
-    card.classList.remove('ui-small', 'ui-wide');
-    card.classList.add(classe);
-    card.style.order = String(index + 1);
-    const heading = card.querySelector('.ct');
-    if (heading) heading.textContent = titre;
-  });
-  // Sans graphique NQ disponible, les deux cartes
-  // restantes remplissent la dernière rangée.
-  const secondaires = [
-    ...main.querySelectorAll('.overview-secondary')
-  ];
-  secondaires.forEach(card => {
-    card.style.removeProperty('grid-column');
-    if (secondaires.length === 2) {
-      card.style.setProperty('grid-column', 'span 6', 'important');
-    }
-  });
-  requestAnimationFrame(() => {
-    Object.values(CHS).forEach(chart => {
-      if (!chart.canvas || chart.canvas.closest('.ui-hidden')) return;
-      chart.resize();
-      chart.update('none');
+  const number = (value, digits = 1) =>
+    Number(value).toLocaleString('fr-FR', {
+      maximumFractionDigits: digits
     });
+  const sum = key => agents.reduce(
+    (total, agent) => total + (Number(agent[key]) || 0),
+    0
+  );
+  const results = sum('res');
+  const clips = sum('rm');
+  const hours = sum('tps');
+  const productivity = hours > 0 ? results / hours : null;
+  const transformation = results > 0 ? clips / results * 100 : null;
+  // Même définition que la performance existante :
+  // moyenne des atteintes individuelles d’objectif.
+  const performance = agents.length ? avg(agents, 'top') * 100 : null;
+  const occupation = agents.length ? avg(agents, 'occNet') : null;
+  [...main.children].forEach(child => {
+    child.classList.add('ov-hidden');
   });
+  const panel = document.createElement('section');
+  panel.id = 'lirisOverview';
+  // Structure fixe uniquement :
+  // les noms et les valeurs sont insérés avec textContent.
+  panel.innerHTML = `
+    <div class="ov-heading">
+      <h2>Pilotage de production</h2>
+      <p class="ov-muted" data-ov="period"></p>
+    </div>
+    <div class="ov-top">
+      <div class="ov-tile">
+        <div class="ov-label">Résultats traités</div>
+        <div class="ov-value" data-ov="results"></div>
+        <div class="ov-note" data-ov="clips"></div>
+      </div>
+      <div class="ov-tile">
+        <div class="ov-label">Productivité horaire</div>
+        <div class="ov-value" data-ov="productivity"></div>
+        <div class="ov-note">Résultats / heures enregistrées</div>
+      </div>
+      <div class="ov-tile">
+        <div class="ov-label">Transformation</div>
+        <div class="ov-value" data-ov="transformation"></div>
+        <div class="ov-note">Media clips / résultats traités</div>
+      </div>
+      <div class="ov-tile">
+        <div class="ov-label">Occupation nette moyenne</div>
+        <div class="ov-value" data-ov="occupation"></div>
+        <div class="ov-note">Moyenne des agents sélectionnés</div>
+      </div>
+    </div>
+    <div class="ov-layout">
+      <article class="ov-panel ov-performance">
+        <div>
+          <h3>Performance de la sélection</h3>
+          <p class="ov-muted">Atteinte moyenne des objectifs individuels</p>
+        </div>
+        <div>
+          <div class="ov-gauge">
+            <canvas id="ovPerformanceGauge"></canvas>
+          </div>
+          <div class="ov-big" data-ov="performance"></div>
+          <p class="ov-performance-note">Objectif : 100 %</p>
+        </div>
+        <div class="ov-facts">
+          <div class="ov-fact">
+            <span>Agents en production</span>
+            <strong data-ov="agents"></strong>
+          </div>
+          <div class="ov-fact">
+            <span>À objectif ou au-dessus</span>
+            <strong data-ov="atGoal"></strong>
+          </div>
+          <div class="ov-fact">
+            <span>Temps enregistré</span>
+            <strong data-ov="hours"></strong>
+          </div>
+        </div>
+      </article>
+      <div class="ov-sites" data-ov="sites"></div>
+      <article class="ov-panel ov-daily">
+        <h3>Production quotidienne</h3>
+        <p class="ov-muted">
+          Résultats traités par jour · sélection actuelle
+        </p>
+        <div class="ov-chart">
+          <canvas id="ovDailyChart"></canvas>
+        </div>
+        <p class="ov-muted" data-ov="dailyNote"></p>
+      </article>
+    </div>
+    <article class="ov-panel ov-followup">
+      <h3>Agents à suivre</h3>
+      <p class="ov-muted" data-ov="followupNote"></p>
+      <div class="ov-agent-list" data-ov="followup"></div>
+    </article>
+  `;
+  main.appendChild(panel);
+  const write = (key, value) => {
+    panel.querySelector('[data-ov="' + key + '"]').textContent = value;
+  };
+  const percent = value =>
+    value === null ? '—' : number(value) + ' %';
+  const [start, end] = periodRange();
+  write('period',
+    iso(start) + ' → ' + iso(end) +
+    ' · ' + number(agents.length, 0) + ' agents'
+  );
+  write('results', agents.length ? number(results, 0) : '—');
+  write('clips', number(clips, 0) + ' media clips envoyés');
+  write('productivity',
+    productivity === null ? '—' : number(productivity) + ' / h'
+  );
+  write('transformation', percent(transformation));
+  write('occupation', percent(occupation));
+  write('performance', percent(performance));
+  write('agents', number(agents.length, 0));
+  write('atGoal',
+    number(agents.filter(agent => agent.top >= 1).length, 0)
+  );
+  write('hours', number(hours) + ' h');
+  // Synthèses de site : mêmes filtres que la sélection actuelle.
+  const siteZone = panel.querySelector('[data-ov="sites"]');
+  [
+    ['TANA', '#9b59b6'],
+    ['DIEGO', '#3fc7ab']
+  ].forEach(([site, color]) => {
+    const group = agents.filter(agent => agent.site === site);
+    const value = group.length ? avg(group, 'top') * 100 : null;
+    const siteHours = group.reduce((s, agent) => s + agent.tps, 0);
+    const siteResults = group.reduce((s, agent) => s + agent.res, 0);
+    const card = document.createElement('article');
+    card.className = 'ov-panel';
+    card.innerHTML = `
+      <h3></h3>
+      <div class="ov-site-value"></div>
+      <div class="ov-meter"><span></span></div>
+      <p class="ov-muted"></p>
+    `;
+    card.querySelector('h3').textContent = site;
+    card.querySelector('.ov-site-value').textContent = percent(value);
+    const bar = card.querySelector('.ov-meter span');
+    bar.style.backgroundColor = color;
+    bar.style.width = Math.max(0, Math.min(value || 0, 100)) + '%';
+    card.querySelector('p').textContent = group.length
+      ? number(group.length, 0) + ' agents · ' +
+        (siteHours > 0
+          ? number(siteResults / siteHours) + ' résultats / h'
+          : 'Temps indisponible')
+      : 'Aucun agent dans la sélection';
+    siteZone.appendChild(card);
+  });
+  if (performance !== null) {
+    const gaugeValue = Math.max(0, Math.min(performance, 100));
+    lirisOverviewCharts.push(new Chart(
+      document.getElementById('ovPerformanceGauge'),
+      {
+        type: 'doughnut',
+        data: {
+          labels: ['Atteinte', 'Reste jusqu’à l’objectif'],
+          datasets: [{
+            data: [gaugeValue, 100 - gaugeValue],
+            backgroundColor: ['#ffffff', 'rgba(255,255,255,.22)'],
+            borderWidth: 0,
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
+          rotation: -90,
+          circumference: 180,
+          cutout: '80%',
+          plugins: {
+            legend: { display: false },
+            tooltip: { enabled: false },
+            lirisAsapCentre: false
+          }
+        }
+      }
+    ));
+  }
+  // Lecture quotidienne des lignes brutes, sans modifier DATA.
+  const selectedAgents = new Set(agents.map(agent => agent.t));
+  const daily = new Map();
+  const headers = RAWROWS.length ? Object.keys(RAWROWS[0]) : [];
+  const cAgent = fc(
+    headers, 'trigramme', 'trigr', 'login', 'agent', 'collab'
+  );
+  const cResults = fc(
+    headers, 'sultats trait', 'sultats', 'resultat',
+    'result', 'clips trait', 'traitement'
+  );
+  const cDate = fc(
+    headers, 'date de lecture', 'date lecture',
+    'date extraction', 'date export', 'date', 'jour',
+    'period', 'periode'
+  );
+  let invalidDates = 0;
+  let invalidVolumes = 0;
+  if (cAgent && cResults && cDate) {
+    RAWROWS.forEach(row => {
+      const trigram = String(row[cAgent] || '')
+        .trim().toUpperCase().slice(0, 3);
+      if (!selectedAgents.has(trigram)) return;
+      const date = parseDateCell(row[cDate]);
+      if (!date) {
+        invalidDates++;
+        return;
+      }
+      if (date < start || date > end) return;
+      const text = String(row[cResults] ?? '')
+        .replace(/\s/g, '').replace(',', '.');
+      const value = Number(text);
+      if (!text || !Number.isFinite(value) || value < 0) {
+        invalidVolumes++;
+        return;
+      }
+      const key = iso(date);
+      daily.set(key, (daily.get(key) || 0) + value);
+    });
+  }
+  const dates = [...daily.keys()].sort();
+  if (dates.length) {
+    const css = getComputedStyle(document.documentElement);
+    const textColor = css.getPropertyValue('--txt3').trim();
+    const gridColor = css.getPropertyValue('--bd').trim();
+    lirisOverviewCharts.push(new Chart(
+      document.getElementById('ovDailyChart'),
+      {
+        type: 'bar',
+        data: {
+          labels: dates,
+          datasets: [{
+            label: 'Résultats traités',
+            data: dates.map(date => daily.get(date)),
+            backgroundColor: '#3fc7ab',
+            hoverBackgroundColor: '#4a89c4',
+            borderRadius: 6,
+            maxBarThickness: 32
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: context =>
+                  number(context.parsed.y, 0) + ' résultats'
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: {
+                color: textColor,
+                maxRotation: 0,
+                maxTicksLimit: 8,
+                callback: function (value) {
+                  const date = this.getLabelForValue(value);
+                  return date.slice(8, 10) + '/' + date.slice(5, 7);
+                }
+              }
+            },
+            y: {
+              beginAtZero: true,
+              grid: { color: gridColor },
+              ticks: {
+                color: textColor,
+                callback: value => number(value, 0)
+              }
+            }
+          }
+        }
+      }
+    ));
+    write('dailyNote',
+      'Jours avec données uniquement.' +
+      (invalidDates
+        ? ' Lignes sans date valide exclues : ' +
+          number(invalidDates, 0) + '.'
+        : '') +
+      (invalidVolumes
+        ? ' Volumes vides ou invalides exclus : ' +
+          number(invalidVolumes, 0) + '.'
+        : '')
+    );
+  } else {
+    panel.querySelector('.ov-chart').style.display = 'none';
+    write('dailyNote',
+      'Aucune donnée quotidienne exploitable pour la sélection.'
+    );
+  }
+  // Suivi fondé sur le seuil déjà utilisé dans le bandeau existant.
+  const followup = agents
+    .filter(agent => agent.top > 0 && agent.top < .85)
+    .sort((a, b) => a.top - b.top);
+  write('followupNote',
+    followup.length
+      ? number(followup.length, 0) +
+        ' agents sous 85 % · les six plus faibles affichés · ' +
+        'cliquer pour ouvrir la fiche'
+      : agents.length
+        ? 'Aucun agent avec une performance positive inférieure à 85 %.'
+        : 'Aucun agent dans la sélection.'
+  );
+  const followupZone = panel.querySelector('[data-ov="followup"]');
+  followup.slice(0, 6).forEach(agent => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'ov-agent';
+    const name = document.createElement('strong');
+    name.textContent =
+      agent.t + ' · ' + agent.prenom + ' ' + agent.nom;
+    const detail = document.createElement('span');
+    detail.textContent =
+      agent.site + ' · Performance ' +
+      number(agent.top * 100) + ' % · ' +
+      number(agent.ph) + ' résultats / h';
+    button.append(name, detail);
+    button.addEventListener('click', () => {
+      LIRIS_AGENT_SELECTION = agent.t;
+      UI_VIEW = 'agents';
+      applyLirisInterface();
+    });
+    followupZone.appendChild(button);
+  });
+}
+const interfaceAvantNouvelOverview = applyLirisInterface;
+applyLirisInterface = function () {
+  clearLirisOverview();
+  interfaceAvantNouvelOverview();
+  renderLirisOverview();
 };
 createLirisNavigation();
   applyLirisInterface();
