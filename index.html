@@ -1287,7 +1287,7 @@ html[data-theme="dark"] #main #lirisOverview .ov-performance {
 }
   /* Masquer le diagnostic de chargement */#dataLoadStatus {  display: none !important;}
 </style>
-  <script>Chart.register({  id: 'barresPlusLarges',  beforeUpdate(chart) {    chart.data.datasets.forEach(dataset => {      const type = dataset.type || chart.config.type;      if (type !== 'bar') return;      dataset.barThickness = 'flex';dataset.maxBarThickness = 55;dataset.categoryPercentage = 0.98;dataset.barPercentage = 1;});  }});</script>
+  <script>Chart.register({  id: 'barresPlusLarges',  beforeUpdate(chart) {    chart.data.datasets.forEach(dataset => {      const type = dataset.type || chart.config.type;      if (type !== 'bar') return;      const quotidien = chart.canvas.id === 'ovDailyChart';      dataset.barThickness = 'flex';      dataset.maxBarThickness = quotidien ? 10 : 55;      dataset.categoryPercentage = quotidien ? 0.60 : 0.98;      dataset.barPercentage = quotidien ? 0.65 : 1;    });  }});</script>
 <style>#main .chart-wrap:not(.asap-donut):not(:has(#cO)),#main .ui-small .chart-wrap:not(.asap-donut):not(:has(#cO)) {  height: 420px !important;}@media (max-width: 750px) {  #main .chart-wrap:not(.asap-donut):not(:has(#cO)),  #main .ui-small .chart-wrap:not(.asap-donut):not(:has(#cO)) {    height: 340px !important;  }}</style>
 </head>
 <body>
@@ -4141,30 +4141,98 @@ createLirisNavigation();
   refreshLabels();
   if (RAWROWS.length) recompute();
 })();
-  (function installerDetailQualiteAgent() {
+ (function installerDetailQualiteAgent() {
   const renduInitial = renderLirisAgentPanel;
+  const normaliser = valeur => String(valeur ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim().toLowerCase();
+  const texte = valeur => String(valeur ?? '').trim();
+  function element(tag, contenu, parent) {
+    const node = document.createElement(tag);
+    if (contenu !== undefined) node.textContent = contenu;
+    if (parent) parent.appendChild(node);
+    return node;
+  }
+  const style = document.createElement('style');
+  style.textContent = `
+    .qa-section {
+      margin-top:24px;padding:20px;
+      background:var(--bg2);color:var(--txt);
+      border:1px solid var(--bd);border-radius:16px;
+    }
+    .qa-note {color:var(--txt2);margin:8px 0 16px;}
+    .qa-grid {
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:12px;margin-bottom:18px;
+    }
+    .qa-card {
+      padding:16px;background:var(--bg);
+      border:1px solid var(--bd);border-radius:12px;
+    }
+    .qa-label {font-size:12px;color:var(--txt2);}
+    .qa-value {
+      margin-top:6px;font-size:28px;font-weight:600;
+      font-variant-numeric:tabular-nums;
+    }
+    .qa-filters {display:flex;gap:8px;flex-wrap:wrap;}
+    .qa-filter {
+      padding:8px 12px;border:1px solid var(--bd);
+      border-radius:20px;background:var(--bg);
+      color:var(--txt);cursor:pointer;
+    }
+    .qa-filter[aria-pressed="true"] {
+      background:#2563eb;color:white;border-color:#2563eb;
+    }
+    .qa-scroll {overflow:auto;max-height:440px;}
+    .qa-table {width:100%;min-width:480px;border-collapse:collapse;}
+    .qa-table th,.qa-table td {
+      text-align:left;padding:12px;
+      border-bottom:1px solid var(--bd);vertical-align:top;
+    }
+    .qa-table th {
+      position:sticky;top:0;z-index:1;
+      background:var(--bg2);color:var(--txt2);
+    }
+    .qa-badge {
+      display:inline-block;padding:5px 10px;
+      border-radius:20px;font-size:12px;font-weight:600;
+    }
+    .qa-mauvaise {background:rgba(232,97,90,.16);color:#e8615a;}
+    .qa-loupe {background:rgba(26,188,156,.16);color:#1abc9c;}
+    .qa-nonconforme {background:rgba(245,197,24,.16);color:#c89f00;}
+    .qa-autre {background:var(--bg);color:var(--txt2);}
+    .qa-detail summary {cursor:pointer;color:var(--txt2);}
+    .qa-detail p {
+      white-space:pre-wrap;overflow-wrap:anywhere;
+      margin:10px 0;max-width:700px;
+    }
+    .qa-empty {color:var(--txt2);padding:20px 0;}
+    @media(max-width:650px) {
+      .qa-grid {grid-template-columns:repeat(2,minmax(0,1fr));}
+      .qa-section {padding:14px;}
+    }
+  `;
+  document.head.appendChild(style);
   renderLirisAgentPanel = function () {
     renduInitial();
     const panel = document.getElementById('lirisAgentPanel');
     if (!panel || UI_VIEW !== 'agents') return;
-    const section = document.createElement('section');
-    section.style.cssText =
-      'margin-top:24px;padding:20px;background:var(--bg2);' +
-      'border:1px solid var(--bd);border-radius:16px;';
-    const titre = document.createElement('h3');
-    titre.textContent = 'Détails qualité · ' + LIRIS_AGENT_SELECTION;
-    titre.style.marginBottom = '12px';
-    section.appendChild(titre);
-    panel.appendChild(section);
-    const message = document.createElement('p');
-    message.style.cssText = 'color:var(--txt2);margin-bottom:14px;';
-    section.appendChild(message);
+    panel.querySelector('.qa-section')?.remove();
+    const section = element('section', undefined, panel);
+    section.className = 'qa-section';
+    element('h3', 'Détails qualité · ' + LIRIS_AGENT_SELECTION, section);
+    const note = element('p', undefined, section);
+    note.className = 'qa-note';
     if (!RAWNQROWS.length || !NQCOLS) {
-      message.textContent = 'Données NQ non chargées.';
+      note.textContent = 'Données NQ non chargées.';
       return;
     }
     const entetes = Object.keys(RAWNQROWS[0]);
-    const exact = nom => entetes.find(h => cl(h) === cl(nom));
+    const exact = nom => entetes.find(
+      h => normaliser(h) === normaliser(nom)
+    );
     const cDate = exact('Date réalisation');
     const cTri = exact('Trigramme') || NQCOLS.cTri;
     const cVal = exact('Validation') || NQCOLS.cVal;
@@ -4172,71 +4240,131 @@ createLirisNavigation();
     const cConstat = exact('Constat NQ');
     const cComment = exact('Commentaires');
     const cOutil = exact('Outil');
-    if (!cDate || !cTri) {
-      message.textContent =
-        'Colonne Date réalisation ou Trigramme introuvable.';
+    if (!cDate || !cTri || !cCat) {
+      note.textContent =
+        'Colonne Date réalisation, Trigramme ou Catégorie introuvable.';
       return;
+    }
+    const categories = [
+      { cle:'mauvaise', label:'Mauvaise', classe:'qa-mauvaise' },
+      { cle:'loupe', label:'Loupé', classe:'qa-loupe' },
+      { cle:'nonconforme', label:'Non conforme', classe:'qa-nonconforme' }
+    ];
+    function categorie(valeur) {
+      const cle = normaliser(valeur).replace(/[\s_-]+/g, '');
+      return categories.find(c => c.cle === cle) || {
+        cle:'autre', label:texte(valeur) || 'Non renseignée',
+        classe:'qa-autre'
+      };
     }
     const [debut, fin] = periodRange();
-    const selection = String(LIRIS_AGENT_SELECTION).toUpperCase();
-    const lignes = [];
-    RAWNQROWS.forEach(row => {
-      const tri = String(row[cTri] || '')
-        .trim().toUpperCase().slice(0, 3);
-      if (tri !== selection) return;
-      if (cVal && cl(row[cVal]) === 'ko') return;
-      if (cOutil && cl(row[cOutil]) !== 'liris') return;
+    const selection = texte(LIRIS_AGENT_SELECTION).toUpperCase();
+    const lignes = RAWNQROWS.flatMap(row => {
+      const tri = texte(row[cTri]).toUpperCase().slice(0, 3);
+      if (tri !== selection) return [];
+      if (cVal && normaliser(row[cVal]) === 'ko') return [];
+      if (cOutil && normaliser(row[cOutil]) !== 'liris') return [];
       const date = parseDateCell(row[cDate]);
-      if (!date || date < debut || date > fin) return;
-      lignes.push({ row, date });
-    });
-    lignes.sort((a, b) => b.date - a.date);
-    message.textContent =
-      lignes.length.toLocaleString('fr-FR') +
-      ' RC · Date réalisation · KO exclus' +
+      if (!date || date < debut || date > fin) return [];
+      return [{
+        date,
+        cat:categorie(row[cCat]),
+        validation:cVal ? texte(row[cVal]) : '',
+        constat:cConstat ? texte(row[cConstat]) : '',
+        commentaire:cComment ? texte(row[cComment]) : ''
+      }];
+    }).sort((a, b) => b.date - a.date);
+    note.textContent =
+      'Date réalisation · KO seuls exclus' +
       (cOutil ? ' · LIRIS uniquement' : '') + '.';
-    if (!lignes.length) {
-      message.textContent += ' Aucun détail pour cette sélection.';
-      return;
-    }
-    const zone = document.createElement('div');
-    zone.style.cssText =
-      'overflow:auto;max-height:500px;margin-top:12px;';
-    const table = document.createElement('table');
-    table.style.cssText = 'width:100%;min-width:700px;';
-    const thead = document.createElement('thead');
-    const trEntete = document.createElement('tr');
-    ['Date réalisation', 'Catégorie', 'Constat NQ',
-     'Validation', 'Commentaires'].forEach(label => {
-      const th = document.createElement('th');
-      th.textContent = label;
-      th.style.textAlign = 'left';
-      trEntete.appendChild(th);
+    const grille = element('div', undefined, section);
+    grille.className = 'qa-grid';
+    [
+      ['Total RC', lignes.length],
+      ...categories.map(c => [
+        c.label, lignes.filter(l => l.cat.cle === c.cle).length
+      ])
+    ].forEach(([label, valeur]) => {
+      const carte = element('div', undefined, grille);
+      carte.className = 'qa-card';
+      element('div', label, carte).className = 'qa-label';
+      element('div', valeur.toLocaleString('fr-FR'), carte)
+        .className = 'qa-value';
     });
-    thead.appendChild(trEntete);
-    table.appendChild(thead);
-    const tbody = document.createElement('tbody');
-    lignes.forEach(({ row, date }) => {
-      const tr = document.createElement('tr');
-      const valeurs = [
-        date.toLocaleDateString('fr-FR'),
-        cCat ? row[cCat] : '',
-        cConstat ? row[cConstat] : '',
-        cVal ? row[cVal] : '',
-        cComment ? row[cComment] : ''
-      ];
-      valeurs.forEach(value => {
-        const td = document.createElement('td');
-        td.textContent = String(value ?? '').trim() || '—';
-        td.style.cssText =
-          'text-align:left;vertical-align:top;white-space:pre-wrap;';
-        tr.appendChild(td);
+    const filtres = element('div', undefined, section);
+    filtres.className = 'qa-filters';
+    const indication = element('p', undefined, section);
+    indication.className = 'qa-note';
+    const zone = element('div', undefined, section);
+    zone.className = 'qa-scroll';
+    const table = element('table', undefined, zone);
+    table.className = 'qa-table';
+    const tete = element('tr', undefined, element('thead', undefined, table));
+    ['Date réalisation', 'Catégorie', 'Validation', 'Détail']
+      .forEach(label => element('th', label, tete));
+    const corps = element('tbody', undefined, table);
+    const vide = element('p', undefined, section);
+    vide.className = 'qa-empty';
+    function afficher(filtre) {
+      corps.replaceChildren();
+      const visibles = lignes.filter(
+        l => filtre === 'toutes' || l.cat.cle === filtre
+      );
+      filtres.querySelectorAll('button').forEach(b => {
+        b.setAttribute('aria-pressed', String(b.dataset.filtre === filtre));
       });
-      tbody.appendChild(tr);
+      indication.textContent =
+        visibles.length.toLocaleString('fr-FR') + ' RC affichés';
+      table.hidden = !visibles.length;
+      vide.hidden = !!visibles.length;
+      vide.textContent = 'Aucun RC pour cette sélection.';
+      visibles.forEach(ligne => {
+        const tr = element('tr', undefined, corps);
+        element('td', ligne.date.toLocaleDateString('fr-FR'), tr);
+        const catCell = element('td', undefined, tr);
+        element('span', ligne.cat.label, catCell).className =
+          'qa-badge ' + ligne.cat.classe;
+        element('td', ligne.validation || 'Non renseignée', tr);
+        const detailCell = element('td', undefined, tr);
+        if (!ligne.constat && !ligne.commentaire) {
+          element('span', 'Aucun détail renseigné', detailCell)
+            .style.color = 'var(--txt2)';
+          return;
+        }
+        const detail = element('details', undefined, detailCell);
+        detail.className = 'qa-detail';
+        element('summary', 'Voir le détail', detail);
+        if (ligne.constat) {
+          element('strong', 'Constat NQ', detail);
+          element('p', ligne.constat, detail);
+        }
+        if (ligne.commentaire) {
+          element('strong', 'Commentaire', detail);
+          element('p', ligne.commentaire, detail);
+        }
+      });
+    }
+    const choix = [
+      {cle:'toutes', label:'Toutes les catégories'},
+      ...categories
+    ];
+    if (lignes.some(l => l.cat.cle === 'autre')) {
+      choix.push({cle:'autre', label:'Autres / non renseignées'});
+    }
+    choix.forEach(c => {
+      const bouton = element('button', c.label, filtres);
+      bouton.type = 'button';
+      bouton.className = 'qa-filter';
+      bouton.dataset.filtre = c.cle;
+      bouton.addEventListener('click', () => afficher(c.cle));
     });
-    table.appendChild(tbody);
-    zone.appendChild(table);
-    section.appendChild(zone);
+    afficher('toutes');
+    if (lignes.length && !lignes.some(l => l.constat || l.commentaire)) {
+      const info = element('p',
+        'Aucun constat ni commentaire disponible dans les lignes chargées.',
+        section);
+      info.className = 'qa-note';
+    }
   };
   if (UI_VIEW === 'agents') renderLirisAgentPanel();
 })();
