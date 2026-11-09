@@ -3923,6 +3923,112 @@ createLirisNavigation();
   };
   actualiserEntete();
 })();
+  /* ===== TOUTES LES DONNÉES PAR DÉFAUT ===== */
+(function installerToutesDonnees() {
+  const plageInitiale = periodRange;
+  const heuresInitiales = baseHeures;
+  const libellesInitiaux = refreshLabels;
+  const selectionInitiale = setPeriod;
+  const recalculInitial = recompute;
+  function plageDisponible() {
+    let debut = null;
+    let fin = null;
+    function retenir(date) {
+      if (!date || !Number.isFinite(date.getTime())) return;
+      if (!debut || date < debut) debut = new Date(date);
+      if (!fin || date > fin) fin = new Date(date);
+    }
+    if (RAWROWS.length) {
+      const colonne = fc(
+        Object.keys(RAWROWS[0]),
+        'date de lecture', 'date lecture',
+        'date extraction', 'date export',
+        'date', 'jour', 'period', 'periode'
+      );
+      if (colonne) {
+        RAWROWS.forEach(row => {
+          retenir(parseDateCell(row[colonne]));
+        });
+      }
+    }
+    if (NQCOLS?.cDate) {
+      RAWNQROWS.forEach(row => {
+        retenir(parseDateCell(row[NQCOLS.cDate]));
+      });
+    }
+    if (!debut || !fin) return null;
+    debut.setHours(0, 0, 0, 0);
+    fin.setHours(23, 59, 59, 999);
+    return [debut, fin];
+  }
+  periodRange = function () {
+    if (PERIOD !== 'tout') return plageInitiale();
+    return plageDisponible() || [
+      new Date(1900, 0, 1),
+      new Date(9999, 11, 31, 23, 59, 59, 999)
+    ];
+  };
+  baseHeures = function () {
+    if (PERIOD !== 'tout') return heuresInitiales();
+    const plage = plageDisponible();
+    if (!plage) return 8;
+    const [debut, fin] = plage;
+    const date = new Date(debut);
+    let jours = 0;
+    while (date <= fin) {
+      if (date.getDay() !== 0 && date.getDay() !== 6) {
+        jours++;
+      }
+      date.setDate(date.getDate() + 1);
+    }
+    return Math.max(jours * 8, 8);
+  };
+  const bouton = document.createElement('button');
+  bouton.type = 'button';
+  bouton.id = 'pTout';
+  bouton.className = 'bof pbtn';
+  bouton.textContent = 'Toutes les données';
+  bouton.addEventListener('click', () => setPeriod('tout'));
+  document.getElementById('pJ').before(bouton);
+  refreshLabels = function () {
+    libellesInitiaux();
+    const tout = PERIOD === 'tout';
+    bouton.className = (tout ? 'bon' : 'bof') + ' pbtn';
+    bouton.setAttribute('aria-pressed', String(tout));
+    document.getElementById('periodSelectors')
+      ?.style.setProperty('display', tout ? 'none' : 'inline-flex');
+    if (!tout) return;
+    ['pJ', 'pS', 'pM'].forEach(id => {
+      document.getElementById(id).className = 'bof pbtn';
+    });
+    document.getElementById('pdate').style.display = 'none';
+    document.getElementById('wk').textContent = 'TOUT';
+    const plage = plageDisponible();
+    const format = date => date.toLocaleDateString('fr-FR');
+    document.getElementById('hdate').textContent = plage
+      ? format(plage[0]) + ' → ' + format(plage[1])
+      : 'Toutes les données disponibles';
+    document.getElementById('baseLabel').textContent =
+      'Toute la période · base théorique de ' +
+      baseHeures() + ' h par agent';
+  };
+  setPeriod = function (periode) {
+    if (periode !== 'tout') {
+      selectionInitiale(periode);
+      return;
+    }
+    PERIOD = 'tout';
+    refreshLabels();
+    recompute();
+  };
+  recompute = function (...argumentsRecalcul) {
+    refreshLabels();
+    return recalculInitial(...argumentsRecalcul);
+  };
+  PERIOD = 'tout';
+  refreshLabels();
+  if (RAWROWS.length) recompute();
+})();
 </script>
 </body>
 </html>
