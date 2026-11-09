@@ -1492,7 +1492,7 @@ async function loadSharedData() {
     const url =
       `https://raw.githubusercontent.com/` +
       `${GH_OWNER}/${GH_REPO}/main/${GH_PATH}`;
-    const res = await fetch(url, { cache: 'no-store' });
+    const res = await fetch(url, { cache: 'no-cache' });
     if (!res.ok) {
       throw new Error(
         `GitHub répond HTTP ${res.status}. ` +
