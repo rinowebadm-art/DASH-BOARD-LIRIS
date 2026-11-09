@@ -2268,34 +2268,75 @@ function build(){
   CHS.T=new Chart('cT',{type:'bar',data:{labels:d10t.map(d=>d.t),datasets:[{data:d10t.map(d=>d.top),backgroundColor:d10t.map(d=>tc(d.top)),borderRadius:3}]},options:bO(true,false)});
   const dataT=new Set(data.map(x=>x.t));
   const nqArr=Object.entries(NQ_DATA).filter(([t])=>dataT.has(t)).map(([t,v])=>{const d=data.find(x=>x.t===t);const rate=d&&d.res>0?(v.total/d.res):0;return{t,...v,rate};}).filter(x=>x.rate>0).sort((a,b)=>b.total-a.total).slice(0,10);
-  if(nqArr.length){
-    CHS.NQ=new Chart('cNQ',{type:'bar',data:{
-      labels:nqArr.map(d=>d.t),
-      datasets:[
-        {label:'Mauvaise',data:nqArr.map(d=>d.mauvaise),backgroundColor:'rgba(232,97,90,.85)',borderRadius:2},
-        {label:'Loupé',data:nqArr.map(d=>d.loupe),backgroundColor:'rgba(26,188,156,.85)',borderRadius:2},
-        {label:'Non conf.',data:nqArr.map(d=>d.nonconforme),backgroundColor:'rgba(245,197,24,.85)',borderRadius:2}
+  if (nqArr.length) {
+  CHS.NQ = new Chart('cNQ', {
+    type: 'bar',
+    data: {
+      labels: nqArr.map(d => d.t),
+      datasets: [
+        {
+          label: 'Mauvaise',
+          data: nqArr.map(d => d.mauvaise),
+          backgroundColor: 'rgba(232,97,90,.85)',
+          borderRadius: 2
+        },
+        {
+          label: 'Loupé',
+          data: nqArr.map(d => d.loupe),
+          backgroundColor: 'rgba(26,188,156,.85)',
+          borderRadius: 2
+        },
+        {
+          label: 'Non conf.',
+          data: nqArr.map(d => d.nonconforme),
+          backgroundColor: 'rgba(245,197,24,.85)',
+          borderRadius: 2
+        }
       ]
-    },options:{indexAxis:'x',maintainAspectRatio:false,responsive:true,animation:false,plugins:{legend:{display:true,position:'top',labels:{color:tC2,font:{size:9},boxWidth:8,padding:4}}},scales: {
-  x: {
-    stacked: true,
-    grid: { display: false },
-    ticks: {
-      color: tC2,
-      font: { size: 11 },
-      autoSkip: false,
-      minRotation: 0,
-      maxRotation: 0
+    },
+    options: {
+      indexAxis: 'x',
+      maintainAspectRatio: false,
+      responsive: true,
+      animation: false,
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+          labels: {
+            color: tC2,
+            font: { size: 9 },
+            boxWidth: 8,
+            padding: 4
+          }
+        }
+      },
+      scales: {
+        x: {
+          stacked: true,
+          grid: { display: false },
+          ticks: {
+            color: tC2,
+            font: { size: 11 },
+            autoSkip: false,
+            minRotation: 0,
+            maxRotation: 0
+          }
+        },
+        y: {
+          stacked: true,
+          beginAtZero: true,
+          grid: { color: gC },
+          ticks: {
+            color: tC,
+            font: { size: 11 },
+            precision: 0
+          }
+        }
+      }
     }
-  },
-  y: {
-    stacked: true,
-    beginAtZero: true,
-    grid: { color: gC },
-    ticks: {
-      color: tC,
-      font: { size: 11 },
-       precision: 0    }  }}       // Fin de scales}});    // Fin des options et de new Chart}       // Fin de if(nqArr.length)
+  });
+}
   const dl=data.slice().sort((a,b)=>b.top-a.top);
   CHS.L=new Chart('cL',{type:'line',data:{labels:dl.map(d=>d.t),datasets:[
     {label:'TOP %',data:dl.map(d=>d.top),borderColor:'#d4a017',backgroundColor:'rgba(212,160,23,.08)',borderWidth:2,pointBackgroundColor:dl.map(d=>tc(d.top)),pointRadius:3,tension:.35,fill:true},
