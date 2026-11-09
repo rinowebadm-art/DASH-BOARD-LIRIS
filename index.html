@@ -3901,8 +3901,10 @@ function renderLirisOverview() {
             data: dates.map(date => daily.get(date)),
             backgroundColor: '#3fc7ab',
             hoverBackgroundColor: '#4a89c4',
-            borderRadius: 6,
-            maxBarThickness: 32
+            borderRadius: 4,
+            maxBarThickness: 14,
+            categoryPercentage: 0.7,
+            barPercentage: 0.7
           }]
         },
         options: {
