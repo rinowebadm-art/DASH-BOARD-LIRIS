@@ -3708,36 +3708,84 @@ function renderLirisOverview() {
     siteZone.appendChild(card);
   });
   if (performance !== null) {
-    const gaugeValue = Math.max(0, Math.min(performance, 100));
-    lirisOverviewCharts.push(new Chart(
-      document.getElementById('ovPerformanceGauge'),
-      {
-        type: 'doughnut',
-        data: {
-          labels: ['Atteinte', 'Reste jusqu’à l’objectif'],
-          datasets: [{
+  const gaugeValue = Math.max(0, Math.min(performance, 100));
+  const agentsObjectif = agents.filter(agent => agent.top >= 1).length;
+  const partObjectif = agents.length
+    ? agentsObjectif / agents.length * 100
+    : 0;
+  const zone = panel.querySelector('.ov-gauge');
+  const valeur = panel.querySelector('.ov-big');
+  // Placer le pourcentage au centre des anneaux.
+  zone.style.cssText =
+    'position:relative;height:260px;width:100%;' +
+    'max-width:300px;margin:18px auto;';
+  valeur.style.cssText =
+    'position:absolute;inset:0;display:flex;' +
+    'align-items:center;justify-content:center;' +
+    'font-size:34px;font-weight:650;color:white;' +
+    'pointer-events:none;margin:0;';
+  zone.appendChild(valeur);
+  panel.querySelector('.ov-performance-note').textContent =
+    'Objectif : 100 % · Anneau intérieur : agents à objectif';
+  lirisOverviewCharts.push(new Chart(
+    document.getElementById('ovPerformanceGauge'),
+    {
+      type: 'doughnut',
+      data: {
+        labels: ['Atteinte', 'Reste'],
+        datasets: [
+          {
+            label: 'Performance moyenne',
             data: [gaugeValue, 100 - gaugeValue],
-            backgroundColor: ['#ffffff', 'rgba(255,255,255,.22)'],
+            backgroundColor: [
+              '#ffffff',
+              'rgba(255,255,255,.16)'
+            ],
             borderWidth: 0,
-            borderRadius: 6
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          animation: false,
-          rotation: -90,
-          circumference: 180,
-          cutout: '80%',
-          plugins: {
-            legend: { display: false },
-            tooltip: { enabled: false },
-            lirisAsapCentre: false
+            borderRadius: 14,
+            spacing: 0,
+            weight: 1
+          },
+          {
+            label: 'Agents à objectif',
+            data: [partObjectif, 100 - partObjectif],
+            backgroundColor: [
+              '#83dfeb',
+              'rgba(255,255,255,.12)'
+            ],
+            borderColor: 'transparent',
+            borderWidth: 5,
+            borderRadius: 14,
+            spacing: 0,
+            weight: 1
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        rotation: -90,
+        circumference: 360,
+        cutout: '73%',
+        plugins: {
+          legend: { display: false },
+          lirisAsapCentre: false,
+          tooltip: {
+            filter: contexte => contexte.dataIndex === 0,
+            callbacks: {
+              label: contexte =>
+                contexte.datasetIndex === 0
+                  ? 'Performance : ' + number(performance) + ' %'
+                  : 'À objectif : ' + agentsObjectif +
+                    ' / ' + agents.length + ' agents'
+            }
           }
         }
       }
-    ));
-  }
+    }
+  ));
+}
   // Lecture quotidienne des lignes brutes, sans modifier DATA.
   const selectedAgents = new Set(agents.map(agent => agent.t));
   const daily = new Map();
