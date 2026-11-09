@@ -1287,7 +1287,7 @@ html[data-theme="dark"] #main #lirisOverview .ov-performance {
 }
   /* Masquer le diagnostic de chargement */#dataLoadStatus {  display: none !important;}
 </style>
-  <script>Chart.register({  id: 'barresPlusLarges',  beforeUpdate(chart) {    chart.data.datasets.forEach(dataset => {      const type = dataset.type || chart.config.type;      if (type !== 'bar') return;      dataset.barThickness = 'flex';      dataset.maxBarThickness = 40;      dataset.categoryPercentage = 0.90;      dataset.barPercentage = 0.95;    });  }});</script>
+  <script>Chart.register({  id: 'barresPlusLarges',  beforeUpdate(chart) {    chart.data.datasets.forEach(dataset => {      const type = dataset.type || chart.config.type;      if (type !== 'bar') return;      dataset.barThickness = 'flex';dataset.maxBarThickness = 55;dataset.categoryPercentage = 0.98;dataset.barPercentage = 1;});  }});</script>
 </head>
 <body>
 <header class="hd">
