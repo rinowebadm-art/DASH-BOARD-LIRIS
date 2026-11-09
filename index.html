@@ -664,11 +664,7 @@ button {
 .ui-small .chart-wrap {
   height: 220px;
 }
-.chart-wrap canvas {
-  display: block;
-  width: 100% !important;
-  height: 100% !important;
-}
+.chart-wrap canvas {  display: block;}
 .tw {
   max-height: 520px;
   overflow: auto;
@@ -1713,9 +1709,9 @@ function build(){
       '</tr></thead><tbody id="clsBody"></tbody></table></div>'+
     '</div>'+
     '<div class="r3d" style="margin-bottom:8px">'+
-      '<div class="card"><div class="ct"><span class="dot" style="background:#2e75b6"></span>Sr / Jr</div><canvas id="cD1" height="130"></canvas></div>'+
-      '<div class="card"><div class="ct"><span class="dot" style="background:#9b59b6"></span>Performance % zones</div><canvas id="cD2" height="130"></canvas></div>'+
-      '<div class="card"><div class="ct"><span class="dot" style="background:#e74c3c"></span>NQ par catégorie</div><canvas id="cD3" height="130"></canvas></div>'+
+  '<div class="card"><div class="ct"><span class="dot" style="background:#2e75b6"></span>Sr / Jr</div><div class="chart-wrap asap-donut"><canvas id="cD1"></canvas></div></div>'+
+  '<div class="card"><div class="ct"><span class="dot" style="background:#9b59b6"></span>Performance % zones</div><div class="chart-wrap asap-donut"><canvas id="cD2"></canvas></div></div>'+
+  '<div class="card"><div class="ct"><span class="dot" style="background:#e74c3c"></span>NQ par catégorie</div><div class="chart-wrap asap-donut"><canvas id="cD3"></canvas></div></div>'+
     '</div>'+
     '<div class="r2b" style="margin-bottom:8px">'+
       '<div class="card"><div class="ct"><span class="dot" style="background:#d4a017"></span>T.Occupation Top 20</div><canvas id="cO" height="135"></canvas></div>'+
@@ -1814,31 +1810,40 @@ function build(){
   responsive: true,
   maintainAspectRatio: false,
   animation: false,
+  cutout: '72%',
+  layout: {
+    padding: 12
+  },
   plugins: {
     legend: {
       display: true,
       position: 'bottom',
       labels: {
         color: tC2,
-        font: { size: 9 },
+        usePointStyle: true,
+        pointStyle: 'circle',
         boxWidth: 10,
-        padding: 6
+        boxHeight: 10,
+        padding: 16,
+        font: { size: 12 }
       }
     },
     tooltip: {
       callbacks: {
-        label: c => {
-          const total = c.dataset.data.reduce(
-            (s, v) => s + (Number(v) || 0), 0
+        label: context => {
+          const value = Number(context.parsed) || 0;
+          const total = context.dataset.data.reduce(
+            (sum, item) => sum + (Number(item) || 0),
+            0
           );
-          const pct = total ? c.parsed / total * 100 : 0;
-          return c.label + ' : ' + c.parsed +
-            ' (' + pct.toFixed(1) + '%)';
+          const percent = total ? value / total * 100 : 0;
+          return context.label + ' : ' +
+            value.toLocaleString('fr-FR') +
+            ' (' + percent.toFixed(1) + '%)';
         }
       }
     }
-  },
-  cutout: '62%'
+  }
 });
 CHS.D1 = new Chart('cD1', {
   type: 'doughnut',
@@ -2262,7 +2267,7 @@ applyLirisInterface = function () {
           usePointStyle: true,
           boxWidth: 8,
           padding: 12,
-          font: { family: 'Inter', size: 11 }
+          font: { family: 'Inter', size: 12 }
         };
       }
       chart.data.datasets.forEach(dataset => {
