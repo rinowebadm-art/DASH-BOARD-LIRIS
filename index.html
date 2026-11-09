@@ -1336,33 +1336,148 @@ function unlockAdmin(){
     alert('Mode admin activé.');  
   } else alert('Mot de passe incorrect.');
 }
-async function loadSharedData(){  
-try{    
-  const res = await fetch(`https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/main/${GH_PATH}`);    
-  if(!res.ok) return;    
-  const json = await res.json();    
-  RAWROWS = json.rawrows || [];    
-  RAWNQROWS = json.rawnqrows || [];    
-  NQCOLS = json.nqcols || null;    
-  if(RAWROWS.length) recompute();  
-}catch(e){ console.warn('Pas de data.json existant encore.'); }
-}
-  async function pushToGitHub(){  
-    if(!isAdmin || !GH_TOKEN) return;  
-    const content = { rawrows: RAWROWS, rawnqrows: RAWNQROWS, nqcols: NQCOLS };  
-    const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(content))));  
-    const api = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;  
-    const cur = await fetch(api, {headers:{Authorization:`token ${GH_TOKEN}`}}).then(r=>r.ok?r.json():null);  
-    await fetch(api, {    
-      method:'PUT',    
-      headers:{Authorization:`token ${GH_TOKEN}`, 'Content-Type':'application/json'},    
-      body: JSON.stringify({      
-        message: 'Mise à jour dashboard '+new Date().toISOString(),      
-        content: b64,      
-        sha: cur ? cur.sha : undefined    
-      })  
-    });
+async function loadSharedData() {
+  let status = document.getElementById('dataLoadStatus');
+  if (!status) {
+    status = document.createElement('div');
+    status.id = 'dataLoadStatus';
+    status.setAttribute('role', 'status');
+    status.style.cssText =
+      'margin:12px 24px;padding:12px 16px;' +
+      'border:1px solid var(--bd);border-radius:12px;' +
+      'background:var(--bg2);color:var(--txt);' +
+      'white-space:pre-wrap;line-height:1.6;';
+    document.getElementById('main').before(status);
   }
+  const afficher = message => {
+    status.textContent = message;
+  };
+  afficher('Chargement des données GitHub…');
+  try {
+    const url =
+      `https://raw.githubusercontent.com/` +
+      `${GH_OWNER}/${GH_REPO}/main/${GH_PATH}`;
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) {
+      throw new Error(
+        `GitHub répond HTTP ${res.status}. ` +
+        'Vérifier le dépôt, la branche main et le fichier data.json. ' +
+        'Un dépôt privé n’est pas accessible avec cette URL sans authentification.'
+      );
+    }
+    const json = await res.json();
+    if (!json || !Array.isArray(json.rawrows)) {
+      throw new Error(
+        'Format de data.json incorrect : le tableau rawrows est absent.'
+      );
+    }
+    RAWROWS = json.rawrows;
+    RAWNQROWS = Array.isArray(json.rawnqrows)
+      ? json.rawnqrows
+      : [];
+    NQCOLS = json.nqcols || null;
+    if (!RAWROWS.length) {
+      afficher(
+        'data.json est accessible, mais rawrows est vide. ' +
+        'Aucune donnée de production à afficher.'
+      );
+      return;
+    }
+    // Ne pas conserver les anciens résultats en cas de recalcul incomplet.
+    DATA = [];
+    recompute();
+    if (!DATA.length) {
+      const diagnostic =
+        document.getElementById('diag')?.textContent || '';
+      afficher(
+        `${RAWROWS.length} lignes de production reçues, ` +
+        'mais aucun agent retenu après recalcul.\n' +
+        'Vérifier la période, les colonnes, les trigrammes ' +
+        'du référentiel et les volumes de résultats.\n' +
+        diagnostic
+      );
+      return;
+    }
+    // Garantir l’affichage même si le recalcul NQ n’a pas appelé build().
+    if (RAWNQROWS.length && !NQCOLS) {
+      NQ_DATA = {};
+      addScores(DATA);
+      build();
+    }
+    afficher(
+      `${RAWROWS.length} lignes de production chargées · ` +
+      `${DATA.length} agents dans la période · ` +
+      `${fd().length} agents après filtres.` +
+      (RAWNQROWS.length && !NQCOLS
+        ? '\nNQ non calculées : configuration nqcols absente.'
+        : '')
+    );
+  } catch (error) {
+    afficher('Chargement interrompu : ' + error.message);
+    console.error('Chargement LIRIS :', error);
+  }
+}
+ async function pushToGitHub() {
+  if (!isAdmin || !GH_TOKEN) return;
+  try {
+    const api =
+      `https://api.github.com/repos/` +
+      `${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;
+    const headers = {
+      Authorization: `Bearer ${GH_TOKEN}`,
+      Accept: 'application/vnd.github+json',
+      'Content-Type': 'application/json'
+    };
+    const current = await fetch(
+      api + '?ref=main',
+      { headers }
+    );
+    if (!current.ok && current.status !== 404) {
+      throw new Error(
+        'Lecture GitHub refusée : HTTP ' + current.status
+      );
+    }
+    const existing = current.ok
+      ? await current.json()
+      : null;
+    const payload = {
+      rawrows: RAWROWS,
+      rawnqrows: RAWNQROWS,
+      nqcols: NQCOLS
+    };
+    const bytes = new TextEncoder().encode(
+      JSON.stringify(payload)
+    );
+    let binary = '';
+    for (const byte of bytes) {
+      binary += String.fromCharCode(byte);
+    }
+    const saved = await fetch(api, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify({
+        message: 'Mise à jour dashboard ' +
+          new Date().toISOString(),
+        branch: 'main',
+        content: btoa(binary),
+        ...(existing?.sha ? { sha: existing.sha } : {})
+      })
+    });
+    if (!saved.ok) {
+      throw new Error(
+        'Sauvegarde GitHub refusée : HTTP ' + saved.status
+      );
+    }
+    alert('Données enregistrées sur GitHub.');
+  } catch (error) {
+    console.error('Synchronisation LIRIS :', error);
+    alert(
+      'Les données restent dans cette session, ' +
+      'mais ne sont pas synchronisées.\n' +
+      error.message
+    );
+  }
+}
 
 const DEF={
 "ZNL":{"nom":"ANDRIAMAHEFA","prenom":"Nambinintsoa","s":"Senior","site":"TANA","shift":"23:00","obj":100},
@@ -1668,51 +1783,141 @@ const clamp=v=>Math.max(0,Math.min(1,v));
       d.score=+s.toFixed(1);  
     });
   }
-  
-  function recompute(fname,sn){
-  const rows=RAWROWS
-  if(!rows.length)return;
-  if(fname!==undefined)LASTFNAME=fname;
-  if(sn!==undefined)LASTSN=sn;
-  const H=Object.keys(rows[0]);
-  const cT=fc(H,'trigramme','trigr','login','agent','collab');
-  const cR=fc(H,'sultats trait','sultats','resultat','result','clips trait','traitement');
-  const cC=fc(H,'media clip','clip media','nb clip','transformation','transfo');
-  const cP=fc(H,'temps de travail','temps travail','tps connect','temps connect','duree');
-  const cD=fc(H,'date de lecture','date lecture','date extraction','date export','date','jour','period','periode');
-  showDiag('Colonne date détectée : '+(cD||'AUCUNE — filtrage désactivé')+'\nColonnes : '+H.join(' | '));
-  if(!cT||!cR){setSp('Colonnes introuvables','err');showDiag('Colonnes reçues :\n'+H.join('\n'));return;}
-  const[pStart,pEnd]=periodRange();
-  pEnd.setHours(23,59,59,999);
-  let usedRows=rows;
-  if(cD)usedRows=rows.filter(row=>{const d=parseDateCell(row[cD]);if(!d)return true;return d>=pStart&&d<=pEnd;});
-  const agg={};
-  usedRows.forEach(row=>{
-    const t=String(row[cT]||'').trim().toUpperCase().slice(0,3);
-    if(!t||t.length<2||!BASE[t])return;
-    if(!agg[t])agg[t]={res:0,rm:0,tps:0};
-    agg[t].res+=parseFloat(String(row[cR]||0).replace(',','.'))||0;
-    if(cC)agg[t].rm+=parseFloat(String(row[cC]||0).replace(',','.'))||0;
-    if(cP)agg[t].tps+=parseTps(row[cP]);
+  function parseNombreLiris(value) {  if (typeof value === 'number') {    return Number.isFinite(value) ? value : NaN;  }  const text = String(value ?? '')    .trim()    .replace(/\s/g, '')    .replace(',', '.');  if (!text) return NaN;  const number = Number(text);  return Number.isFinite(number) ? number : NaN;}
+  function recompute(fname, sn) {
+  DATA = [];
+  if (fname !== undefined) LASTFNAME = fname;
+  if (sn !== undefined) LASTSN = sn;
+  const rows = RAWROWS;
+  if (!rows.length) {
+    NQ_DATA = {};
+    addScores(DATA);
+    build();
+    setSp('Aucune ligne de production', 'err');
+    return;
+  }
+  const H = Object.keys(rows[0]);
+  const cT = fc(
+    H, 'trigramme', 'trigr', 'login', 'agent', 'collab'
+  );
+  const cR = fc(
+    H, 'sultats trait', 'sultats', 'resultat',
+    'result', 'clips trait', 'traitement'
+  );
+  const cC = fc(
+    H, 'media clip', 'clip media', 'nb clip',
+    'transformation', 'transfo'
+  );
+  const cP = fc(
+    H, 'temps de travail', 'temps travail',
+    'tps connect', 'temps connect', 'duree'
+  );
+  const cD = fc(
+    H, 'date de lecture', 'date lecture',
+    'date extraction', 'date export', 'date',
+    'jour', 'period', 'periode'
+  );
+  if (!cT || !cR) {
+    NQ_DATA = {};
+    addScores(DATA);
+    build();
+    setSp('Colonnes introuvables', 'err');
+    showDiag('Colonnes reçues :\n' + H.join('\n'));
+    return;
+  }
+  const [pStart, pEnd] = periodRange();
+  const usedRows = cD
+    ? rows.filter(row => {
+        const date = parseDateCell(row[cD]);
+        return date && date >= pStart && date <= pEnd;
+      })
+    : rows;
+  const agg = {};
+  usedRows.forEach(row => {
+    const t = String(row[cT] || '')
+      .trim()
+      .toUpperCase()
+      .slice(0, 3);
+    if (!t || t.length < 2 || !BASE[t]) return;
+    if (!agg[t]) {
+      agg[t] = { res: 0, rm: 0, tps: 0 };
+    }
+    const resultats = parseNombreLiris(row[cR]);
+    const clips = cC ? parseNombreLiris(row[cC]) : NaN;
+    if (Number.isFinite(resultats) && resultats >= 0) {
+      agg[t].res += resultats;
+    }
+    if (Number.isFinite(clips) && clips >= 0) {
+      agg[t].rm += clips;
+    }
+    if (cP) {
+      const temps = parseTps(row[cP]);
+      if (Number.isFinite(temps) && temps >= 0) {
+        agg[t].tps += temps;
+      }
+    }
   });
-  const base=baseHeures();
-  DATA=Object.entries(agg).map(([t,v])=>{
-    const b=BASE[t];
-    const ph=v.tps>0?+(v.res/v.tps).toFixed(2):0;
-    const top=ph>0?+(ph/b.obj).toFixed(3):0;
-    const tx=v.res>0?+(v.rm/v.res).toFixed(3):0;
-    const lost=lostHoursFor(t,pStart,pEnd);
-    const baseNette=Math.max(base-lost,0.1);
-    return{t,nom:b.nom,prenom:b.prenom,s:b.s,site:b.site,shift:b.shift,obj:b.obj,
-      res:Math.round(v.res),rm:Math.round(v.rm),tps:v.tps,ph,top,tx,
-      lost,occ:+(v.tps/base*100).toFixed(1),occNet:+(v.tps/baseNette*100).toFixed(1)};
-  }).filter(d=>d.res>0||d.ph>0).sort((a,b)=>b.top-a.top);
-  setSp(DATA.length+'/'+Object.keys(BASE).length+' agents','ok');
-  document.getElementById('dinfo').textContent=(LASTFNAME?LASTFNAME+' · ':'')+'onglet "'+LASTSN+'" · '+DATA.length+' agents · '+PERIOD;
-  if(DATA.length)document.getElementById('diag').style.display='none';
-  // Si NQ chargées, on les recalcule aussi (elles appellent build) ; sinon on build directement
-  if(RAWNQROWS.length)recomputeNQ();
-  else{addScores(DATA);build();}
+  const base = baseHeures();
+  DATA = Object.entries(agg)
+    .map(([t, v]) => {
+      const b = BASE[t];
+      const ph = v.tps > 0
+        ? +(v.res / v.tps).toFixed(2)
+        : 0;
+      const top = ph > 0 && b.obj > 0
+        ? +(ph / b.obj).toFixed(3)
+        : 0;
+      const tx = v.res > 0
+        ? +(v.rm / v.res).toFixed(3)
+        : 0;
+      const lost = lostHoursFor(t, pStart, pEnd);
+      const baseNette = Math.max(base - lost, 0.1);
+      return {
+        t,
+        nom: b.nom,
+        prenom: b.prenom,
+        s: b.s,
+        site: b.site,
+        shift: b.shift,
+        obj: b.obj,
+        res: Math.round(v.res),
+        rm: Math.round(v.rm),
+        tps: v.tps,
+        ph,
+        top,
+        tx,
+        lost,
+        occ: +(v.tps / base * 100).toFixed(1),
+        occNet: +(v.tps / baseNette * 100).toFixed(1)
+      };
+    })
+    .filter(d => d.res > 0 || d.ph > 0)
+    .sort((a, b) => b.top - a.top);
+  setSp(
+    DATA.length + '/' + Object.keys(BASE).length + ' agents',
+    DATA.length ? 'ok' : 'err'
+  );
+  document.getElementById('dinfo').textContent =
+    (LASTFNAME ? LASTFNAME + ' · ' : '') +
+    'onglet "' + LASTSN + '" · ' +
+    DATA.length + ' agents · ' + PERIOD;
+  if (RAWNQROWS.length && NQCOLS) {
+    recomputeNQ();
+  } else {
+    NQ_DATA = {};
+    addScores(DATA);
+    build();
+  }
+  showDiag(
+    'Colonne agent : ' + cT + '\n' +
+    'Colonne résultats : ' + cR + '\n' +
+    'Colonne clips : ' + (cC || 'ABSENTE') + '\n' +
+    'Colonne temps : ' + (cP || 'ABSENTE') + '\n' +
+    'Colonne date : ' + (cD || 'ABSENTE — aucun filtrage temporel') +
+    '\nLignes reçues : ' + rows.length +
+    '\nLignes dans la période : ' + usedRows.length +
+    '\nAgents retenus : ' + DATA.length
+  );
 }
 function exportXL(){
   if(!DATA.length){alert('Aucune donnée chargée.');return;}
@@ -2636,7 +2841,7 @@ applyLirisInterface = function () {
     const texte = css.getPropertyValue('--txt3').trim();
     const grille = css.getPropertyValue('--bd').trim();
     Object.values(CHS).forEach(chart => {
-      if (!chart.canvas || chart.canvas.closest('.ui-hidden')) return;
+      if (  !chart.canvas ||  chart.canvas.closest('.ui-hidden, .ov-hidden')) return;
       const type = chart.config.type;
       chart.options.maintainAspectRatio = false;
       chart.options.animation = false;
@@ -3396,10 +3601,7 @@ function renderLirisOverview() {
         return;
       }
       if (date < start || date > end) return;
-      const text = String(row[cResults] ?? '')
-        .replace(/\s/g, '').replace(',', '.');
-      const value = Number(text);
-      if (!text || !Number.isFinite(value) || value < 0) {
+     const value = parseNombreLiris(row[cResults]);if (!Number.isFinite(value) || value < 0) {
         invalidVolumes++;
         return;
       }
