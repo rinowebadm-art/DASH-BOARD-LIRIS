@@ -1365,8 +1365,7 @@ html[data-theme="dark"] #main #lirisOverview .ov-performance {
   </div>
   <button class="bxl" onclick="exportXL()">Export Excel</button>
   <button class="bpr" onclick="window.print()">Imprimer</button>
-  <button class="bof" onclick="openMo()">Gérer agents</button>
-  <button class="bho" onclick="openMoLH()">Heures perdues</button>
+    <button class="bho" onclick="openMoLH()">Heures perdues</button>
   <span id="finfo" style="color:var(--txt3);font-size:11px;margin-left:auto"></span>
 </div>
 <div class="aband hide" id="aband">
@@ -1505,11 +1504,7 @@ async function loadSharedData() {
         'Format de data.json incorrect : le tableau rawrows est absent.'
       );
     }
-    RAWROWS = json.rawrows;
-    RAWNQROWS = Array.isArray(json.rawnqrows)
-      ? json.rawnqrows
-      : [];
-    NQCOLS = json.nqcols || null;
+    if (  !json.base ||  typeof json.base !== 'object' ||  Array.isArray(json.base) ||  !Object.keys(json.base).length) {  throw new Error(    'Référentiel absent : synchronise Listes depuis Apps Script.'  );}BASE = Object.assign(Object.create(null), json.base);RAWROWS = json.rawrows;RAWNQROWS = Array.isArray(json.rawnqrows)  ? json.rawnqrows  : [];NQCOLS = json.nqcols || null;
     if (!RAWROWS.length) {
       afficher(
         'data.json est accessible, mais rawrows est vide. ' +
@@ -1574,11 +1569,7 @@ async function loadSharedData() {
     const existing = current.ok
       ? await current.json()
       : null;
-    const payload = {
-      rawrows: RAWROWS,
-      rawnqrows: RAWNQROWS,
-      nqcols: NQCOLS
-    };
+const payload = {  rawrows: RAWROWS,  rawnqrows: RAWNQROWS,  nqcols: NQCOLS,  base: BASE};
     const bytes = new TextEncoder().encode(
       JSON.stringify(payload)
     );
@@ -1676,7 +1667,7 @@ const DEF={
 "XEU":{"nom":"RANIRIMALALA","prenom":"Nasolo Harinoro","s":"Junior","site":"TANA","shift":"05:00","obj":75},
 "XEV":{"nom":"ANDRIANIARILALA","prenom":"Nomenjanahary Arthur","s":"Junior","site":"TANA","shift":"05:00","obj":75}
 };
-let BASE=(()=>{try{const s=localStorage.getItem('lb4');return s?JSON.parse(s):JSON.parse(JSON.stringify(DEF));}catch{return JSON.parse(JSON.stringify(DEF));}})();
+let BASE = Object.create(null);
 let LOSTH=(()=>{try{const s=localStorage.getItem('lh1');return s?JSON.parse(s):[];}catch{return[];}})();
 // ── NOUVEAUTÉ : stockage des lignes NQ brutes pour recalcul à chaque changement de période ──
 let DATA=[],RAWROWS=[],RAWNQROWS=[],NQCOLS=null,NQ_DATA={},TAB='g',FIL='all',SHFT='all',mfv='all',CHS={},GRP='top',SEARCH='',DARK=false;
