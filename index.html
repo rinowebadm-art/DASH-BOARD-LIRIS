@@ -5960,5 +5960,240 @@ html[data-theme="dark"] .aband .ab-item {
   actualiserBandeaux();
 })();
 </script>
+<style>
+  /* Style réservé aux autres onglets */
+  #main.liris-autres-design {
+    gap: 20px;
+  }
+  #main.liris-autres-design .krow {
+    gap: 18px;
+    align-items: stretch;
+  }
+  /* Cartes KPI */
+  #main.liris-autres-design .kpi:not(.ui-hidden),
+  #main.liris-autres-design .liris-agent-metric {
+    --accent: #378ce7;
+    --tint: #eaf5ff;
+    container-type: inline-size;
+    position: relative;
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: 200px;
+    padding: 26px 18px !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    text-align: center;
+    background: linear-gradient(
+      155deg, #ffffff 35%, var(--tint) 100%
+    ) !important;
+    border: 1px solid #eaf0f6 !important;
+    border-radius: 22px !important;
+    box-shadow: 0 8px 26px rgba(37, 78, 119, 0.06);
+  }
+  #main.liris-autres-design .kpi:nth-child(4n+2),
+  #main.liris-autres-design .liris-agent-metric:nth-child(4n+2) {
+    --accent: #8c72da;
+    --tint: #f1edff;
+  }
+  #main.liris-autres-design .kpi:nth-child(4n+3),
+  #main.liris-autres-design .liris-agent-metric:nth-child(4n+3) {
+    --accent: #27b493;
+    --tint: #e9faf4;
+  }
+  #main.liris-autres-design .kpi:nth-child(4n+4),
+  #main.liris-autres-design .liris-agent-metric:nth-child(4n+4) {
+    --accent: #d7a542;
+    --tint: #fff8e8;
+  }
+  #main.liris-autres-design .kpi:not(.ui-hidden)::before,
+  #main.liris-autres-design .liris-agent-metric::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 32%;
+    right: 32%;
+    height: 4px;
+    background: var(--accent);
+    border-radius: 0 0 8px 8px;
+    opacity: 0.65;
+  }
+  /* Libellés centrés */
+  #main.liris-autres-design .kl,
+  #main.liris-autres-design .liris-agent-metric > div:first-child {
+    width: 100%;
+    margin: 0 !important;
+    color: #60758d !important;
+    font-size: 14px !important;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  /* Chiffres agrandis */
+  #main.liris-autres-design .kv,
+  #main.liris-autres-design .liris-agent-metric > div:last-child {
+    width: 100%;
+    margin: 0 !important;
+    color: #193653 !important;
+    font-size: clamp(26px, 12cqw, 52px) !important;
+    font-weight: 750 !important;
+    line-height: 1.15;
+    letter-spacing: -0.8px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  #main.liris-autres-design .ks {
+    margin: 0 !important;
+    color: #60758d !important;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  #main.liris-autres-design .kb {
+    position: static !important;
+    align-self: center;
+  }
+  #main.liris-autres-design .kb:empty {
+    display: none;
+  }
+  /* Graphiques et fiche agent */
+  #main.liris-autres-design .card,
+  #main.liris-autres-design #lirisAgentPanel {
+    box-sizing: border-box;
+    padding: 24px !important;
+    background: var(--bg2) !important;
+    border: 1px solid var(--bd) !important;
+    border-radius: 22px !important;
+    box-shadow: 0 8px 26px rgba(37, 78, 119, 0.06);
+  }
+  #main.liris-autres-design #lirisAgentPanel h2 {
+    margin: 0 0 20px;
+    color: var(--txt);
+    font-size: 20px;
+    font-weight: 700;
+  }
+  #main.liris-autres-design #lirisAgentPanel select {
+    padding: 14px 16px !important;
+    border-radius: 14px !important;
+    font-size: 14px;
+  }
+  #main.liris-autres-design .liris-agent-grid {
+    grid-template-columns:
+      repeat(auto-fit, minmax(180px, 1fr)) !important;
+    gap: 18px !important;
+  }
+  /* Classement : tableau plus aéré */
+  #main.liris-autres-design table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-variant-numeric: tabular-nums;
+  }
+  #main.liris-autres-design table th {
+    padding: 16px 14px !important;
+    background: var(--bg3, var(--bg2));
+    color: var(--txt2);
+    font-size: 12px;
+    font-weight: 700;
+    border-bottom: 1px solid var(--bd);
+  }
+  #main.liris-autres-design table td {
+    padding: 15px 14px !important;
+    border-bottom: 1px solid var(--bd);
+  }
+  #main.liris-autres-design table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  #main.liris-autres-design table tbody tr:hover {
+    background: var(--bg3, var(--bg2));
+  }
+  /* Mode sombre */
+  html[data-theme="dark"] #main.liris-autres-design .kpi:not(.ui-hidden),
+  html[data-theme="dark"] #main.liris-autres-design .liris-agent-metric {
+    background: var(--bg2) !important;
+    border-color: var(--bd) !important;
+  }
+  html[data-theme="dark"] #main.liris-autres-design .kl,
+  html[data-theme="dark"] #main.liris-autres-design .ks,
+  html[data-theme="dark"] #main.liris-autres-design .liris-agent-metric > div:first-child {
+    color: var(--txt3) !important;
+  }
+  html[data-theme="dark"] #main.liris-autres-design .kv,
+  html[data-theme="dark"] #main.liris-autres-design .liris-agent-metric > div:last-child {
+    color: var(--txt) !important;
+  }
+  @media (max-width: 650px) {
+    #main.liris-autres-design .krow:not(.ui-hidden) {
+      grid-template-columns: 1fr !important;
+    }
+    #main.liris-autres-design .liris-agent-grid {
+      grid-template-columns: 1fr !important;
+    }
+    #main.liris-autres-design .kpi:not(.ui-hidden),
+    #main.liris-autres-design .liris-agent-metric {
+      min-height: 175px;
+    }
+    #main.liris-autres-design .card,
+    #main.liris-autres-design #lirisAgentPanel {
+      padding: 18px !important;
+    }
+  }
+</style>
+<script>
+(function installerDesignAutresOnglets() {
+  const vuesConcernees = new Set([
+    'performance',
+    'quality',
+    'agents',
+    'ranking',
+    'occupation'
+  ]);
+  function preparerCartesAgent() {
+    const panel = document.getElementById('lirisAgentPanel');
+    if (!panel) return;
+    Array.from(panel.children).forEach(element => {
+      if (element.tagName !== 'DIV') return;
+      if (element.querySelector('canvas')) return;
+      const cartes = Array.from(element.children);
+      const estGrille = cartes.length > 1 && cartes.every(carte =>
+        carte.tagName === 'DIV' &&
+        carte.children.length === 2 &&
+        Array.from(carte.children).every(enfant =>
+          enfant.tagName === 'DIV'
+        )
+      );
+      if (!estGrille) return;
+      element.classList.add('liris-agent-grid');
+      cartes.forEach(carte => {
+        carte.classList.add('liris-agent-metric');
+      });
+    });
+  }
+  function appliquerDesign() {
+    const main = document.getElementById('main');
+    if (!main) return;
+    main.classList.toggle(
+      'liris-autres-design',
+      vuesConcernees.has(UI_VIEW)
+    );
+    if (UI_VIEW === 'agents') preparerCartesAgent();
+  }
+  /* Conserver les traitements déjà installés */
+  const interfacePrecedente = applyLirisInterface;
+  applyLirisInterface = function (...args) {
+    const resultat = interfacePrecedente.apply(this, args);
+    appliquerDesign();
+    return resultat;
+  };
+  /* Appliquer aussi le style lors du changement d’agent */
+  const ficheAgentPrecedente = renderLirisAgentPanel;
+  renderLirisAgentPanel = function (...args) {
+    const resultat = ficheAgentPrecedente.apply(this, args);
+    preparerCartesAgent();
+    return resultat;
+  };
+  appliquerDesign();
+})();
+</script>
 </body>
 </html>
