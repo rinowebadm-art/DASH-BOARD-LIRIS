@@ -1283,6 +1283,202 @@ html[data-theme="dark"] #main #lirisOverview .ov-performance {
 }
   /* Masquer le diagnostic de chargement */#dataLoadStatus {  display: none !important;}
 /* Occupation : courbes compactes comme le modèle */#main .chart-wrap:has(> #cO) {  height: 340px !important;}@media (max-width: 650px) {  #main .chart-wrap:has(> #cO) {    height: 280px !important;  }}
+/* EN-TÊTE LIRIS — DESIGN UNIQUEMENT */
+header.hd {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 150px;
+  padding: 24px 32px;
+  overflow: hidden;
+  background: var(--bg);
+  border: none;
+  border-bottom: 1px solid var(--bd);
+}
+header.hd .header-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 0;
+  min-width: 0;
+  filter: drop-shadow(0 8px 10px rgba(15, 35, 50, .18));
+}
+/* Bloc incliné à gauche */
+header.hd .header-icon {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 110px;
+  width: 110px;
+  height: 104px;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  clip-path: polygon(
+    25% 0,
+    75% 0,
+    100% 50%,
+    75% 100%,
+    25% 100%,
+    0 50%
+  );
+  background: linear-gradient(135deg, #31596b, #152e3b);
+  color: #ffffff;
+  font-size: 38px;
+}
+/* Deux rubans superposés */
+header.hd .header-title {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
+  gap: 6px;
+  margin-left: -24px;
+}
+/* Ruban supérieur : sous-titre existant */
+header.hd .header-subtitle {
+  order: -1;
+  display: flex;
+  align-items: center;
+  min-height: 34px;
+  margin: 0 52px 0 0;
+  padding: 8px 38px;
+  clip-path: polygon(
+    0 0,
+    calc(100% - 25px) 0,
+    100% 100%,
+    0 100%
+  );
+  background: linear-gradient(100deg, #152e3b, #31596b);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .8px;
+}
+/* Ruban principal : titre existant */
+header.hd .header-title h1 {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 6px 10px;
+  min-height: 62px;
+  margin: 0;
+  padding: 14px 42px;
+  clip-path: polygon(
+    0 0,
+    calc(100% - 36px) 0,
+    100% 100%,
+    0 100%
+  );
+  background: linear-gradient(100deg, #ffffff, #e3edf3);
+  color: #193442;
+  font-size: clamp(17px, 1.7vw, 28px);
+  font-weight: 900;
+  letter-spacing: .4px;
+  line-height: 1.3;
+}
+header.hd .header-accent {
+  color: #397a99;
+}
+header.hd .badge {
+  margin-left: 4px;
+  padding: 4px 10px;
+  border: 1px solid rgba(25, 52, 66, .15);
+  border-radius: 5px;
+  background: #193442;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+/* Date et bouton conservés */
+header.hd .hd-r {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+  gap: 10px;
+  text-align: right;
+}
+header.hd .hd-r #themeBtn {
+  display: inline-flex !important;
+  align-items: center;
+  margin: 0;
+  padding: 7px 14px;
+  border: 1px solid var(--bd);
+  border-radius: 20px;
+  background: var(--bg2);
+  color: var(--txt);
+  font-size: 11px;
+}
+header.hd .hd-r #themeBtn:hover {
+  background: var(--bg3);
+}
+header.hd .hd-r #hdate {
+  display: block !important;
+  margin: 0;
+  color: var(--txt) !important;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+header.hd .header-technical {
+  display: none !important;
+}
+/* Adaptation aux écrans plus étroits */
+@media (max-width: 1000px) {
+  header.hd {
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 18px 20px;
+  }
+  header.hd .header-left {
+    flex-basis: 100%;
+  }
+  header.hd .hd-r {
+    flex: 1 0 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+@media (max-width: 650px) {
+  header.hd {
+    padding: 14px 12px;
+  }
+  header.hd .header-icon {
+    flex-basis: 76px;
+    width: 76px;
+    height: 104px;
+    font-size: 28px;
+  }
+  header.hd .header-title {
+    margin-left: -18px;
+  }
+  header.hd .header-subtitle {
+    margin-right: 14px;
+    padding: 8px 24px;
+    font-size: 10px;
+    letter-spacing: 0;
+  }
+  header.hd .header-title h1 {
+    padding: 12px 26px;
+    font-size: 16px;
+    letter-spacing: 0;
+  }
+  header.hd .badge {
+    padding: 3px 7px;
+    font-size: 10px;
+  }
+}
 </style>
 <style>
 .aband {  background: linear-gradient(    110deg,    rgba(255, 23, 68, .16),    rgba(255, 53, 94, .08)  ) !important;  border: 1px solid rgba(255, 80, 110, .22) !important;  border-bottom: 1px solid rgba(255, 80, 110, .28) !important;  padding: 12px 24px !important;  gap: 10px !important;  color: #210009 !important;  -webkit-backdrop-filter: blur(16px) saturate(120%);  backdrop-filter: blur(16px) saturate(120%);  box-shadow:    0 4px 14px rgba(120, 20, 45, .06),    inset 0 1px 0 rgba(255, 255, 255, .45);}
@@ -1324,7 +1520,8 @@ html[data-theme="dark"] #main #lirisOverview .ov-performance {
 }
 </style>
 </head>
-<header class="hd">
+  <body>
+    <header class="hd">
   <div class="header-left">
     <div class="header-icon" aria-hidden="true">▦</div>
 
@@ -6151,9 +6348,8 @@ html[data-theme="dark"] .aband .ab-item {
     --tickC2: #315c67;
   }
   /* En-tête et navigation */
-  html[data-theme="light"] .hd {
-    background: linear-gradient(135deg, #174553, #006d83);
-  }
+  html[data-theme="light"] header.hd {    
+    background: var(--bg);  }
   html[data-theme="light"] .hd-r {
     color: #d9ecef;
   }
