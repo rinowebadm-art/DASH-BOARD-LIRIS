@@ -5310,5 +5310,122 @@ html[data-theme="dark"] .aband .ab-item {
   applyLirisInterface();
 })();
 </script>
+<style>
+  #lirisOverview .ov-top {
+    align-items: stretch;
+  }
+  #lirisOverview .ov-top .ov-tile {
+    container-type: inline-size;
+    min-height: 220px;
+    padding: 24px 18px;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 14px;
+  }
+  #lirisOverview .ov-top .ov-label {
+    width: 100%;
+    font-size: 15px !important;
+    line-height: 1.4;
+    margin: 0 !important;
+  }
+  #lirisOverview .ov-top .ov-value {
+    width: 100%;
+    font-size: clamp(28px, 13cqw, 64px) !important;
+    font-weight: 700;
+    line-height: 1.15;
+    margin: 0 !important;
+    white-space: nowrap;
+  }
+  #lirisOverview .ov-top .ov-note {
+    width: 100%;
+    font-size: 13px !important;
+    line-height: 1.5;
+    margin: 0 !important;
+  }
+  #lirisOverview .ov-top .liris-flux-duo {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center !important;
+    width: 100%;
+    flex: 0 0 auto !important;
+    gap: 12px !important;
+    margin: 0 !important;
+  }
+  #lirisOverview .liris-flux-duo > div {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    text-align: center;
+  }
+  #lirisOverview .liris-flux-duo .liris-flux-label {
+    font-size: 13px !important;
+    line-height: 1.4;
+    margin: 0 !important;
+  }
+  #lirisOverview .liris-flux-duo .liris-flux-value {
+    display: block;
+    font-size: clamp(22px, 9cqw, 48px) !important;
+    font-weight: 700;
+    line-height: 1.15 !important;
+    margin: 0 !important;
+    white-space: nowrap;
+  }
+  #lirisOverview .ov-sites {
+    grid-auto-rows: 1fr;
+    align-items: stretch;
+  }
+  #lirisOverview .ov-sites > .ov-panel {
+    container-type: inline-size;
+    min-height: 220px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 20px;
+  }
+  #lirisOverview .ov-sites h3 {
+    width: 100%;
+    font-size: 20px !important;
+    margin: 0 !important;
+  }
+  #lirisOverview .ov-sites .ov-site-value {
+    width: 100%;
+    font-size: clamp(36px, 18cqw, 76px) !important;
+    font-weight: 700;
+    line-height: 1.15;
+    margin: 0 !important;
+    white-space: nowrap;
+  }
+  #lirisOverview .ov-sites .ov-meter {
+    width: 100%;
+    height: 12px;
+    flex-shrink: 0;
+    margin: 0 !important;
+  }
+  #lirisOverview .ov-sites .ov-muted {
+    width: 100%;
+    font-size: 14px !important;
+    line-height: 1.5;
+    margin: 0 !important;
+  }
+  @media (max-width: 650px) {
+    #lirisOverview .ov-top {
+      grid-template-columns: 1fr;
+    }
+    #lirisOverview .ov-top .ov-tile,
+    #lirisOverview .ov-sites > .ov-panel {
+      min-height: 200px;
+      padding: 20px;
+    }
+  }
+</style>
 </body>
 </html>
