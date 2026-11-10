@@ -3902,16 +3902,7 @@ function renderLirisOverview() {
   if (UI_VIEW !== 'overview') return;
   const main = document.getElementById('main');
   if (!main) return;
-  const agents = fd().filter(agent => {
-    if (!SEARCH) return true;
-    return [
-      agent.t,
-      agent.nom,
-      agent.prenom
-    ].some(value =>
-      String(value || '').toLowerCase().includes(SEARCH)
-    );
-  });
+  const agents = fd().filter(agent => {  if (!(Number(agent.res) > 0)) return false;  if (!SEARCH) return true;  return [    agent.t,    agent.nom,    agent.prenom  ].some(value =>    String(value || '').toLowerCase().includes(SEARCH)  );});
   const number = (value, digits = 1) =>
     Number(value).toLocaleString('fr-FR', {
       maximumFractionDigits: digits
@@ -4019,7 +4010,7 @@ function renderLirisOverview() {
   write('transformation', percent(transformation));
   write('occupation', percent(occupation));
   write('performance', percent(performance));
-  write('agents', number(production.length, 0));
+  write(  'agents',  number(    production.filter(agent => Number(agent.res) > 0).length,    0  ));
   write('atGoal',
     number(agents.filter(agent => agent.top >= 1).length, 0)
   );
