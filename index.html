@@ -2340,11 +2340,135 @@ function build(){
   });
 }
   const dl=data.slice().sort((a,b)=>b.top-a.top);
-  CHS.L=new Chart('cL',{type:'line',data:{labels:dl.map(d=>d.t),datasets:[
-    {label:'TOP %',data:dl.map(d=>d.top),borderColor:'#d4a017',backgroundColor:'rgba(212,160,23,.08)',borderWidth:2,pointBackgroundColor:dl.map(d=>tc(d.top)),pointRadius:3,tension:.35,fill:true},
-    {label:'100%',data:dl.map(()=>1),borderColor:'rgba(192,57,43,.7)',borderWidth:2,borderDash:[6,4],pointRadius:0},
-    {label:'85%',data:dl.map(()=>.85),borderColor:'rgba(160,102,0,.6)',borderWidth:1.5,borderDash:[3,3],pointRadius:0}
-  ]},options:{indexAxis:'x',maintainAspectRatio:false,responsive:true,animation:false,plugins:{legend:{display:true,labels:{color:tC2,font:{size:10}}}},scales:{x:{grid:{color:gC},ticks:{color:tC,font:{size:8},maxRotation:45}},y:{grid:{color:gC},ticks:{color:tC,callback:v=>(v*100).toFixed(0)+'%',font:{size:9}}}}}});
+CHS.L = new Chart('cL', {
+  type: 'line',
+  data: {
+    labels: dl.map(agent => agent.t),
+    datasets: [
+      {
+        label: 'Performance',
+        data: dl.map(agent => agent.top),
+        borderColor: '#35c4a5',
+        backgroundColor: context => {
+          const { ctx, chartArea } = context.chart;
+          if (!chartArea) return 'rgba(53,196,165,.12)';
+          const gradient = ctx.createLinearGradient(
+            0, chartArea.top, 0, chartArea.bottom
+          );
+          gradient.addColorStop(0, 'rgba(53,196,165,.32)');
+          gradient.addColorStop(1, 'rgba(53,196,165,.01)');
+          return gradient;
+        },
+        fill: 'origin',
+        tension: .4,
+        cubicInterpolationMode: 'monotone',
+        borderWidth: 2.5,
+        pointRadius: 2,
+        pointBackgroundColor: '#35c4a5',
+        pointBorderWidth: 0,
+        pointHoverRadius: 6,
+        pointHoverBackgroundColor: '#35c4a5',
+        pointHoverBorderColor: '#ffffff',
+        pointHoverBorderWidth: 2
+      },
+      {
+        label: 'Objectif 100 %',
+        data: dl.map(() => 1),
+        borderColor: 'rgba(59,130,246,.65)',
+        borderWidth: 1.5,
+        borderDash: [6, 5],
+        pointRadius: 0,
+        pointHoverRadius: 0,
+        fill: false
+      },
+      {
+        label: 'Seuil 85 %',
+        data: dl.map(() => .85),
+        borderColor: 'rgba(245,158,11,.65)',
+        borderWidth: 1.5,
+        borderDash: [3, 5],
+        pointRadius: 0,
+        pointHoverRadius: 0,
+        fill: false
+      }
+    ]
+  },
+  options: {
+    indexAxis: 'x',
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: false,
+    layout: {
+      padding: { top: 12, right: 12 }
+    },
+    interaction: {
+      mode: 'index',
+      intersect: false
+    },
+    plugins: {
+      legend: {
+        display: true,
+        position: 'bottom',
+        labels: {
+          color: tC2,
+          usePointStyle: true,
+          pointStyle: 'line',
+          boxWidth: 24,
+          padding: 18,
+          font: { size: 11 }
+        }
+      },
+      tooltip: {
+        backgroundColor: DARK ? '#1e293b' : '#ffffff',
+        titleColor: DARK ? '#ffffff' : '#1e293b',
+        bodyColor: DARK ? '#cbd5e1' : '#475569',
+        borderColor: DARK ? '#334155' : '#e2e8f0',
+        borderWidth: 1,
+        padding: 12,
+        displayColors: false,
+        filter: item => item.datasetIndex === 0,
+        callbacks: {
+          label: context =>
+            'Performance : ' +
+            (context.parsed.y * 100).toLocaleString('fr-FR', {
+              maximumFractionDigits: 1
+            }) + ' %'
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        border: { display: false },
+        ticks: {
+          color: tC,
+          autoSkip: true,
+          maxTicksLimit: 14,
+          maxRotation: 0,
+          padding: 10,
+          font: { size: 10 }
+        }
+      },
+      y: {
+        beginAtZero: true,
+        border: { display: false },
+        grid: {
+          color: DARK
+            ? 'rgba(148,163,184,.12)'
+            : 'rgba(148,163,184,.15)',
+          drawTicks: false
+        },
+        ticks: {
+          color: tC,
+          maxTicksLimit: 6,
+          padding: 10,
+          font: { size: 11 },
+          callback: value => Math.round(value * 100) + ' %'
+        }
+      }
+    }
+  }
+});
   const srFull=DATA.filter(d=>d.s==='Senior'&&(TAB==='g'||d.site===(TAB==='t'?'TANA':'DIEGO')));
   const jrFull=DATA.filter(d=>d.s==='Junior'&&(TAB==='g'||d.site===(TAB==='t'?'TANA':'DIEGO')));
   CHS.C=new Chart('cC',{type:'bar',data:{labels:['Prod/h','TOP %','Transfo %'],datasets:[
