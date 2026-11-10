@@ -4519,5 +4519,101 @@ createLirisNavigation();
   if (UI_VIEW === 'agents') renderLirisAgentPanel();
 })();
 </script>
+  <script>
+(function () {
+  const sources = new WeakMap();
+  const fonds = new WeakMap();
+  function nuance(couleur, force) {
+    if (typeof couleur !== 'string') return couleur;
+    let rgb;
+    const hex = couleur.match(/^#([0-9a-f]{6}|[0-9a-f]{3})$/i);
+    const rgba = couleur.match(
+      /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i
+    );
+    if (hex) {
+      let valeur = hex[1];
+      if (valeur.length === 3) {
+        valeur = valeur.split('').map(c => c + c).join('');
+      }
+      rgb = [0, 2, 4].map(i =>
+        parseInt(valeur.slice(i, i + 2), 16)
+      );
+    } else if (rgba) {
+      rgb = rgba.slice(1, 4).map(Number);
+    } else {
+      return couleur;
+    }
+    const cible = force > 0 ? 255 : 0;
+    return 'rgb(' + rgb.map(v =>
+      Math.round(v + (cible - v) * Math.abs(force))
+    ).join(',') + ')';
+  }
+  Chart.register({
+    id: 'lirisBatonnetsDegrades',
+    beforeUpdate(chart) {
+      chart.data.datasets.forEach(dataset => {
+        if ((dataset.type || chart.config.type) !== 'bar') return;
+        const horizontal =
+          (dataset.indexAxis || chart.options.indexAxis) === 'y';
+        // Largeur adaptée au nombre de barres affichées.
+        dataset.barThickness = 'flex';
+        delete dataset.maxBarThickness;
+        dataset.categoryPercentage = 0.78;
+        dataset.barPercentage = 0.90;
+        // Extrémité arrondie et base plate.
+        dataset.borderRadius = horizontal
+          ? {
+              topLeft: 0,
+              bottomLeft: 0,
+              topRight: 10,
+              bottomRight: 10
+            }
+          : {
+              topLeft: 10,
+              topRight: 10,
+              bottomLeft: 0,
+              bottomRight: 0
+            };
+        dataset.borderSkipped = 'middle';
+        dataset.borderWidth = 0;
+        if (dataset.backgroundColor !== fonds.get(dataset)) {
+          sources.set(dataset, dataset.backgroundColor);
+        }
+        const fond = context => {
+          const source = sources.get(dataset);
+          const couleur = Array.isArray(source)
+            ? source[context.dataIndex % source.length]
+            : typeof source === 'function'
+              ? source(context)
+              : source;
+          const zone = context.chart.chartArea;
+          if (!zone || typeof couleur !== 'string') {
+            return couleur;
+          }
+          const gradient = horizontal
+            ? context.chart.ctx.createLinearGradient(
+                zone.left, 0, zone.right, 0
+              )
+            : context.chart.ctx.createLinearGradient(
+                0, zone.top, 0, zone.bottom
+              );
+          gradient.addColorStop(
+            0, nuance(couleur, horizontal ? -0.22 : 0.12)
+          );
+          gradient.addColorStop(
+            1, nuance(couleur, horizontal ? 0.12 : -0.22)
+          );
+          return gradient;
+        };
+        fonds.set(dataset, fond);
+        dataset.backgroundColor = fond;
+      });
+    }
+  });
+  Object.values(Chart.instances).forEach(chart => {
+    chart.update('none');
+  });
+})();
+</script>
 </body>
 </html>
