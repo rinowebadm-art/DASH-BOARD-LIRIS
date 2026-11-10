@@ -5254,20 +5254,7 @@ html[data-theme="dark"] .aband .ab-item {
             'liris-flux-value ' + classe
           );
         });
-        creer(
-          'div',
-          'Prévu ' + nombre(b.prev) +
-          ' · Reçu ' + nombre(b.recu) +
-          ' · Traité ' + nombre(b.traite),
-          carte,
-          'liris-flux-note'
-        );
-        creer(
-          'div',
-          couverture(b),
-          carte,
-          'liris-flux-note'
-        );
+  carte.style.display = 'flex';        carte.style.flexDirection = 'column';        duo.style.flex = '1';        duo.style.alignItems = 'center';        duo.style.margin = '16px 0';        duo.style.gap = '20px';        duo.querySelectorAll('.liris-flux-label').forEach(label => {          label.style.fontSize = '13px';          label.style.marginBottom = '12px';        });        duo.querySelectorAll('.liris-flux-value').forEach(valeur => {          valeur.style.fontSize = 'clamp(28px, 2.5vw, 44px)';          valeur.style.lineHeight = '1.2';          valeur.style.marginTop = '0';          valeur.style.whiteSpace = 'nowrap';        });
       }
     }
     if (UI_VIEW !== 'production') return;
@@ -5276,14 +5263,7 @@ html[data-theme="dark"] .aband .ab-item {
     const panel = creer('section');
     panel.id = 'lirisFluxProduction';
     creer('h2', 'Prévision, réception et traitement', panel);
-    creer(
-      'p',
-      'Flux global tous sites · filtre de période appliqué.' +
-      ' Les filtres agent, statut, shift et site ne' +
-      ' s’appliquent pas à cette feuille globale.',
-      panel,
-      'liris-flux-note'
-    );
+    creer(      'p',      'Tous sites · période sélectionnée',      panel,      'liris-flux-note'    );
     const grille = creer(
       'div', undefined, panel, 'liris-flux-grid'
     );
@@ -5300,48 +5280,25 @@ html[data-theme="dark"] .aband .ab-item {
       creer('div', titre, carte, 'liris-flux-label');
       creer('strong', valeur, carte, classe);
     });
-    creer('p', couverture(b), panel, 'liris-flux-note');
-    const zone = creer(
-      'div', undefined, panel, 'liris-flux-scroll'
-    );
-    const table = creer(
-      'table', undefined, zone, 'liris-flux-table'
-    );
-    const tete = creer('thead', undefined, table);
-    const tr = creer('tr', undefined, tete);
-    [
-      'Période','Prévu','Reçu','Traité','QP','QT','Couverture'
-    ].forEach(t => creer('th', t, tr));
-    const corps = creer('tbody', undefined, table);
-    const groupes = new Map();
-    lignes.forEach(ligne => {
-      const cle = groupe(ligne.date);
-      if (!groupes.has(cle)) groupes.set(cle, []);
-      groupes.get(cle).push(ligne);
+        grille.style.gridTemplateColumns =
+      'repeat(auto-fit, minmax(170px, 1fr))';
+    grille.style.gap = '18px';
+    grille.style.margin = '20px 0 0';
+    grille.querySelectorAll('.liris-flux-card').forEach(carte => {
+      carte.style.minHeight = '145px';
+      carte.style.padding = '22px';
+      carte.style.display = 'flex';
+      carte.style.flexDirection = 'column';
+      carte.style.justifyContent = 'center';
     });
-    groupes.forEach((rows,cle) => {
-      const total = bilan(rows);
-      const ligne = creer('tr', undefined, corps);
-      [
-        libelle(cle),
-        nombre(total.prev),
-        nombre(total.recu),
-        nombre(total.traite),
-        pourcentage(total.qp),
-        pourcentage(total.qt),
-        'QP ' + total.joursQP + '/' + total.jours +
-        ' · QT ' + total.joursQT + '/' + total.jours
-      ].forEach(v => creer('td', v, ligne));
+    grille.querySelectorAll('.liris-flux-label').forEach(label => {
+      label.style.fontSize = '13px';
     });
-    creer(
-      'p',
-      '— : total incomplet ou dénominateur nul.' +
-      ' Traité : valeur de la feuille, sinon résultats Extract.' +
-      ' Un QT supérieur à 100 % peut correspondre' +
-      ' au traitement de stock antérieur.',
-      panel,
-      'liris-flux-note'
-    );
+    grille.querySelectorAll('strong').forEach(valeur => {
+      valeur.style.fontSize = 'clamp(28px, 2.5vw, 42px)';
+      valeur.style.lineHeight = '1.2';
+      valeur.style.marginTop = '16px';
+    });
     main.prepend(panel);
   }
   const interfaceInitiale = applyLirisInterface;
