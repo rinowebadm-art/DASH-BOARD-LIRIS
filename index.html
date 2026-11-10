@@ -5644,5 +5644,229 @@ html[data-theme="dark"] .aband .ab-item {
     }
   }
 </style>
+<style>
+  /* Retouches limitées à la vue Production */
+  #main.liris-production-design {
+    gap: 20px;
+  }
+  #main.liris-production-design #lirisFluxProduction,
+  #main.liris-production-design #lirisTotauxProduction {
+    padding: 24px !important;
+    border: 1px solid var(--bd) !important;
+    border-radius: 22px !important;
+    background: var(--bg2) !important;
+    box-shadow: 0 8px 26px rgba(37, 78, 119, 0.06) !important;
+  }
+  #main.liris-production-design #lirisFluxProduction h2,
+  #main.liris-production-design #lirisTotauxProduction h2 {
+    margin: 0 0 20px !important;
+    color: var(--txt);
+    font-size: 20px;
+    font-weight: 700;
+  }
+  /* Retirer les explications et l’ancien tableau de flux */
+  #main.liris-production-design #lirisFluxProduction > p,
+  #main.liris-production-design #lirisFluxProduction > .liris-flux-note,
+  #main.liris-production-design #lirisFluxProduction .liris-flux-scroll,
+  #main.liris-production-design #lirisTotauxProduction > p {
+    display: none !important;
+  }
+  #main.liris-production-design .liris-flux-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 18px !important;
+    margin: 0 !important;
+  }
+  /* Trois indicateurs complémentaires : clips, heures, productivité */
+  #main.liris-production-design #lirisTotauxProduction > div {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 18px !important;
+    margin: 0 !important;
+  }
+  #main.liris-production-design #lirisTotauxProduction > div > div:first-child {
+    display: none !important;
+  }
+  /* Style commun aux cartes de chiffres */
+  #main.liris-production-design .liris-flux-card,
+  #main.liris-production-design #lirisTotauxProduction > div > div,
+  #main.liris-production-design .kpi:not(.ui-hidden) {
+    --accent: #378ce7;
+    --tint: #eaf5ff;
+    container-type: inline-size;
+    position: relative;
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: 190px !important;
+    padding: 24px 18px !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 16px;
+    text-align: center !important;
+    background: linear-gradient(
+      155deg, #ffffff 35%, var(--tint) 100%
+    ) !important;
+    border: 1px solid #eaf0f6 !important;
+    border-radius: 20px !important;
+    box-shadow: 0 6px 20px rgba(37, 78, 119, 0.05) !important;
+  }
+  #main.liris-production-design .liris-flux-card:nth-child(2),
+  #main.liris-production-design #lirisTotauxProduction > div > div:nth-child(2) {
+    --accent: #8c72da;
+    --tint: #f1edff;
+  }
+  #main.liris-production-design .liris-flux-card:nth-child(3),
+  #main.liris-production-design #lirisTotauxProduction > div > div:nth-child(3),
+  #main.liris-production-design .kpi.gl {
+    --accent: #27b493;
+    --tint: #e9faf4;
+  }
+  #main.liris-production-design .liris-flux-card:nth-child(4) {
+    --accent: #8c72da;
+    --tint: #f1edff;
+  }
+  #main.liris-production-design .kpi.jr,
+  #main.liris-production-design #lirisTotauxProduction > div > div:nth-child(4) {
+    --accent: #d7a542;
+    --tint: #fff8e8;
+  }
+  #main.liris-production-design .liris-flux-card::before,
+  #main.liris-production-design #lirisTotauxProduction > div > div::before,
+  #main.liris-production-design .kpi:not(.ui-hidden)::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 32%;
+    right: 32%;
+    height: 4px;
+    background: var(--accent);
+    border-radius: 0 0 8px 8px;
+    opacity: 0.65;
+  }
+  /* Libellés */
+  #main.liris-production-design .liris-flux-label,
+  #main.liris-production-design #lirisTotauxProduction > div > div > div,
+  #main.liris-production-design .kl {
+    width: 100%;
+    margin: 0 !important;
+    color: #60758d !important;
+    font-size: 14px !important;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  /* Valeurs */
+  #main.liris-production-design .liris-flux-card strong,
+  #main.liris-production-design #lirisTotauxProduction strong,
+  #main.liris-production-design .kv {
+    display: block;
+    width: 100%;
+    margin: 0 !important;
+    color: #193653 !important;
+    font-size: clamp(26px, 13cqw, 54px) !important;
+    font-weight: 750;
+    line-height: 1.15 !important;
+    letter-spacing: -0.8px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  #main.liris-production-design strong.liris-flux-qp {
+    color: #8870cf !important;
+  }
+  #main.liris-production-design strong.liris-flux-qt {
+    color: #3386cc !important;
+  }
+  /* Objectifs et répartition des agents conservés */
+  #main.liris-production-design .ks {
+    margin: 0 !important;
+    color: #60758d !important;
+    font-size: 13px !important;
+    line-height: 1.5;
+  }
+  #main.liris-production-design .kb {
+    position: static !important;
+    align-self: center;
+  }
+  #main.liris-production-design .kb:empty {
+    display: none;
+  }
+  /* Graphiques : surfaces sobres */
+  #main.liris-production-design .card {
+    padding: 22px !important;
+    background: var(--bg2) !important;
+    border: 1px solid var(--bd) !important;
+    border-radius: 22px !important;
+    box-shadow: 0 7px 24px rgba(37, 78, 119, 0.05) !important;
+  }
+  /* Lisibilité en mode sombre */
+  html[data-theme="dark"] #main.liris-production-design .liris-flux-card,
+  html[data-theme="dark"] #main.liris-production-design #lirisTotauxProduction > div > div,
+  html[data-theme="dark"] #main.liris-production-design .kpi:not(.ui-hidden) {
+    background: var(--bg2) !important;
+    border-color: var(--bd) !important;
+  }
+  html[data-theme="dark"] #main.liris-production-design .liris-flux-label,
+  html[data-theme="dark"] #main.liris-production-design #lirisTotauxProduction > div > div > div,
+  html[data-theme="dark"] #main.liris-production-design .kl,
+  html[data-theme="dark"] #main.liris-production-design .ks {
+    color: var(--txt3) !important;
+  }
+  html[data-theme="dark"] #main.liris-production-design .liris-flux-card strong,
+  html[data-theme="dark"] #main.liris-production-design #lirisTotauxProduction strong,
+  html[data-theme="dark"] #main.liris-production-design .kv {
+    color: var(--txt) !important;
+  }
+  @media (max-width: 1100px) {
+    #main.liris-production-design .liris-flux-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+  }
+  @media (max-width: 650px) {
+    #main.liris-production-design .liris-flux-grid,
+    #main.liris-production-design #lirisTotauxProduction > div {
+      grid-template-columns: 1fr !important;
+    }
+    #main.liris-production-design .liris-flux-card,
+    #main.liris-production-design #lirisTotauxProduction > div > div,
+    #main.liris-production-design .kpi:not(.ui-hidden) {
+      min-height: 170px !important;
+    }
+  }
+</style>
+<script>
+(function installerDesignProduction() {
+  function retoucherProduction() {
+    const main = document.getElementById('main');
+    if (!main) return;
+    const actif = UI_VIEW === 'production';
+    main.classList.toggle('liris-production-design', actif);
+    if (!actif) return;
+    const flux = document.getElementById('lirisFluxProduction');
+    if (flux) {
+      const titre = flux.querySelector('h2');
+      if (titre) titre.textContent = 'Volumes et flux';
+      flux.querySelectorAll('.liris-flux-label').forEach(label => {
+        if (label.textContent.startsWith('QP')) {
+          label.textContent = 'QP';
+        } else if (label.textContent.startsWith('QT')) {
+          label.textContent = 'QT';
+        }
+      });
+    }
+    const totaux = document.getElementById('lirisTotauxProduction');
+    if (totaux) {
+      const titre = totaux.querySelector('h2');
+      if (titre) titre.textContent = 'Production · indicateurs complémentaires';
+    }
+  }
+  const interfacePrecedente = applyLirisInterface;
+  applyLirisInterface = function (...args) {
+    const resultat = interfacePrecedente.apply(this, args);
+    retoucherProduction();
+    return resultat;
+  };
+  retoucherProduction();
+})();
+</script>
 </body>
 </html>
