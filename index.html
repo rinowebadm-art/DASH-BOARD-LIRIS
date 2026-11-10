@@ -1975,8 +1975,8 @@ function setTab(t,el){TAB=t;document.querySelectorAll('.tab').forEach(e=>e.class
 function setF(v){FIL=v;['fa','fs','fj'].forEach(id=>document.getElementById(id).className='bof');document.getElementById(v==='all'?'fa':v==='Senior'?'fs':'fj').className='bon';if(DATA.length)build();}
 function setShift(v){SHFT=v;['fsh0','fsh1','fsh2','fsh3'].forEach(id=>document.getElementById(id).className='bof');document.getElementById(v==='all'?'fsh0':v==='05:00'?'fsh1':v==='14:00'?'fsh2':'fsh3').className='bon';if(DATA.length)build();}
 function setGrp(v,btn){GRP=v;document.querySelectorAll('#gTop,#gShift').forEach(b=>b.className='bof');btn.className='bon';renderCls(fd());}
-function productionSelection() {  let donnees = DATA;  if (TAB === 't') {    donnees = donnees.filter(agent => agent.site === 'TANA');  } else if (TAB === 'd') {    donnees = donnees.filter(agent => agent.site === 'DIEGO');  }  if (SHFT !== 'all') {    donnees = donnees.filter(agent => agent.shift === SHFT);  }  return donnees;}
-function fd() {  let donnees = productionSelection().filter(    agent => Number(agent.obj) > 0  );  if (FIL !== 'all') {    donnees = donnees.filter(agent => agent.s === FIL);  }  return donnees;}
+function productionSelection() {  let donnees = DATA;  if (TAB === 't') {    donnees = donnees.filter(agent => agent.site === 'TANA');  } else if (TAB === 'd') {    donnees = donnees.filter(agent => agent.site === 'DIEGO');  }  if (SHFT !== 'all') {    donnees = donnees.filter(agent => agent.shift === SHFT);  }  if (FIL !== 'all') {    donnees = donnees.filter(agent => agent.s === FIL);  }  return donnees;}
+function fd() {  return productionSelection().filter(    agent => Number(agent.obj) > 0  );}
 // ── NOUVEAUTÉ : readNQ stocke les lignes brutes + colonnes, puis appelle recomputeNQ ──
 function readNQ(f){
   setSpNQ('Lecture NQ…','ld');
