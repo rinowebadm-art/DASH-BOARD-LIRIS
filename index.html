@@ -6596,5 +6596,60 @@ html[data-theme] header.hd .hd-r #themeBtn:hover {
   border-color: #e9f0f5 !important;
 }
 </style>
+<style>
+/* Vue d’ensemble : contraste en mode sombre uniquement */
+/* Texte général et titres */
+html[data-theme="dark"] #main #lirisOverview {
+  color: #f1f5f9 !important;
+}
+html[data-theme="dark"] #main #lirisOverview .ov-heading h2,
+html[data-theme="dark"] #main #lirisOverview .ov-panel h3 {
+  color: #f1f5f9 !important;
+}
+/* Grands chiffres */
+html[data-theme="dark"] #main #lirisOverview .ov-top .ov-value,
+html[data-theme="dark"] #main #lirisOverview .ov-sites .ov-site-value {
+  color: #f8fafc !important;
+  opacity: 1 !important;
+}
+/* Libellés des cartes */
+html[data-theme="dark"] #main #lirisOverview .ov-top .ov-label,
+html[data-theme="dark"] #main #lirisOverview .ov-sites h3 {
+  color: #cbd5e1 !important;
+  opacity: 1 !important;
+}
+/* Textes secondaires sur fond sombre */
+html[data-theme="dark"] #main #lirisOverview .ov-muted,
+html[data-theme="dark"] #main #lirisOverview .ov-sites .ov-muted,
+html[data-theme="dark"] #main #lirisOverview .ov-agent span {
+  color: #cbd5e1 !important;
+  opacity: 1 !important;
+}
+/* Notes : garder un texte foncé sur leur fond pastel */
+html[data-theme="dark"] #main #lirisOverview .ov-top .ov-note {
+  color: #334155 !important;
+  opacity: 1 !important;
+}
+/* Carte de performance */
+html[data-theme="dark"] #main #lirisOverview .ov-performance h3,
+html[data-theme="dark"] #main #lirisOverview .ov-performance .ov-muted,
+html[data-theme="dark"] #main #lirisOverview .ov-performance-note,
+html[data-theme="dark"] #main #lirisOverview .ov-fact,
+html[data-theme="dark"] #main #lirisOverview .ov-big {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+/* QP et QT : couleurs plus lumineuses */
+html[data-theme="dark"] #main #lirisOverview .liris-flux-qp {
+  color: #c4b5fd !important;
+}
+html[data-theme="dark"] #main #lirisOverview .liris-flux-qt {
+  color: #7dd3fc !important;
+}
+/* Fiches des agents */
+html[data-theme="dark"] #main #lirisOverview .ov-agent {
+  color: #f1f5f9 !important;
+}
+</style>
 </body>
 </html>
