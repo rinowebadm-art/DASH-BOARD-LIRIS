@@ -1789,48 +1789,147 @@ function readNQ(f){
   r.readAsArrayBuffer(f);
 }
 // ── NOUVEAUTÉ : recomputeNQ ré-agrège les NQ sur la fenêtre périodRange() courante ──
-function recomputeNQ(){ 
-  if(!RAWNQROWS.length||!NQCOLS)return;  
-  const dateRealisation = Object.keys(RAWNQROWS[0])  .find(h => cl(h) === 'date realisation');if (!dateRealisation) {  NQ_DATA = {};  addScores(DATA);  build();  setSpNQ('Erreur : colonne Date réalisation absente', 'err');  return;}NQCOLS.cDate = dateRealisation;
-  const{sn,cTri,cDate,cCat,cVal,cL,cN}=NQCOLS;  const agg={};  
-  let skipped=0,counted=0;  
-  RAWNQROWS.forEach(row=>{
-    const [start, end] = periodRange();
-    const date = parseDateCell(row[cDate]);if (!date || date < start || date > end) return;
-    const t=String(row[cTri]||'').trim().toUpperCase().slice(0,3);    if(!t||t.length<2)return;    
-    if(cVal){  const vs=cl(String(row[cVal]||''));  if(vs==='ko'){skipped++;return;}
-    }
-    counted++;
-    if(!agg[t])agg[t]={total:0,mauvaise:0,loupe:0,nonconforme:0};
-    agg[t].total++;
-    const cat=cCat?cl(String(row[cCat]||'')):'';
-    if(cat.includes('mauvais'))agg[t].mauvaise++;
-    else if(cat.includes('loupe')||cat.includes('loup'))agg[t].loupe++;
-    else if(cat.includes('conforme'))agg[t].nonconforme++;
-    else{
-      const vL=cL?cl(String(row[cL]||'')):'';
-      const vN=cN?cl(String(row[cN]||'')):'';
-      if(vL&&vL!=='nan')agg[t].loupe++;
-      else if(vN&&vN!=='nan')agg[t].nonconforme++;
-      else agg[t].mauvaise++;
-    }
-  });
-  NQ_DATA=agg;
-  const nb=Object.keys(agg).length;
-  const tot=Object.values(agg).reduce((s,v)=>s+v.total,0);
-  const totM=Object.values(agg).reduce((s,v)=>s+v.mauvaise,0);
-  const totL=Object.values(agg).reduce((s,v)=>s+v.loupe,0);
-  const totN=Object.values(agg).reduce((s,v)=>s+v.nonconforme,0);
-  setSpNQ('NQ OK · '+nb+' agents · '+tot+' NQ validées (toutes dates)','ok');  
-  showDiag(    
-    'NQ chargées (toutes sauf KO, toutes dates)\n'+    
-    'Feuille : "'+sn+'"\n'+    
-    'Col. Catégorie : '+(cCat||'NON TROUVÉE')+'\n'+    
-    'Col. Validée   : '+(cVal||'NON TROUVÉE — toutes lignes retenues')+'\n'+    
-    'Lignes retenues : '+counted+' | Exclues : '+skipped+'\n'+    
-    'Total NQ : '+tot+' (Mauvaise:'+totM+' Loupé:'+totL+' NC:'+totN+')'
+  let NQ_READY = false;
+function normaliserRC(valeur) {
+  return String(valeur ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .toLowerCase();
+}
+function trigrammeRC(valeur) {
+  return String(valeur ?? '').trim().toUpperCase();
+}
+function colonnesRC() {
+  const entetes = RAWNQROWS.length
+    ? Object.keys(RAWNQROWS[0])
+    : [];
+  const exact = nom => entetes.find(
+    h => normaliserRC(h) === normaliserRC(nom)
   );
-  addScores(DATA);build();
+  return {
+    cTri: exact('Trigramme'),
+    cDate: exact('Date réalisation'),
+    cYear: exact('Année réalisation'),
+    cMonth: exact('Mois réalisation'),
+    cCat: exact('Catégorie'),
+    cVal: exact('Validation'),
+    cOutil: exact('Outil')
+  };
+}
+function categorieRC(valeur) {
+  const cle = normaliserRC(valeur).replace(/[\s_-]+/g, '');
+  return {
+    mauvaise: 'mauvaise',
+    loupe: 'loupe',
+    nonconforme: 'nonconforme'
+  }[cle] || null;
+}
+function configurationRCValide(cols) {
+  const periodeDisponible =
+    PERIOD === 'mois'
+      ? Boolean(cols.cDate || (cols.cYear && cols.cMonth))
+      : Boolean(cols.cDate);
+  return Boolean(
+    cols.cTri && cols.cCat && cols.cVal && periodeDisponible
+  );
+}
+function lignesRCSelection(trigramme = '') {
+  const cols = colonnesRC();
+  if (!configurationRCValide(cols)) return [];
+  const selection = trigrammeRC(trigramme);
+  const [debut, fin] = periodRange();
+  const nomsMois = [
+    'janvier', 'fevrier', 'mars', 'avril',
+    'mai', 'juin', 'juillet', 'aout',
+    'septembre', 'octobre', 'novembre', 'decembre'
+  ];
+  function dansPeriode(row) {
+    if (PERIOD === 'mois' && cols.cYear && cols.cMonth) {
+      const mois = normaliserRC(row[cols.cMonth]);
+      const numeroMois = Number(mois);
+      const moisCorrespond =
+        mois === nomsMois[PDATE.getMonth()] ||
+        (
+          Number.isInteger(numeroMois) &&
+          numeroMois === PDATE.getMonth() + 1
+        );
+      return (
+        Number(row[cols.cYear]) === PDATE.getFullYear() &&
+        moisCorrespond
+      );
+    }
+    const date = parseDateCell(row[cols.cDate]);
+    return Boolean(date && date >= debut && date <= fin);
+  }
+  return RAWNQROWS.filter(row => {
+    const tri = trigrammeRC(row[cols.cTri]);
+    if (!tri || !BASE[tri]) return false;
+    if (selection && tri !== selection) return false;
+    if (normaliserRC(row[cols.cVal]) !== 'ok') return false;
+    if (
+      cols.cOutil &&
+      normaliserRC(row[cols.cOutil]) !== 'liris'
+    ) return false;
+    if (!categorieRC(row[cols.cCat])) return false;
+    return dansPeriode(row);
+  });
+}
+function recomputeNQ() {
+  NQ_DATA = {};
+  NQ_READY = false;
+  const cols = colonnesRC();
+  if (
+    !RAWNQROWS.length ||
+    !configurationRCValide(cols)
+  ) {
+    addScores(DATA);
+    build();
+    setSpNQ('Qualité indisponible', 'err');
+    if (RAWNQROWS.length) {
+      showDiag(
+        'Qualité non calculable : vérifier Trigramme, ' +
+        'Catégorie, Validation et les colonnes de période.'
+      );
+    }
+    return;
+  }
+  NQCOLS = {
+    ...(NQCOLS || {}),
+    ...cols
+  };
+  DATA.forEach(agent => {
+    NQ_DATA[agent.t] = {
+      total: 0,
+      mauvaise: 0,
+      loupe: 0,
+      nonconforme: 0
+    };
+  });
+  const lignes = lignesRCSelection();
+  lignes.forEach(row => {
+    const tri = trigrammeRC(row[cols.cTri]);
+    const cat = categorieRC(row[cols.cCat]);
+    if (!NQ_DATA[tri]) {
+      NQ_DATA[tri] = {
+        total: 0,
+        mauvaise: 0,
+        loupe: 0,
+        nonconforme: 0
+      };
+    }
+    NQ_DATA[tri][cat]++;
+    NQ_DATA[tri].total++;
+  });
+  NQ_READY = true;
+  addScores(DATA);
+  build();
+  setSpNQ(
+    'RC agents · OK uniquement' +
+    (cols.cOutil ? ' · LIRIS uniquement' : '') +
+    ' · ' + lignes.length + ' RC',
+    'ok'
+  );
 }
 function nqRateFor(cat,t,res,rm){
   const nq=NQ_DATA[t];if(!nq)return null;
@@ -2146,7 +2245,7 @@ function build(){
   const avgOcc=data.length?+(data.reduce((s,d)=>s+d.occ,0)/data.length).toFixed(1):0;
   const avgOccNet=data.length?+(data.reduce((s,d)=>s+d.occNet,0)/data.length).toFixed(1):0;
   const totLost=data.reduce((s,d)=>s+d.lost,0);
-  const nqOk = NQCOLS !== null;
+  const nqOk = NQ_READY;
   const sumRes=data.reduce((s,d)=>s+d.res,0);
   const sumRm=data.reduce((s,d)=>s+d.rm,0);
   const selectedNQ = data    .map(d => NQ_DATA[d.t])    .filter(Boolean);  const sumL = selectedNQ.reduce((s,v) => s + v.loupe, 0);  const sumM = selectedNQ.reduce((s,v) => s + v.mauvaise, 0);  const sumN = selectedNQ.reduce((s,v) => s + v.nonconforme, 0);
@@ -2918,8 +3017,7 @@ function renderLirisAgentPanel() {
   panel.appendChild(grille);
   const qualite = document.createElement('p');
   const nq = NQ_DATA[agent.t];
-  qualite.textContent = NQCOLS === null
-    ? 'Qualité : données NQ non chargées.'
+  qualite.textContent = !NQ_READY    ? 'Qualité indisponible ou non calculable.'
     : nq
       ? 'NQ comptabilisées : ' + nombre(nq.total, 0) +
         ' · Mauvaise : ' + nombre(nq.mauvaise, 0) +
@@ -4375,8 +4473,8 @@ createLirisNavigation();
     element('h3', 'Détails qualité · ' + LIRIS_AGENT_SELECTION, section);
     const note = element('p', undefined, section);
     note.className = 'qa-note';
-    if (!RAWNQROWS.length || !NQCOLS) {
-      note.textContent = 'Données NQ non chargées.';
+    if (!NQ_READY) {
+      note.textContent = 'Qualité indisponible ou non calculable.';
       return;
     }
     const entetes = Object.keys(RAWNQROWS[0]);
@@ -4390,7 +4488,7 @@ createLirisNavigation();
     const cConstat = exact('Constat NQ');
     const cComment = exact('Commentaires');
     const cOutil = exact('Outil');
-    if (!cDate || !cTri || !cCat) {
+    if (!configurationRCValide(colonnesRC())) {
       note.textContent =
         'Colonne Date réalisation, Trigramme ou Catégorie introuvable.';
       return;
@@ -4407,26 +4505,8 @@ createLirisNavigation();
         classe:'qa-autre'
       };
     }
-    const [debut, fin] = periodRange();
-    const selection = texte(LIRIS_AGENT_SELECTION).toUpperCase();
-    const lignes = RAWNQROWS.flatMap(row => {
-      const tri = texte(row[cTri]).toUpperCase().slice(0, 3);
-      if (tri !== selection) return [];
-      if (cVal && normaliser(row[cVal]) === 'ko') return [];
-      if (cOutil && normaliser(row[cOutil]) !== 'liris') return [];
-      const date = parseDateCell(row[cDate]);
-      if (!date || date < debut || date > fin) return [];
-      return [{
-        date,
-        cat:categorie(row[cCat]),
-        validation:cVal ? texte(row[cVal]) : '',
-        constat:cConstat ? texte(row[cConstat]) : '',
-        commentaire:cComment ? texte(row[cComment]) : ''
-      }];
-    }).sort((a, b) => b.date - a.date);
-    note.textContent =
-      'Date réalisation · KO seuls exclus' +
-      (cOutil ? ' · LIRIS uniquement' : '') + '.';
+    const cols = colonnesRC();const lignes = lignesRCSelection(LIRIS_AGENT_SELECTION)  .map(row => ({    date: cols.cDate      ? parseDateCell(row[cols.cDate])      : null,    cat: categories.find(      c => c.cle === categorieRC(row[cols.cCat])    ),    validation: texte(row[cols.cVal]),    constat: cConstat ? texte(row[cConstat]) : '',    commentaire: cComment ? texte(row[cComment]) : ''  }))  .sort((a, b) =>    (b.date ? b.date.getTime() : 0) -    (a.date ? a.date.getTime() : 0)  );
+ note.textContent =  (    PERIOD === 'mois' && cols.cYear && cols.cMonth      ? 'Année et mois réalisation'      : 'Date réalisation'  ) +  ' · OK uniquement' +  (cols.cOutil ? ' · LIRIS uniquement' : '') +  ' · Mauvaise, Loupé et Non conforme.';
     const grille = element('div', undefined, section);
     grille.className = 'qa-grid';
     [
@@ -4470,7 +4550,7 @@ createLirisNavigation();
       vide.textContent = 'Aucun RC pour cette sélection.';
       visibles.forEach(ligne => {
         const tr = element('tr', undefined, corps);
-        element('td', ligne.date.toLocaleDateString('fr-FR'), tr);
+        element(  'td',  ligne.date    ? ligne.date.toLocaleDateString('fr-FR')    : 'Date non renseignée',  tr);
         const catCell = element('td', undefined, tr);
         element('span', ligne.cat.label, catCell).className =
           'qa-badge ' + ligne.cat.classe;
