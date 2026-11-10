@@ -1743,13 +1743,26 @@ function setTab(t,el){TAB=t;document.querySelectorAll('.tab').forEach(e=>e.class
 function setF(v){FIL=v;['fa','fs','fj'].forEach(id=>document.getElementById(id).className='bof');document.getElementById(v==='all'?'fa':v==='Senior'?'fs':'fj').className='bon';if(DATA.length)build();}
 function setShift(v){SHFT=v;['fsh0','fsh1','fsh2','fsh3'].forEach(id=>document.getElementById(id).className='bof');document.getElementById(v==='all'?'fsh0':v==='05:00'?'fsh1':v==='14:00'?'fsh2':'fsh3').className='bon';if(DATA.length)build();}
 function setGrp(v,btn){GRP=v;document.querySelectorAll('#gTop,#gShift').forEach(b=>b.className='bof');btn.className='bon';renderCls(fd());}
-function fd(){
-  let d=DATA;
-  if(TAB==='t')d=d.filter(x=>x.site==='TANA');
-  else if(TAB==='d')d=d.filter(x=>x.site==='DIEGO');
-  if(FIL!=='all')d=d.filter(x=>x.s===FIL);
-  if(SHFT!=='all')d=d.filter(x=>x.shift===SHFT);
-  return d;
+function productionSelection() {
+  let donnees = DATA;
+  if (TAB === 't') {
+    donnees = donnees.filter(agent => agent.site === 'TANA');
+  } else if (TAB === 'd') {
+    donnees = donnees.filter(agent => agent.site === 'DIEGO');
+  }
+  return donnees;
+}
+function fd() {
+  let donnees = productionSelection().filter(
+    agent => Number(agent.obj) > 0
+  );
+  if (FIL !== 'all') {
+    donnees = donnees.filter(agent => agent.s === FIL);
+  }
+  if (SHFT !== 'all') {
+    donnees = donnees.filter(agent => agent.shift === SHFT);
+  }
+  return donnees;
 }
 // ── NOUVEAUTÉ : readNQ stocke les lignes brutes + colonnes, puis appelle recomputeNQ ──
 function readNQ(f){
@@ -1999,7 +2012,7 @@ const clamp=v=>Math.max(0,Math.min(1,v));
     const q=c=>{const r=nqRateFor(c,d.t,d.res,d.rm);if(r===null)return 1;const s=SEU[c];return clamp(1-(r-s)/(2*s));};  
     return (q('loupe')+q('mauvaise')+q('nonconforme'))/3;}
   function addScores(arr){  
-    const rs=arr.map(d=>d.res).sort((a,b)=>a-b);  
+    const rs = arr  .filter(d => Number(d.obj) > 0)  .map(d => d.res)  .sort((a, b) => a - b); 
     const p90=rs[Math.floor(rs.length*0.9)]||1;  
     arr.forEach(d=>{    
       d.sQ=qualScore(d);    
@@ -2063,7 +2076,7 @@ const clamp=v=>Math.max(0,Math.min(1,v));
       .trim()
       .toUpperCase()
       .slice(0, 3);
-    if (!t || t.length < 2 || !BASE[t]) return;
+    if (!t || t.length < 2) return;
     if (!agg[t]) {
       agg[t] = { res: 0, rm: 0, tps: 0 };
     }
@@ -2085,7 +2098,7 @@ const clamp=v=>Math.max(0,Math.min(1,v));
   const base = baseHeures();
   DATA = Object.entries(agg)
     .map(([t, v]) => {
-      const b = BASE[t];
+const b = BASE[t] || {  nom: t,  prenom: '',  s: '',  site: 'NON RENSEIGNÉ',  shift: '',  obj: null};      
       const ph = v.tps > 0
         ? +(v.res / v.tps).toFixed(2)
         : 0;
@@ -2116,7 +2129,7 @@ const clamp=v=>Math.max(0,Math.min(1,v));
         occNet: +(v.tps / baseNette * 100).toFixed(1)
       };
     })
-    .filter(d => d.res > 0 || d.ph > 0)
+    .filter(d => d.res > 0 || d.rm > 0 || d.tps > 0)
     .sort((a, b) => b.top - a.top);
   setSp(
     DATA.length + '/' + Object.keys(BASE).length + ' agents',
@@ -2229,7 +2242,7 @@ function renderCls(data){
 function build(){
   const data=fd().sort((a,b)=>b.score-a.score);
   const sr=data.filter(d=>d.s==='Senior'),jr=data.filter(d=>d.s==='Junior');
-  const tnAll=DATA.filter(d=>d.site==='TANA'),dgAll=DATA.filter(d=>d.site==='DIEGO');
+  const tnAll = DATA.filter(  d => d.site === 'TANA' && Number(d.obj) > 0);const dgAll = DATA.filter(  d => d.site === 'DIEGO' && Number(d.obj) > 0);
   document.getElementById('agct').textContent=data.length+' agents · '+sr.length+' Sr · '+jr.length+' Jr';
   document.getElementById('finfo').textContent=data.length+' affichés';
   buildAlertBand(data);
@@ -2559,8 +2572,8 @@ CHS.L = new Chart('cL', {
     }
   }
 });
-  const srFull=DATA.filter(d=>d.s==='Senior'&&(TAB==='g'||d.site===(TAB==='t'?'TANA':'DIEGO')));
-  const jrFull=DATA.filter(d=>d.s==='Junior'&&(TAB==='g'||d.site===(TAB==='t'?'TANA':'DIEGO')));
+ const srFull = data.filter(d => d.s === 'Senior');
+  const jrFull = data.filter(d => d.s === 'Junior');
   CHS.C=new Chart('cC',{type:'bar',data:{labels:['Prod/h','TOP %','Transfo %'],datasets:[
     {label:'Seniors',data:[avg(srFull,'ph'),avg(srFull,'top')*100,avg(srFull,'tx')*100],backgroundColor:'rgba(46,117,182,.85)',borderRadius:3},
     {label:'Juniors',data:[avg(jrFull,'ph'),avg(jrFull,'top')*100,avg(jrFull,'tx')*100],backgroundColor:'rgba(197,90,17,.85)',borderRadius:3},
@@ -3865,13 +3878,7 @@ function renderLirisOverview() {
     Number(value).toLocaleString('fr-FR', {
       maximumFractionDigits: digits
     });
-  const sum = key => agents.reduce(
-    (total, agent) => total + (Number(agent[key]) || 0),
-    0
-  );
-  const results = sum('res');
-  const clips = sum('rm');
-  const hours = sum('tps');
+  const production = productionSelection();const sum = key => production.reduce(  (total, agent) => total + (Number(agent[key]) || 0),  0);const results = sum('res');const clips = sum('rm');const hours = sum('tps');
   const productivity = hours > 0 ? results / hours : null;
   const transformation = results > 0 ? clips / results * 100 : null;
   // Même définition que la performance existante :
@@ -3965,11 +3972,8 @@ function renderLirisOverview() {
   const percent = value =>
     value === null ? '—' : number(value) + ' %';
   const [start, end] = periodRange();
-  write('period',
-    iso(start) + ' → ' + iso(end) +
-    ' · ' + number(agents.length, 0) + ' agents'
-  );
-  write('results', agents.length ? number(results, 0) : '—');
+  write('period',  iso(start) + ' → ' + iso(end) +  ' · ' + number(production.length, 0) + ' agents en production' +  ' · ' + number(agents.length, 0) + ' agents avec objectif sélectionnés');
+  write('results', production.length ? number(results, 0) : '—');
   write('clips', number(clips, 0) + ' media clips envoyés');
   write('productivity',
     productivity === null ? '—' : number(productivity) + ' / h'
@@ -3977,7 +3981,7 @@ function renderLirisOverview() {
   write('transformation', percent(transformation));
   write('occupation', percent(occupation));
   write('performance', percent(performance));
-  write('agents', number(agents.length, 0));
+  write('agents', number(production.length, 0));
   write('atGoal',
     number(agents.filter(agent => agent.top >= 1).length, 0)
   );
@@ -3988,8 +3992,7 @@ function renderLirisOverview() {
     ['TANA', '#9b59b6'],
     ['DIEGO', '#3fc7ab']
   ].forEach(([site, color]) => {
-    const group = agents.filter(agent => agent.site === site);
-    const value = group.length ? avg(group, 'top') * 100 : null;
+    const group = production.filter(agent => agent.site === site);const suivi = agents.filter(agent => agent.site === site);const value = suivi.length  ? avg(suivi, 'top') * 100  : null;
     const siteHours = group.reduce((s, agent) => s + agent.tps, 0);
     const siteResults = group.reduce((s, agent) => s + agent.res, 0);
     const card = document.createElement('article');
@@ -4093,7 +4096,7 @@ function renderLirisOverview() {
   ));
 }
   // Lecture quotidienne des lignes brutes, sans modifier DATA.
-  const selectedAgents = new Set(agents.map(agent => agent.t));
+  const selectedAgents = new Set(  production.map(agent => agent.t));
   const daily = new Map();
   const headers = RAWROWS.length ? Object.keys(RAWROWS[0]) : [];
   const cAgent = fc(
@@ -4684,6 +4687,136 @@ createLirisNavigation();
   Object.values(Chart.instances).forEach(chart => {
     chart.update('none');
   });
+})();
+</script>
+<script>
+(function installerTotauxEtActualisation() {
+  const interfaceInitiale = applyLirisInterface;
+  applyLirisInterface = function () {
+    interfaceInitiale();
+    document.getElementById('lirisTotauxProduction')?.remove();
+    if (UI_VIEW !== 'production') return;
+    const main = document.getElementById('main');
+    if (!main) return;
+    const production = productionSelection();
+    const total = cle => production.reduce(
+      (somme, agent) => somme + (Number(agent[cle]) || 0),
+      0
+    );
+    const resultats = total('res');
+    const clips = total('rm');
+    const heures = total('tps');
+    const panel = document.createElement('section');
+    panel.id = 'lirisTotauxProduction';
+    panel.style.cssText =
+      'grid-column:1/-1;order:-1;width:100%;' +
+      'padding:20px;border:1px solid var(--bd);' +
+      'border-radius:16px;background:var(--bg2);';
+    const titre = document.createElement('h2');
+    titre.textContent =
+      'Production ' +
+      (TAB === 't' ? 'TANA' : TAB === 'd' ? 'DIEGO' : 'globale');
+    const note = document.createElement('p');
+    note.textContent =
+      'Toute la production, y compris les agents sans objectif.';
+    note.style.color = 'var(--txt3)';
+    const grille = document.createElement('div');
+    grille.style.cssText =
+      'display:grid;gap:14px;grid-template-columns:' +
+      'repeat(auto-fit,minmax(150px,1fr));margin-top:16px;';
+    const nombre = (valeur, decimales = 0) =>
+      valeur.toLocaleString('fr-FR', {
+        maximumFractionDigits: decimales
+      });
+    const metriques = [
+      ['Résultats traités', nombre(resultats)],
+      ['Media clips envoyés', nombre(clips)],
+      ['Temps enregistré', nombre(heures, 1) + ' h'],
+      [
+        'Productivité globale / h',
+        heures > 0 ? nombre(resultats / heures, 1) : '—'
+      ]
+    ];
+    metriques.forEach(([libelle, valeur]) => {
+      const carte = document.createElement('div');
+      const label = document.createElement('div');
+      const chiffre = document.createElement('strong');
+      label.textContent = libelle;
+      label.style.cssText = 'font-size:12px;color:var(--txt3);';
+      chiffre.textContent = valeur;
+      chiffre.style.cssText =
+        'display:block;margin-top:8px;font-size:26px;';
+      carte.append(label, chiffre);
+      grille.appendChild(carte);
+    });
+    panel.append(titre, note, grille);
+    main.prepend(panel);
+  };
+  let lectureEnCours = false;
+  let dernierContenu = null;
+  async function verifierMiseAJour() {
+    // Ne pas écraser les imports locaux d'une session admin.
+    if (document.hidden || lectureEnCours || isAdmin) return;
+    lectureEnCours = true;
+    try {
+      const url =
+        'https://raw.githubusercontent.com/' +
+        GH_OWNER + '/' + GH_REPO + '/main/' +
+        GH_PATH + '?actualisation=' + Date.now();
+      const reponse = await fetch(url, { cache: 'no-store' });
+      if (!reponse.ok) {
+        throw new Error('HTTP ' + reponse.status);
+      }
+      const contenu = await reponse.text();
+      if (contenu === dernierContenu) return;
+      const json = JSON.parse(contenu);
+      if (
+        !Array.isArray(json.rawrows) ||
+        !json.base ||
+        typeof json.base !== 'object' ||
+        Array.isArray(json.base) ||
+        !Object.keys(json.base).length
+      ) {
+        throw new Error('Données partagées incomplètes.');
+      }
+      BASE = Object.assign(Object.create(null), json.base);
+      RAWROWS = json.rawrows;
+      RAWNQROWS = Array.isArray(json.rawnqrows)
+        ? json.rawnqrows
+        : [];
+      NQCOLS = json.nqcols || null;
+      NQ_DATA = {};
+      NQ_READY = false;
+      document.getElementById('basecount').textContent =
+        Object.keys(BASE).length + ' agents';
+      recompute();
+      dernierContenu = contenu;
+      const statut = document.getElementById('dataLoadStatus');
+      if (statut) {
+        statut.textContent =
+          'Données actualisées automatiquement · ' +
+          new Date().toLocaleTimeString('fr-FR') +
+          ' · ' + DATA.length + ' agents en production' +
+          ' · ' + fd().length + ' agents avec objectif après filtres.';
+      }
+    } catch (erreur) {
+      console.error('Actualisation automatique LIRIS :', erreur);
+      const statut = document.getElementById('dataLoadStatus');
+      if (statut) {
+        statut.textContent =
+          'Actualisation automatique impossible : ' +
+          erreur.message +
+          '. Les dernières données chargées restent affichées.';
+      }
+    } finally {
+      lectureEnCours = false;
+    }
+  }
+  setInterval(verifierMiseAJour, 60000);
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) verifierMiseAJour();
+  });
+  if (DATA.length) build();
 })();
 </script>
 </body>
