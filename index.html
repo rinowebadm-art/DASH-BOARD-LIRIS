@@ -90,10 +90,6 @@ th{background:var(--bg3);color:var(--txt3);padding:8px 10px;text-align:center;po
 td{padding:7px 10px;text-align:center;border-bottom:1px solid var(--bd);font-size:12px;color:var(--txt)}
 .tdl{text-align:left;font-weight:700}.tdn{text-align:left;color:var(--txt5);font-size:11px}
 tr.senior td{background:#f6f9fd}tr.junior td{background:#fdf8f2}tr:hover td{background:#e8f0fb!important}
-@keyframes blink-sr{0%,100%{background:#f6f9fd}50%{background:#fde2e2}}
-@keyframes blink-jr{0%,100%{background:#fdf8f2}50%{background:#fde2e2}}
-tr.alert-red.senior td{animation:blink-sr 1.8s ease-in-out infinite}
-tr.alert-red.junior td{animation:blink-jr 1.8s ease-in-out infinite}
 tr.alert-red:hover td{animation:none!important;background:#e8f0fb!important}
 .bgold{display:inline-flex;align-items:center;gap:3px;background:linear-gradient(135deg,#ffd700,#e8a800);color:#5a3800;padding:3px 10px;border-radius:20px;font-weight:800;font-size:11px}
 .bsilv{display:inline-flex;align-items:center;gap:3px;background:linear-gradient(135deg,#e0e0e0,#a8a8a8);color:#2a2a2a;padding:3px 10px;border-radius:20px;font-weight:800;font-size:11px}
@@ -1783,18 +1779,7 @@ function setF(v){FIL=v;['fa','fs','fj'].forEach(id=>document.getElementById(id).
 function setShift(v){SHFT=v;['fsh0','fsh1','fsh2','fsh3'].forEach(id=>document.getElementById(id).className='bof');document.getElementById(v==='all'?'fsh0':v==='05:00'?'fsh1':v==='14:00'?'fsh2':'fsh3').className='bon';if(DATA.length)build();}
 function setGrp(v,btn){GRP=v;document.querySelectorAll('#gTop,#gShift').forEach(b=>b.className='bof');btn.className='bon';renderCls(fd());}
 function productionSelection() {  let donnees = DATA;  if (TAB === 't') {    donnees = donnees.filter(agent => agent.site === 'TANA');  } else if (TAB === 'd') {    donnees = donnees.filter(agent => agent.site === 'DIEGO');  }  if (SHFT !== 'all') {    donnees = donnees.filter(agent => agent.shift === SHFT);  }  return donnees;}
-function fd() {
-  let donnees = productionSelection().filter(
-    agent => Number(agent.obj) > 0
-  );
-  if (FIL !== 'all') {
-    donnees = donnees.filter(agent => agent.s === FIL);
-  }
-  if (SHFT !== 'all') {
-    donnees = donnees.filter(agent => agent.shift === SHFT);
-  }
-  return donnees;
-}
+function fd() {  let donnees = productionSelection().filter(    agent => Number(agent.obj) > 0  );  if (FIL !== 'all') {    donnees = donnees.filter(agent => agent.s === FIL);  }  return donnees;}
 // ── NOUVEAUTÉ : readNQ stocke les lignes brutes + colonnes, puis appelle recomputeNQ ──
 function readNQ(f){
   setSpNQ('Lecture NQ…','ld');
@@ -4497,14 +4482,9 @@ createLirisNavigation();
     const exact = nom => entetes.find(
       h => normaliser(h) === normaliser(nom)
     );
-    const cDate = exact('Date réalisation');
-    const cTri = exact('Trigramme') || NQCOLS.cTri;
-    const cVal = exact('Validation') || NQCOLS.cVal;
-    const cCat = exact('Catégorie') || NQCOLS.cCat;
-    const cConstat = exact('Constat NQ');
+      const cConstat = exact('Constat NQ');
     const cComment = exact('Commentaires');
-    const cOutil = exact('Outil');
-    if (!configurationRCValide(colonnesRC())) {
+        if (!configurationRCValide(colonnesRC())) {
       note.textContent =
         'Colonne Date réalisation, Trigramme ou Catégorie introuvable.';
       return;
@@ -4514,14 +4494,7 @@ createLirisNavigation();
       { cle:'loupe', label:'Loupé', classe:'qa-loupe' },
       { cle:'nonconforme', label:'Non conforme', classe:'qa-nonconforme' }
     ];
-    function categorie(valeur) {
-      const cle = normaliser(valeur).replace(/[\s_-]+/g, '');
-      return categories.find(c => c.cle === cle) || {
-        cle:'autre', label:texte(valeur) || 'Non renseignée',
-        classe:'qa-autre'
-      };
-    }
-    const cols = colonnesRC();const lignes = lignesRCSelection(LIRIS_AGENT_SELECTION)  .map(row => ({    date: cols.cDate      ? parseDateCell(row[cols.cDate])      : null,    cat: categories.find(      c => c.cle === categorieRC(row[cols.cCat])    ),    validation: texte(row[cols.cVal]),    constat: cConstat ? texte(row[cConstat]) : '',    commentaire: cComment ? texte(row[cComment]) : ''  }))  .sort((a, b) =>    (b.date ? b.date.getTime() : 0) -    (a.date ? a.date.getTime() : 0)  );
+        const cols = colonnesRC();const lignes = lignesRCSelection(LIRIS_AGENT_SELECTION)  .map(row => ({    date: cols.cDate      ? parseDateCell(row[cols.cDate])      : null,    cat: categories.find(      c => c.cle === categorieRC(row[cols.cCat])    ),    validation: texte(row[cols.cVal]),    constat: cConstat ? texte(row[cConstat]) : '',    commentaire: cComment ? texte(row[cComment]) : ''  }))  .sort((a, b) =>    (b.date ? b.date.getTime() : 0) -    (a.date ? a.date.getTime() : 0)  );
  note.textContent =  (    PERIOD === 'mois' && cols.cYear && cols.cMonth      ? 'Année et mois réalisation'      : 'Date réalisation'  ) +  ' · OK uniquement' +  (cols.cOutil ? ' · LIRIS uniquement' : '') +  ' · Mauvaise, Loupé et Non conforme.';
     const grille = element('div', undefined, section);
     grille.className = 'qa-grid';
@@ -5182,38 +5155,7 @@ html[data-theme="dark"] .aband .ab-item {
       joursQT:joursQT.length
     };
   }
-  function couverture(b) {
-    return b.jours
-      ? 'QP : ' + b.joursQP + '/' + b.jours +
-        ' jours renseignés · QT : ' +
-        b.joursQT + '/' + b.jours +
-        '. Ratios calculés sur les jours renseignés communs.'
-      : 'Aucune donnée de flux pour cette période.';
-  }
-  function groupe(date) {
-    if (PERIOD === 'mois') return date.slice(0,7);
-    if (PERIOD === 'semaine') {
-      const d = new Date(date + 'T12:00:00');
-      const decalage = (d.getDay() + 6) % 7;
-      d.setDate(d.getDate() - decalage);
-      return iso(d);
-    }
-    return date;
-  }
-  function libelle(cle) {
-    if (PERIOD === 'mois') {
-      return new Date(cle + '-01T12:00:00')
-        .toLocaleDateString('fr-FR', {
-          month:'long',
-          year:'numeric'
-        });
-    }
-    const date = cle.split('-').reverse().join('/');
-    return PERIOD === 'semaine'
-      ? 'Semaine du ' + date
-      : date;
-  }
-  function rendre() {
+    function rendre() {
     document.getElementById('lirisFluxProduction')?.remove();
     const lignes = lignesSelection();
     const b = bilan(lignes);
