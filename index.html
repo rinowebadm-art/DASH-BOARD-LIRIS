@@ -5428,5 +5428,221 @@ html[data-theme="dark"] .aband .ab-item {
     }
   }
 </style>
+<style>
+  /* Ambiance générale inspirée de Finora */
+  #lirisOverview {
+    color: #193653;
+  }
+  #lirisOverview .ov-top {
+    gap: 20px;
+    align-items: stretch;
+    margin-bottom: 24px;
+  }
+  /* Cartes principales : pastel discret et relief léger */
+  #lirisOverview .ov-top .ov-tile {
+    --accent: #378ce7;
+    --tint: #eaf5ff;
+    container-type: inline-size;
+    position: relative;
+    box-sizing: border-box;
+    min-height: 230px;
+    padding: 28px 20px;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    text-align: center;
+    background: linear-gradient(
+      155deg,
+      #ffffff 35%,
+      var(--tint) 100%
+    ) !important;
+    border: 1px solid #ffffff !important;
+    border-radius: 22px !important;
+    box-shadow:
+      0 8px 26px rgba(37, 78, 119, 0.07),
+      inset 0 0 0 1px rgba(37, 78, 119, 0.03);
+    overflow: hidden;
+    transition: transform 180ms ease, box-shadow 180ms ease;
+  }
+  #lirisOverview .ov-top .ov-tile:nth-child(2) {
+    --accent: #8c72da;
+    --tint: #f1edff;
+  }
+  #lirisOverview .ov-top .ov-tile:nth-child(3) {
+    --accent: #27b493;
+    --tint: #e9faf4;
+  }
+  #lirisOverview .ov-top .ov-tile:nth-child(4) {
+    --accent: #d7a542;
+    --tint: #fff8e8;
+  }
+  /* Repère coloré discret en haut de chaque carte */
+  #lirisOverview .ov-top .ov-tile::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 32%;
+    right: 32%;
+    height: 4px;
+    background: var(--accent);
+    border-radius: 0 0 8px 8px;
+    opacity: 0.65;
+  }
+  #lirisOverview .ov-top .ov-label {
+    width: 100%;
+    margin: 0 !important;
+    color: #60758d !important;
+    font-size: 15px !important;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.1px;
+  }
+  #lirisOverview .ov-top .ov-value {
+    width: 100%;
+    margin: 0 !important;
+    color: #193653 !important;
+    font-size: clamp(30px, 13cqw, 62px) !important;
+    font-weight: 750;
+    line-height: 1.1;
+    letter-spacing: -1.2px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  #lirisOverview .ov-top .ov-note {
+    max-width: 100%;
+    margin: 0 !important;
+    padding: 7px 12px;
+    color: #60758d !important;
+    background: var(--tint);
+    border-radius: 12px;
+    font-size: 12px !important;
+    line-height: 1.5;
+  }
+  /* QP et QT : deux lignes simples, bien centrées */
+  #lirisOverview .liris-flux-simple {
+    width: 100%;
+    gap: 24px !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  #lirisOverview .liris-flux-simple strong {
+    margin: 0 !important;
+    font-size: clamp(26px, 10cqw, 46px) !important;
+    font-weight: 750 !important;
+    line-height: 1.2 !important;
+    letter-spacing: -0.6px;
+    font-variant-numeric: tabular-nums;
+  }
+  #lirisOverview .liris-flux-simple .liris-flux-qp {
+    color: #8870cf !important;
+  }
+  #lirisOverview .liris-flux-simple .liris-flux-qt {
+    color: #3386cc !important;
+  }
+  /* Panneaux secondaires */
+  #lirisOverview .ov-panel {
+    background: #ffffff !important;
+    border: 1px solid #eaf0f6 !important;
+    border-radius: 22px !important;
+    box-shadow: 0 7px 24px rgba(37, 78, 119, 0.05);
+  }
+  /* Visibilité par site : même langage visuel */
+  #lirisOverview .ov-sites {
+    gap: 20px;
+    align-items: stretch;
+  }
+  #lirisOverview .ov-sites > .ov-panel {
+    --site-accent: #378ce7;
+    container-type: inline-size;
+    box-sizing: border-box;
+    min-height: 230px;
+    padding: 26px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    text-align: center;
+    background: linear-gradient(
+      160deg,
+      #ffffff 45%,
+      #f0f7ff 100%
+    ) !important;
+  }
+  #lirisOverview .ov-sites > .ov-panel:nth-child(2) {
+    --site-accent: #27b493;
+    background: linear-gradient(
+      160deg,
+      #ffffff 45%,
+      #effaf6 100%
+    ) !important;
+  }
+  #lirisOverview .ov-sites h3 {
+    width: 100%;
+    margin: 0 !important;
+    color: #60758d !important;
+    font-size: 16px !important;
+    font-weight: 650;
+    letter-spacing: 0.5px;
+  }
+  #lirisOverview .ov-sites .ov-site-value {
+    width: 100%;
+    margin: 0 !important;
+    color: #193653 !important;
+    font-size: clamp(36px, 16cqw, 72px) !important;
+    font-weight: 750;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  #lirisOverview .ov-sites .ov-meter {
+    width: 100%;
+    height: 10px;
+    margin: 0 !important;
+    flex-shrink: 0;
+    background: #eaf0f6 !important;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  #lirisOverview .ov-sites .ov-meter > * {
+    background: var(--site-accent) !important;
+    border-radius: 20px;
+  }
+  #lirisOverview .ov-sites .ov-muted {
+    width: 100%;
+    margin: 0 !important;
+    color: #60758d !important;
+    font-size: 13px !important;
+    line-height: 1.5;
+  }
+  @media (hover: hover) {
+    #lirisOverview .ov-top .ov-tile:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(37, 78, 119, 0.11);
+    }
+  }
+  @media (max-width: 650px) {
+    #lirisOverview .ov-top {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    #lirisOverview .ov-top .ov-tile,
+    #lirisOverview .ov-sites > .ov-panel {
+      min-height: 200px;
+      padding: 22px 18px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #lirisOverview .ov-top .ov-tile {
+      transition: none;
+    }
+    #lirisOverview .ov-top .ov-tile:hover {
+      transform: none;
+    }
+  }
+</style>
 </body>
 </html>
