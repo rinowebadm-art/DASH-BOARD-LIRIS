@@ -1288,8 +1288,54 @@ html[data-theme="dark"] #main #lirisOverview .ov-performance {
   /* Masquer le diagnostic de chargement */#dataLoadStatus {  display: none !important;}
 /* Occupation : courbes compactes comme le modèle */#main .chart-wrap:has(> #cO) {  height: 340px !important;}@media (max-width: 650px) {  #main .chart-wrap:has(> #cO) {    height: 280px !important;  }}
 </style>
+<style>
+.aband {
+  background: linear-gradient(110deg, #ff1744, #ff355e) !important;
+  border: none !important;
+  border-bottom: 3px solid #ff003c !important;
+  padding: 12px 24px !important;
+  gap: 10px !important;
+  color: #210009 !important;
+  box-shadow: 0 3px 18px rgba(255, 0, 60, .45);
+}
+.aband .ab-title {
+  color: #210009 !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+}
+.aband .ab-item {
+  background: #fff !important;
+  color: #a60028 !important;
+  border: 1px solid #fff !important;
+  border-radius: 9px !important;
+  padding: 6px 11px !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 6px rgba(80, 0, 20, .18);
+}
+.aband .ab-close {
+  background: #210009 !important;
+  color: #fff !important;
+  width: 30px;
+  height: 30px;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  font-size: 17px !important;
+}
+.aband .ab-close:hover {
+  background: #570015 !important;
+}
+@media (max-width: 650px) {
+  .aband {
+    padding: 10px 12px !important;
+    gap: 8px !important;
+  }
+  .aband .ab-title {
+    white-space: normal !important;
+  }
+}
+</style>
 </head>
-<body>
 <header class="hd">
   <div class="header-left">
     <div class="header-icon" aria-hidden="true">▦</div>
