@@ -5868,5 +5868,101 @@ html[data-theme="dark"] .aband .ab-item {
   retoucherProduction();
 })();
 </script>
+<style>
+  #lirisOverview .liris-flux-simple {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: center !important;
+    width: 100%;
+    gap: 14px !important;
+  }
+  #lirisOverview .liris-flux-simple .liris-ratio-row {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 82px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-radius: 16px;
+  }
+  #lirisOverview .liris-ratio-row.liris-flux-qp {
+    background: #eee8fa;
+    color: #8063bd;
+    border: 1px solid #e3d9f5;
+  }
+  #lirisOverview .liris-ratio-row.liris-flux-qt {
+    background: #e5f1fc;
+    color: #3386cc;
+    border: 1px solid #d4e7f8;
+  }
+  #lirisOverview .liris-ratio-name {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  #lirisOverview .liris-flux-simple .liris-ratio-number {
+    width: auto;
+    margin: 0 !important;
+    color: inherit !important;
+    font-size: clamp(24px, 10cqw, 44px) !important;
+    font-weight: 750 !important;
+    line-height: 1.15 !important;
+    letter-spacing: -0.8px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  html[data-theme="dark"] #lirisOverview .liris-ratio-row.liris-flux-qp {
+    background: #302b46;
+    color: #c3a8ef;
+    border-color: #49405f;
+  }
+  html[data-theme="dark"] #lirisOverview .liris-ratio-row.liris-flux-qt {
+    background: #22394d;
+    color: #8cc6f5;
+    border-color: #35536c;
+  }
+</style>
+<script>
+(function installerBandeauxQPQT() {
+  function actualiserBandeaux() {
+    const duo = document.querySelector(
+      '#lirisOverview .liris-flux-simple'
+    );
+    if (!duo) return;
+    Array.from(duo.children).forEach(element => {
+      if (element.classList.contains('liris-ratio-row')) return;
+      const texte = element.textContent.trim();
+      const correspondance = texte.match(
+        /^(QP|QT)\s*[-–—]\s*(.+)$/
+      );
+      if (!correspondance) return;
+      const ligne = document.createElement('div');
+      ligne.className =
+        'liris-ratio-row ' +
+        (correspondance[1] === 'QP'
+          ? 'liris-flux-qp'
+          : 'liris-flux-qt');
+      const nom = document.createElement('span');
+      nom.className = 'liris-ratio-name';
+      nom.textContent = correspondance[1];
+      const valeur = document.createElement('strong');
+      valeur.className = 'liris-ratio-number';
+      valeur.textContent = correspondance[2];
+      ligne.append(nom, valeur);
+      element.replaceWith(ligne);
+    });
+  }
+  const interfacePrecedente = applyLirisInterface;
+  applyLirisInterface = function (...args) {
+    const resultat = interfacePrecedente.apply(this, args);
+    actualiserBandeaux();
+    return resultat;
+  };
+  actualiserBandeaux();
+})();
+</script>
 </body>
 </html>
