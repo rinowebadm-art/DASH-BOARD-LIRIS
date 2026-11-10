@@ -5232,27 +5232,28 @@ html[data-theme="dark"] .aband .ab-item {
       const carte = valeur?.closest('.ov-tile');
       if (carte) {
         carte.replaceChildren();
-        creer(
-          'div',
-          'Flux global · QP / QT',
-          carte,
-          'ov-label'
+     const duo = creer(
+          'div', undefined, carte, 'liris-flux-simple'
         );
-        const duo = creer(
-          'div', undefined, carte, 'liris-flux-duo'
-        );
+        duo.style.cssText =
+          'display:flex;flex-direction:column;' +
+          'align-items:center;justify-content:center;' +
+          'width:100%;gap:24px;text-align:center;';
         [
-          ['QP · Reçu / Prévu', b.qp, 'liris-flux-qp'],
-          ['QT · Traité / Reçu', b.qt, 'liris-flux-qt']
-        ].forEach(([titre,valeur,classe]) => {
-          const zone = creer('div', undefined, duo);
-          creer('div', titre, zone, 'liris-flux-label');
-          creer(
+          ['QP', b.qp, 'liris-flux-qp'],
+          ['QT', b.qt, 'liris-flux-qt']
+        ].forEach(([titre, valeur, classe]) => {
+          const ligne = creer(
             'strong',
-            pourcentage(valeur),
-            zone,
-            'liris-flux-value ' + classe
+            titre + ' - ' + pourcentage(valeur),
+            duo,
+            classe
           );
+          ligne.style.cssText =
+            'display:block;margin:0;' +
+            'font-size:clamp(24px, 10cqw, 48px);' +
+            'font-weight:700;line-height:1.2;' +
+            'white-space:nowrap;text-align:center;';
         });
   carte.style.display = 'flex';        carte.style.flexDirection = 'column';        duo.style.flex = '1';        duo.style.alignItems = 'center';        duo.style.margin = '16px 0';        duo.style.gap = '20px';        duo.querySelectorAll('.liris-flux-label').forEach(label => {          label.style.fontSize = '13px';          label.style.marginBottom = '12px';        });        duo.querySelectorAll('.liris-flux-value').forEach(valeur => {          valeur.style.fontSize = 'clamp(28px, 2.5vw, 44px)';          valeur.style.lineHeight = '1.2';          valeur.style.marginTop = '0';          valeur.style.whiteSpace = 'nowrap';        });
       }
