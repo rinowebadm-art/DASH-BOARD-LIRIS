@@ -4184,7 +4184,7 @@ function renderLirisOverview() {
           datasets: [{
             label: 'Résultats traités',
             data: dates.map(date => daily.get(date)),
-            backgroundColor: '#3fc7ab',hoverBackgroundColor: '#4a89c4',borderRadius: 4,borderWidth: 0,categoryPercentage: 0.8,barPercentage: 0.9
+            backgroundColor: '#6496c3',hoverBackgroundColor: '#3978b5',borderRadius: 4,borderWidth: 0,categoryPercentage: 0.8,barPercentage: 0.9
           }]
         },
         options: {
@@ -4857,5 +4857,197 @@ createLirisNavigation();
   if (DATA.length) build();
 })();
 </script>
+  <style id="liris-harmonie">
+/* Palette commune */
+html[data-theme="light"] {
+  --bg: #edf2f7;
+  --bg2: #ffffff;
+  --bg3: #f4f7fb;
+  --bd: #dce4ee;
+  --bd2: #dce4ee;
+  --txt: #20344d;
+  --txt2: #354b65;
+  --txt3: #61738a;
+  --txt4: #6b7d93;
+  --blue: #3978b5;
+}
+html[data-theme="dark"] {
+  --bg: #141e2c;
+  --bg2: #1d2a3b;
+  --bg3: #233246;
+  --bd: #35465c;
+  --bd2: #35465c;
+  --txt: #edf3fa;
+  --txt2: #d1deed;
+  --txt3: #a9bbd1;
+  --txt4: #9dafc5;
+  --blue: #75a9dc;
+}
+body {
+  background: var(--bg) !important;
+  color: var(--txt) !important;
+}
+/* En-tête bleu sobre */
+.hd {
+  background: linear-gradient(
+    115deg, #203b5a, #356b9c
+  ) !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid rgba(255,255,255,.16) !important;
+  box-shadow: none !important;
+}
+.hd h1 {
+  color: #ffffff !important;
+}
+.badge {
+  background: rgba(255,255,255,.13) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255,255,255,.24);
+}
+/* Navigation et filtres */
+.view-tabs,
+.tabs,
+.fbar,
+.imp {
+  background: var(--bg2) !important;
+  border-color: var(--bd) !important;
+}
+.view-tab.active,
+.tab.on,
+.bon {
+  background: #3978b5 !important;
+  color: #ffffff !important;
+}
+/* Surfaces en verre */
+.ui-dashboard .card,
+.ui-dashboard .kpi,
+#lirisOverview .ov-tile,
+#lirisOverview .ov-panel,
+#lirisTotauxProduction {
+  background: rgba(255,255,255,.78) !important;
+  color: var(--txt) !important;
+  border: 1px solid rgba(255,255,255,.95) !important;
+  box-shadow:
+    0 5px 18px rgba(32,52,77,.05),
+    inset 0 1px 0 rgba(255,255,255,.75) !important;
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+html[data-theme="dark"] .ui-dashboard .card,
+html[data-theme="dark"] .ui-dashboard .kpi,
+html[data-theme="dark"] #lirisOverview .ov-tile,
+html[data-theme="dark"] #lirisOverview .ov-panel,
+html[data-theme="dark"] #lirisTotauxProduction {
+  background: rgba(29,42,59,.86) !important;
+  border-color: rgba(169,187,209,.18) !important;
+  box-shadow:
+    0 5px 18px rgba(0,0,0,.12),
+    inset 0 1px 0 rgba(255,255,255,.04) !important;
+}
+/* KPI : couleur en accent, pas sur tout le fond */
+.ui-dashboard .kpi {
+  border-top: 3px solid #3978b5 !important;
+}
+.ui-dashboard .kpi.tn {
+  border-top-color: #8971bb !important;
+}
+.ui-dashboard .kpi.dg,
+.ui-dashboard .kpi.gl {
+  border-top-color: #299c98 !important;
+}
+.ui-dashboard .kpi.jr,
+.ui-dashboard .kpi.oc {
+  border-top-color: #c28a43 !important;
+}
+.ui-dashboard .kpi.nq {
+  border-top-color: #cb6471 !important;
+}
+.ui-dashboard .kl,
+.ui-dashboard .kv {
+  color: var(--txt) !important;
+}
+.ui-dashboard .ks {
+  color: var(--txt3) !important;
+}
+/* Vue d’ensemble : accents des quatre indicateurs */
+#lirisOverview .ov-tile:nth-child(1) {
+  border-top: 3px solid #3978b5 !important;
+}
+#lirisOverview .ov-tile:nth-child(2) {
+  border-top: 3px solid #8971bb !important;
+}
+#lirisOverview .ov-tile:nth-child(3) {
+  border-top: 3px solid #299c98 !important;
+}
+#lirisOverview .ov-tile:nth-child(4) {
+  border-top: 3px solid #c28a43 !important;
+}
+#lirisOverview .ov-label,
+#lirisOverview .ov-note {
+  color: var(--txt3) !important;
+  opacity: 1 !important;
+}
+#lirisOverview .ov-value {
+  color: var(--txt) !important;
+}
+/* Performance : seule grande carte colorée */
+#lirisOverview .ov-panel.ov-performance {
+  background: linear-gradient(
+    145deg, #426e98, #305777
+  ) !important;
+  color: #ffffff !important;
+  border-color: rgba(255,255,255,.18) !important;
+}
+#lirisOverview .ov-performance .ov-muted,
+#lirisOverview .ov-performance-note {
+  color: #e4eef8 !important;
+}
+/* Sites : violet TANA, turquoise DIEGO */
+#lirisOverview .ov-sites > .ov-panel:first-child {
+  border-top: 3px solid #8971bb !important;
+}
+#lirisOverview .ov-sites > .ov-panel:last-child {
+  border-top: 3px solid #299c98 !important;
+}
+#lirisOverview .ov-sites > .ov-panel:first-child .ov-site-value,
+.stn {
+  color: #8971bb !important;
+}
+#lirisOverview .ov-sites > .ov-panel:last-child .ov-site-value,
+.std {
+  color: #299c98 !important;
+}
+#lirisOverview .ov-sites > .ov-panel:first-child .ov-meter span {
+  background: #8971bb !important;
+}
+#lirisOverview .ov-sites > .ov-panel:last-child .ov-meter span {
+  background: #299c98 !important;
+}
+/* Alerte : verre rouge discret */
+.aband {
+  background: rgba(203,100,113,.10) !important;
+  border: none !important;
+  border-bottom: 1px solid rgba(203,100,113,.24) !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+.aband .ab-title {
+  color: #a33c4d !important;
+}
+.aband .ab-item {
+  background: rgba(255,255,255,.65) !important;
+  color: #963747 !important;
+  border: 1px solid rgba(203,100,113,.20) !important;
+  box-shadow: none !important;
+}
+html[data-theme="dark"] .aband .ab-title,
+html[data-theme="dark"] .aband .ab-item {
+  color: #ffb8c2 !important;
+}
+html[data-theme="dark"] .aband .ab-item {
+  background: rgba(203,100,113,.12) !important;
+}
+</style>
 </body>
 </html>
