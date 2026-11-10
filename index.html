@@ -6536,5 +6536,65 @@ html[data-theme="dark"] .aband .ab-item {
     color: #b91c1c;
   }
 </style>
+<style>
+/* En-tête uniquement : marine / orange, contraste renforcé */
+html[data-theme] header.hd {
+  background: #172f48 !important;
+  border-bottom-color: #294763 !important;
+}
+/* Bloc incliné à gauche */
+html[data-theme] header.hd .header-icon {
+  background: linear-gradient(
+    135deg, #294b69, #172f48
+  ) !important;
+  color: #ffffff !important;
+}
+/* Ruban supérieur */
+html[data-theme] header.hd .header-subtitle {
+  background: linear-gradient(
+    100deg, #203e59, #315774
+  ) !important;
+  color: #ffffff !important;
+}
+/* Ruban principal */
+html[data-theme] header.hd .header-title h1 {
+  background: linear-gradient(
+    100deg, #ffffff, #e9f0f5
+  ) !important;
+  color: #172f48 !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: #172f48 !important;
+  text-shadow: none !important;
+}
+/* PRODUCTION LIRIS */
+html[data-theme] header.hd .header-title h1 .header-accent {
+  color: #b84716 !important;
+  -webkit-text-fill-color: #b84716 !important;
+}
+/* Indicateur de période */
+html[data-theme] header.hd .header-title h1 .badge {
+  background: #b84716 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border-color: #b84716 !important;
+  opacity: 1 !important;
+}
+/* Date à droite */
+html[data-theme] header.hd .hd-r #hdate {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 1 !important;
+}
+/* Bouton de thème */
+html[data-theme] header.hd .hd-r #themeBtn {
+  background: #ffffff !important;
+  color: #172f48 !important;
+  border-color: #ffffff !important;
+}
+html[data-theme] header.hd .hd-r #themeBtn:hover {
+  background: #e9f0f5 !important;
+  border-color: #e9f0f5 !important;
+}
+</style>
 </body>
 </html>
