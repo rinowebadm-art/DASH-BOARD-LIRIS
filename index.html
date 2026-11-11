@@ -5356,6 +5356,22 @@ html[data-theme="dark"] .aband .ab-item {
     document.getElementById('lirisFluxProduction')?.remove();
     const lignes = lignesSelection();
     const b = bilan(lignes);
+    const selectionFiltree =
+      TAB !== 'g' ||
+      FIL !== 'all' ||
+      SHFT !== 'all';
+    if (UI_VIEW === 'production' && selectionFiltree) {
+      const production = productionSelection();
+      b.traite = production.reduce(
+        (total, agent) =>
+          total + (Number(agent.res) || 0),
+        0
+      );
+      // Le reçu reste global : aucun reçu ventilé par
+      // site, statut ou shift n'est utilisé par ce code.
+      // Ne pas afficher un QT mélangeant deux périmètres.
+      b.qt = null;
+    }
     if (UI_VIEW === 'overview') {
       const valeur = document.querySelector(
         '#lirisOverview [data-ov="occupation"]'
