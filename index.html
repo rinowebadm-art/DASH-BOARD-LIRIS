@@ -5434,10 +5434,7 @@ html[data-theme="dark"] .aband .ab-item {
     ).sort((a,b) => a.date.localeCompare(b.date));
   }
   function bilan(lignes) {
-    const sommeComplete = cle =>
-      lignes.length && lignes.every(l => valide(l[cle]))
-        ? lignes.reduce((s,l) => s + l[cle], 0)
-        : null;
+    const sommeComplete = cle => {      const renseignees = lignes.filter(ligne =>        valide(ligne[cle])      );      return renseignees.length        ? renseignees.reduce(            (total, ligne) => total + ligne[cle],            0          )        : null;    };
     // Chaque ratio porte sur des dates communes.
     const joursQP = lignes.filter(l =>
       valide(l.prev) && valide(l.recu)
@@ -5523,7 +5520,31 @@ html[data-theme="dark"] .aband .ab-item {
     const panel = creer('section');
     panel.id = 'lirisFluxProduction';
     creer('h2', 'Prévision, réception et traitement', panel);
-    creer(      'p',      'Tous sites · période sélectionnée',      panel,      'liris-flux-note'    );
+    const couverture = [
+      ['Prévu', 'prev'],
+      ['Reçu', 'recu'],
+      ['Traité', 'traite']
+    ].map(([libelle, cle]) => {
+      const renseignes = lignes.filter(ligne =>
+        valide(ligne[cle])
+      ).length;
+      return libelle + ' : ' + renseignes +
+        '/' + lignes.length + ' dates renseignées';
+    });
+    const noteFlux = creer(
+      'p',
+      'Tous sites · période sélectionnée · ' +
+      couverture.join(' · ') +
+      '. Volumes : somme des valeurs disponibles. ' +
+      'QP et QT : dates communes renseignées uniquement.',
+      panel,
+      'liris-flux-note'
+    );
+    noteFlux.style.setProperty(
+      'display',
+      'block',
+      'important'
+    );
     const grille = creer(
       'div', undefined, panel, 'liris-flux-grid'
     );
