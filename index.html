@@ -5405,11 +5405,7 @@ html[data-theme="dark"] .aband .ab-item {
     : valeur.toLocaleString('fr-FR', {
         maximumFractionDigits:0
       });
-  const pourcentage = valeur => valeur === null
-    ? '—'
-    : valeur.toLocaleString('fr-FR', {
-        maximumFractionDigits:1
-      }) + ' %';
+  const pourcentage = valeur => valeur === null    ? '—'    : valeur.toLocaleString('fr-FR', {        minimumFractionDigits:2,        maximumFractionDigits:2      }) + ' %';
   const valide = valeur =>
     typeof valeur === 'number' &&
     Number.isFinite(valeur) &&
@@ -5447,19 +5443,7 @@ html[data-theme="dark"] .aband .ab-item {
     const prevQP = total(joursQP, 'prev');
     const recuQT = total(joursQT, 'recu');
     return {
-      prev:sommeComplete('prev'),
-      recu:sommeComplete('recu'),
-      traite:sommeComplete('traite'),
-      qp:prevQP > 0
-        ? total(joursQP, 'recu') * 100 / prevQP
-        : null,
-      qt:recuQT > 0
-        ? total(joursQT, 'traite') * 100 / recuQT
-        : null,
-      jours:lignes.length,
-      joursQP:joursQP.length,
-      joursQT:joursQT.length
-    };
+  const prev = sommeComplete('prev');    const recu = sommeComplete('recu');    const traite = sommeComplete('traite');    return {      prev,      recu,      traite,      qp:prev !== null && prev > 0 && recu !== null        ? recu * 100 / prev        : null,      qt:recuQT > 0        ? total(joursQT, 'traite') * 100 / recuQT        : null,      jours:lignes.length,      joursQP:joursQP.length,      joursQT:joursQT.length    };
   }
     function rendre() {
     document.getElementById('lirisFluxProduction')?.remove();
@@ -5536,7 +5520,8 @@ html[data-theme="dark"] .aband .ab-item {
       'Tous sites · période sélectionnée · ' +
       couverture.join(' · ') +
       '. Volumes : somme des valeurs disponibles. ' +
-      'QP et QT : dates communes renseignées uniquement.',
+      'QP : total reçu / total prévu. ' +      
+      'QT : dates communes renseignées uniquement.',
       panel,
       'liris-flux-note'
     );
