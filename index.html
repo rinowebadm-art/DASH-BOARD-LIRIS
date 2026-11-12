@@ -5443,8 +5443,7 @@ html[data-theme="dark"] .aband .ab-item {
     const prevQP = total(joursQP, 'prev');
     const recuQT = total(joursQT, 'recu');
     return {
-  const prev = sommeComplete('prev');    const recu = sommeComplete('recu');    const traite = sommeComplete('traite');    return {      prev,      recu,      traite,      qp:prev !== null && prev > 0 && recu !== null        ? recu * 100 / prev        : null,      qt:recuQT > 0        ? total(joursQT, 'traite') * 100 / recuQT        : null,      jours:lignes.length,      joursQP:joursQP.length,      joursQT:joursQT.length    };
-  }
+  const prev = sommeComplete('prev');    const recu = sommeComplete('recu');    const traite = sommeComplete('traite');    return {      prev,      recu,      traite,      qp: prev !== null && prev > 0 && recu !== null        ? recu * 100 / prev        : null,      qt: recuQT > 0        ? total(joursQT, 'traite') * 100 / recuQT        : null,      jours: lignes.length,      joursQP: joursQP.length,      joursQT: joursQT.length    };  }
     function rendre() {
     document.getElementById('lirisFluxProduction')?.remove();
     const lignes = lignesSelection();
