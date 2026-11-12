@@ -5429,21 +5429,48 @@ html[data-theme="dark"] .aband .ab-item {
       )
     ).sort((a,b) => a.date.localeCompare(b.date));
   }
-  function bilan(lignes) {
-    const sommeComplete = cle => {      const renseignees = lignes.filter(ligne =>        valide(ligne[cle])      );      return renseignees.length        ? renseignees.reduce(            (total, ligne) => total + ligne[cle],            0          )        : null;    };
-    // Chaque ratio porte sur des dates communes.
-    const joursQP = lignes.filter(l =>
-      valide(l.prev) && valide(l.recu)
+    function bilan(lignes) {
+    const sommeComplete = cle => {
+      const renseignees = lignes.filter(ligne =>
+        valide(ligne[cle])
+      );
+      return renseignees.length
+        ? renseignees.reduce(
+            (total, ligne) => total + ligne[cle],
+            0
+          )
+        : null;
+    };
+    const joursQP = lignes.filter(ligne =>
+      valide(ligne.prev) && valide(ligne.recu)
     );
-    const joursQT = lignes.filter(l =>
-      valide(l.recu) && valide(l.traite)
+    const joursQT = lignes.filter(ligne =>
+      valide(ligne.recu) && valide(ligne.traite)
     );
     const total = (rows, cle) =>
-      rows.reduce((s,l) => s + l[cle], 0);
-    const prevQP = total(joursQP, 'prev');
+      rows.reduce(
+        (somme, ligne) => somme + ligne[cle],
+        0
+      );
+    const prev = sommeComplete('prev');
+    const recu = sommeComplete('recu');
+    const traite = sommeComplete('traite');
     const recuQT = total(joursQT, 'recu');
     return {
-  const prev = sommeComplete('prev');    const recu = sommeComplete('recu');    const traite = sommeComplete('traite');    return {      prev,      recu,      traite,      qp: prev !== null && prev > 0 && recu !== null        ? recu * 100 / prev        : null,      qt: recuQT > 0        ? total(joursQT, 'traite') * 100 / recuQT        : null,      jours: lignes.length,      joursQP: joursQP.length,      joursQT: joursQT.length    };  }
+      prev,
+      recu,
+      traite,
+      qp: prev !== null && prev > 0 && recu !== null
+        ? recu * 100 / prev
+        : null,
+      qt: recuQT > 0
+        ? total(joursQT, 'traite') * 100 / recuQT
+        : null,
+      jours: lignes.length,
+      joursQP: joursQP.length,
+      joursQT: joursQT.length
+    };
+  }
     function rendre() {
     document.getElementById('lirisFluxProduction')?.remove();
     const lignes = lignesSelection();
